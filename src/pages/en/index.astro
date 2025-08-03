@@ -1,0 +1,52 @@
+---
+import Layout from '@layouts/Layout.astro'
+import { getSortedPosts } from '@utils'
+import { getCollection, render } from 'astro:content'
+import PostPreview from '@components/PostPreview.astro'
+import Pagination from '@components/Pagination.astro'
+import BlockHeader from '@components/BlockHeader.astro'
+import HomeBanner from '@components/HomeBanner.astro'
+import siteConfig from '../../site.config'
+import TagsSection from '@components/TagsSection.astro'
+import { t } from '../../i18n'
+
+// 获取英文版本的home内容
+const homeEn = await getCollection('home-en')
+let HomeContent: any
+let homeAvatarImage: any
+let homeGithubCalendar: any
+if (homeEn.length > 0) {
+  const homeEntry = homeEn[0]
+  const { Content } = await render(homeEntry)
+  HomeContent = Content
+  homeAvatarImage = homeEntry.data.avatarImage
+  homeGithubCalendar = homeEntry.data.githubCalendar
+}
+
+const sortedPosts = await getSortedPosts()
+const currentLocale = 'en'
+---
+
+<Layout 
+  title={t(currentLocale, 'home.welcome')}
+  description={t(currentLocale, 'home.description')}
+>
+  {
+    HomeContent && (
+      <HomeBanner avatarImage={homeAvatarImage} githubCalendar={homeGithubCalendar}>
+        <HomeContent />
+      </HomeBanner>
+    )
+  }
+  <BlockHeader>{t(currentLocale, 'nav.tags')}</BlockHeader>
+  <TagsSection posts={sortedPosts} />
+  <BlockHeader>{t(currentLocale, 'nav.latestPosts')}</BlockHeader>
+  {sortedPosts.slice(0, siteConfig.pageSize).map((post) => <PostPreview post={post} />)}
+  <Pagination nextLink="/en/posts" nextText={t(currentLocale, 'nav.archive')} />
+</Layout>
+
+<style is:global>
+  a.heading-anchor {
+    display: none !important;
+  }
+</style>

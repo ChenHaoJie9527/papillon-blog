@@ -62,6 +62,20 @@ const homeCollection = createCollection({
   schema: schemas.avatarImage,
 })
 
+// 英文版home集合
+const homeEnCollection = createCollection({
+  pattern: ['home-en.md', 'home-en.mdx'],
+  base: './src/content',
+  schema: schemas.avatarImage,
+})
+
+// 西班牙语版home集合
+const homeEsCollection = createCollection({
+  pattern: ['home-es.md', 'home-es.mdx'],
+  base: './src/content',
+  schema: schemas.avatarImage,
+})
+
 const addendumCollection = createCollection({
   pattern: ['addendum.md', 'addendum.mdx'],
   base: './src/content',
@@ -70,6 +84,8 @@ const addendumCollection = createCollection({
 
 export const collections = {
   posts: postsCollection, // 博客文章集合
-  home: homeCollection, // 首页内容集合
+  home: homeCollection, // 中文首页内容集合
+  'home-en': homeEnCollection, // 英文首页内容集合
+  'home-es': homeEsCollection, // 西班牙语首页内容集合
   addendum: addendumCollection, // 附录内容集合
 }

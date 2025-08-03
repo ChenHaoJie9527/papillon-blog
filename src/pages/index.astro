@@ -8,12 +8,12 @@ import BlockHeader from "@components/BlockHeader.astro";
 import HomeBanner from "@components/HomeBanner.astro";
 import siteConfig from "../site.config";
 import TagsSection from "@components/TagsSection.astro";
-import { t, getCurrentLocale } from "../i18n";
+import { t } from "../i18n";
 
 const home = await getCollection("home");
-let HomeContent;
-let homeAvatarImage;
-let homeGithubCalendar;
+let HomeContent: any;
+let homeAvatarImage: any;
+let homeGithubCalendar: any;
 if (home.length > 0) {
 	const homeEntry = home[0];
 	const { Content } = await render(homeEntry);
@@ -23,12 +23,14 @@ if (home.length > 0) {
 }
 const sortedPosts = await getSortedPosts();
 
-// 获取当前语言
-const currentLocale = getCurrentLocale(Astro.url.pathname)
-console.log("currentLocale=", currentLocale);
+// 获取当前语言 (默认为中文)
+const currentLocale = 'zh'
 ---
 
-<Layout>
+<Layout 
+  title={t(currentLocale, 'home.welcome')}
+  description={t(currentLocale, 'home.description')}
+>
   {
     HomeContent && (
       <HomeBanner avatarImage={homeAvatarImage} githubCalendar={homeGithubCalendar}>
@@ -36,11 +38,11 @@ console.log("currentLocale=", currentLocale);
       </HomeBanner>
     )
   }
-  <BlockHeader>{t(currentLocale, "nav.tags")}</BlockHeader>
+  <BlockHeader>{t(currentLocale, 'nav.tags')}</BlockHeader>
   <TagsSection posts={sortedPosts} />
-  <BlockHeader>{t(currentLocale, "nav.latestPosts")}</BlockHeader>
+  <BlockHeader>{t(currentLocale, 'nav.latestPosts')}</BlockHeader>
   {sortedPosts.slice(0, siteConfig.pageSize).map((post) => <PostPreview post={post} />)}
-  <Pagination nextLink="/posts" nextText="Archive" />
+  <Pagination nextLink="/posts" nextText={t(currentLocale, 'nav.archive')} />
 </Layout>
 
 <style is:global>

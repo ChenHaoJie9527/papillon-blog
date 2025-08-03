@@ -28,7 +28,7 @@ import react from '@astrojs/react'
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.site,
-  trailingSlash: 'never',
+  trailingSlash: 'ignore',
   prefetch: true,
   markdown: {
     remarkPlugins: [
@@ -101,7 +101,7 @@ export default defineConfig({
     locales: ["zh", "en", "es"],
     defaultLocale: "zh",
     routing: {
-      prefixDefaultLocale: false
+      prefixDefaultLocale: false,
     }
   },
 })

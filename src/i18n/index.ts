@@ -231,6 +231,7 @@ export function t(
 // Helper function to get current locale from URL
 export function getCurrentLocale(pathname: string): Locale {
   if (pathname.startsWith('/en')) return 'en'
+  if (pathname.startsWith('/es')) return 'es'
   if (pathname.startsWith('/zh')) return 'zh'
   return 'zh' // default
 }
