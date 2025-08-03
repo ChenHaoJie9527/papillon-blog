@@ -16,11 +16,18 @@ const { minutesRead } = remarkPluginFrontmatter
 const description = remarkPluginFrontmatter.description || post.data.description
 
 const currentLocale = getCurrentLocale(Astro.url.pathname);
+
+// 根据当前语言生成正确的链接前缀
+const getLocalizedPath = (path: string) => {
+  if (currentLocale === 'en') return `/en${path}`
+  if (currentLocale === 'es') return `/es${path}`
+  return path // 默认中文不加前缀
+}
 ---
 
 <article class="w-full py-5 my-4 border-accent/10">
   <h1 class="mb-3 text-2xl text-[var(--theme-h1)] font-semibold">
-    <a href={`/posts/${post.id}`}># {post.data.title}</a>
+    <a href={getLocalizedPath(`/posts/${post.id}`)}># {post.data.title}</a>
   </h1>
   <div class="text-foreground/80 my-3">
     <time>{dateString(post.data.published)}</time>
@@ -46,7 +53,7 @@ const currentLocale = getCurrentLocale(Astro.url.pathname);
         {post.data.tags.map((tag) => (
           <a
             class="underline mr-4 inline-block"
-            href={`/tags/${encodeURIComponent(tag)}`}
+            href={getLocalizedPath(`/tags/${encodeURIComponent(tag)}`)}
           >
             #{tag}
           </a>
@@ -55,7 +62,7 @@ const currentLocale = getCurrentLocale(Astro.url.pathname);
     )
   }
   <div>
-    <a class="button flex items-center" href={`/posts/${post.id}`}>
+    <a class="button flex items-center" href={getLocalizedPath(`/posts/${post.id}`)}>
       {t(currentLocale, "common.readMore")}
       <Icon name="chevrons-right" class="size-5 ml-2" />
     </a>

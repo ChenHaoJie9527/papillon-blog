@@ -78,19 +78,16 @@ const giscusLang = giscusLangMap[locale] || 'zh-CN'
     document.body.appendChild(script)
   }
   async function updateTheme(theme: string) {
-    console.log('Updating Giscus theme to:', theme)
     let giscusFrame
     // Try to find the Giscus iframe 3 times, in case it takes a moment to load
     for (let i = 0; i < 3; i++) {
       giscusFrame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
       if (giscusFrame) break
-      console.log('Giscus iframe not found, retrying...')
       // Wait a moment before trying again
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
     // If the iframe is still not found, log an error and return
     if (!giscusFrame) {
-      console.error('Giscus iframe not found after retries')
       return
     }
     giscusFrame.contentWindow?.postMessage(
