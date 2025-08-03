@@ -1,26 +1,31 @@
 ---
-import Layout from '@layouts/Layout.astro'
-import { getSortedPosts } from '@utils'
-import { getCollection, render } from 'astro:content'
-import PostPreview from '@components/PostPreview.astro'
-import Pagination from '@components/Pagination.astro'
-import BlockHeader from '@components/BlockHeader.astro'
-import HomeBanner from '@components/HomeBanner.astro'
-import siteConfig from '../site.config'
-import TagsSection from '@components/TagsSection.astro'
+import Layout from "@layouts/Layout.astro";
+import { getSortedPosts } from "@utils";
+import { getCollection, render } from "astro:content";
+import PostPreview from "@components/PostPreview.astro";
+import Pagination from "@components/Pagination.astro";
+import BlockHeader from "@components/BlockHeader.astro";
+import HomeBanner from "@components/HomeBanner.astro";
+import siteConfig from "../site.config";
+import TagsSection from "@components/TagsSection.astro";
+import { t, getCurrentLocale } from "../i18n";
 
-const home = await getCollection('home')
-let HomeContent
-let homeAvatarImage
-let homeGithubCalendar
+const home = await getCollection("home");
+let HomeContent;
+let homeAvatarImage;
+let homeGithubCalendar;
 if (home.length > 0) {
-  const homeEntry = home[0]
-  const { Content } = await render(homeEntry)
-  HomeContent = Content
-  homeAvatarImage = homeEntry.data.avatarImage
-  homeGithubCalendar = homeEntry.data.githubCalendar
+	const homeEntry = home[0];
+	const { Content } = await render(homeEntry);
+	HomeContent = Content;
+	homeAvatarImage = homeEntry.data.avatarImage;
+	homeGithubCalendar = homeEntry.data.githubCalendar;
 }
-const sortedPosts = await getSortedPosts()
+const sortedPosts = await getSortedPosts();
+
+// 获取当前语言
+const currentLocale = getCurrentLocale(Astro.url.pathname)
+console.log("currentLocale=", currentLocale);
 ---
 
 <Layout>
@@ -31,9 +36,9 @@ const sortedPosts = await getSortedPosts()
       </HomeBanner>
     )
   }
-  <BlockHeader>Tags</BlockHeader>
+  <BlockHeader>{t(currentLocale, "nav.tags")}</BlockHeader>
   <TagsSection posts={sortedPosts} />
-  <BlockHeader>Latest Posts</BlockHeader>
+  <BlockHeader>{t(currentLocale, "nav.latestPosts")}</BlockHeader>
   {sortedPosts.slice(0, siteConfig.pageSize).map((post) => <PostPreview post={post} />)}
   <Pagination nextLink="/posts" nextText="Archive" />
 </Layout>
