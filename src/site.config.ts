@@ -2,12 +2,11 @@ import type { SiteConfig } from '@types'
 
 const config: SiteConfig = {
   // Absolute URL to the root of your published site, used for generating links and sitemaps.
-  site: 'https://multiterm-astro.stelclementine.com',
+  site: 'https://papillon-x.netlify.app',
   // The name of your site, used in the title and for SEO.
   title: 'Papillon',
   // The description of your site, used for SEO and RSS feed.
-  description:
-    'A coder-ready Astro blog theme with 59 of your favorite color schemes to choose from',
+  description: '专注于React、Vue、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
   // The author of the site, used in the footer, SEO, and RSS feed.
   author: 'momotom(ChenHaoJie9527)',
   // Keywords for SEO, used in the meta tags.
@@ -119,7 +118,7 @@ const config: SiteConfig = {
   socialLinks: {
     github: 'https://github.com/ChenHaoJie9527/papillon-blog',
     // mastodon: 'https://github.com/ChenHaoJie9527/papillon-blog',
-    email: 'https://github.com/ChenHaoJie9527/papillon-blog',
+    email: '13802406705@163.com',
     // linkedin: 'https://github.com/ChenHaoJie9527/papillon-blog',
     // bluesky: 'https://github.com/ChenHaoJie9527/papillon-blog',
     // twitter: 'https://github.com/ChenHaoJie9527/papillon-blog',
@@ -130,10 +129,10 @@ const config: SiteConfig = {
   // Take the values from the generated script tag at https://giscus.app and fill them in here.
   // If you don't want to use Giscus, set this to undefined.
   giscus: {
-    repo: 'stelcodes/multiterm-astro',
-    repoId: 'R_kgDOPNnBig',
-    category: 'Giscus',
-    categoryId: 'DIC_kwDOPNnBis4CteOc',
+    repo: 'ChenHaoJie9527/papillon-blog',
+    repoId: 'R_kgDOPXEF4g',
+    category: 'General',
+    categoryId: 'DIC_kwDOPXEF4s4CttwV',
     reactionsEnabled: true, // Enable reactions on post itself
   },
 }
