@@ -1,26 +1,54 @@
 ---
-import siteConfig from '../site.config'
-import LightDarkAutoButton from './LightDarkAutoButton.astro'
-import Search from './Search.astro'
-import SelectTheme from './SelectTheme.astro'
-import NavLink from './NavLink.astro'
+import siteConfig from "../site.config";
+import LightDarkAutoButton from "./LightDarkAutoButton.astro";
+import Search from "./Search.astro";
+import SelectTheme from "./SelectTheme.astro";
+import NavLink from "./NavLink.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import { t, getCurrentLocale } from "../i18n";
 
-const lightDarkAutoTheme = siteConfig.themes.mode === 'light-dark-auto'
+const lightDarkAutoTheme = siteConfig.themes.mode === "light-dark-auto";
 const selectTheme =
-  siteConfig.themes.mode === 'select' && siteConfig.themes.include.length > 1
+	siteConfig.themes.mode === "select" && siteConfig.themes.include.length > 1;
+
+// Get current locale from URL
+const currentLocale = getCurrentLocale(Astro.url.pathname);
+
+// Update home link logic
+const homeLink = currentLocale === 'zh' ? '/' : `/${currentLocale}`
+
+// Translate navigation links
+const translatedNavLinks = siteConfig.navLinks.map((link) => {
+	// For external links, keep original name
+	if (link.external) {
+		return link;
+	}
+
+	// For internal links, try to translate
+	const lowerName = link.name.toLowerCase();
+	const translationKey = `nav.${lowerName}`;
+	const translated = t(currentLocale, translationKey);
+
+	// If translation is the same as key (meaning not found), use original name
+	return {
+		...link,
+		name: translated === translationKey ? link.name : translated,
+	};
+});
 ---
 
 <header>
   <div class="relative flex items-center justify-between bg-accent/10 rounded-xl">
     <a
       id="logo"
-      href="/"
+      href={homeLink}
       class="block px-4 py-1.5 max-w-full no-underline items-center bg-accent text-background font-bold rounded-xl"
     >
       {siteConfig.title}
     </a>
     <div class="flex items-center gap-3 sm:mr-3">
       <Search />
+      <LanguageSwitcher />
       {lightDarkAutoTheme && <LightDarkAutoButton />}
       {selectTheme && <SelectTheme />}
       <nav id="nav-mobile" aria-label="Menu" class="p-0 text-accent sm:hidden">
@@ -38,7 +66,7 @@ const selectTheme =
           class="invisible absolute flex flex-col bg-background shadow text-accent border-2 m-0 p-2.5 top-11.5 left-auto right-0 z-50 rounded-xl"
         >
           {
-            siteConfig.navLinks.map((link) => (
+            translatedNavLinks.map((link) => (
               <li class="p-1" aria-expanded="false">
                 <NavLink link={link} />
               </li>
@@ -51,7 +79,7 @@ const selectTheme =
   <nav aria-label="Menu" class="p-0 mt-4 ml-0.5 text-accent hidden sm:block">
     <ul class="flex flex-row text-accent mb-2.5">
       {
-        siteConfig.navLinks.map((link) => (
+        translatedNavLinks.map((link) => (
           <li class="mr-5" aria-expanded="true">
             <NavLink link={link} />
           </li>

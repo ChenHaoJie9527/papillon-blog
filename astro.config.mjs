@@ -71,7 +71,16 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
-    sitemap(),
+    sitemap({
+      i18n: {
+        defaultLocale: "zh",
+        locales: {
+          zh: "zh-CN",
+          es: "es-ES",
+          en: "en-US"
+        }
+      }
+    }),
     expressiveCode({
       themes: siteConfig.themes.include,
       useDarkModeMediaQuery: false,
@@ -87,5 +96,12 @@ export default defineConfig({
   ],
   experimental: {
     contentIntellisense: true,
+  },
+  i18n: {
+    locales: ["zh", "en", "es"],
+    defaultLocale: "zh",
+    routing: {
+      prefixDefaultLocale: false
+    }
   },
 })
