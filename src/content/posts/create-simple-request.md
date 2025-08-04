@@ -108,7 +108,7 @@ const request = createSimpleRequest()
 request.destroy()
 ```
 
-## 2. 应哟过场景
+## 2. 应用场景
 
 ### 搜索功能防抖
 
