@@ -14,7 +14,7 @@ tags: ['hooks']
 ```typescript
 function useCopy() {
   const [copied, setCopied] = useState(null)
-  const copyHandle = useCallback(() => {
+  const copyHandle = () => {
     try {
       // 优先使用现代 Clipboard API
       if (navigator?.clipboard?.writeText) {
@@ -27,7 +27,7 @@ function useCopy() {
       oldSchoolCopy(value)
       setCopied(value)
     }
-  }, [])
+  }
   const resetHandle = useCallback(() => {
     setCoped(null)
   }, [])
