@@ -1,3 +1,4 @@
+// 生成错误对象
 const standardizeError = <U>(err: U): U => {
   const isEmpty = (e: unknown): e is undefined | null | '' => 
     e === undefined || e === null || e === ''
@@ -15,6 +16,7 @@ const standardizeError = <U>(err: U): U => {
   ) as U
 }
 
+// 合并错误扩展
 const extendError = <U>(err: U, errorExt?: Record<string, unknown>): U =>
   errorExt ? { ...err, ...errorExt } as U : err
 

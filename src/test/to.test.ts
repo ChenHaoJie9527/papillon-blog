@@ -31,4 +31,20 @@ describe('to', () => {
     expect(err?.message).toBe('Original Error')
     expect(data).toBeUndefined()
   })
+
+  it('应该处理不同类型的错误', async () => {
+    // 字符串错误
+    const [err1] = await to(Promise.reject('String error'))
+    console.log('err1 =>', err1)
+    expect(err1).toBe('String error')
+
+    // Error 对象
+    const [err2] = await to(Promise.reject(new Error('Error object')))
+    expect(err2?.message).toBe('Error object')
+
+    // 自定义错误对象
+    const customError = { code: 404, message: 'Not found' }
+    const [err3] = await to(Promise.reject(customError))
+    expect(err3?.message).toBe('Not found')
+  })
 })
