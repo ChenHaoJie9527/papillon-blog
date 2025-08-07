@@ -35,7 +35,6 @@ describe('to', () => {
   it('应该处理不同类型的错误', async () => {
     // 字符串错误
     const [err1] = await to(Promise.reject('String error'))
-    console.log('err1 =>', err1)
     expect(err1).toBe('String error')
 
     // Error 对象
@@ -46,5 +45,20 @@ describe('to', () => {
     const customError = { code: 404, message: 'Not found' }
     const [err3] = await to(Promise.reject(customError))
     expect(err3?.message).toBe('Not found')
+  })
+  it('应该处理网络请求场景', async () => {
+    // 模拟成功的 API 调用
+    const mockApiCall = () =>
+      Promise.resolve({ status: 200, data: { id: 1, name: 'test' } })
+    const [err, data] = await to(mockApiCall())
+    expect(err).toBeNull()
+    expect(data).toEqual({ status: 200, data: { id: 1, name: 'test' } })
+
+    // 模拟失败的 API 调用
+    const mockFailedApiCall = () =>
+      Promise.reject({ status: 500, message: 'Server error' })
+    const [err2, data2] = await to(mockFailedApiCall())
+    expect(err2).toEqual({ status: 500, message: 'Server error' })
+    expect(data2).toBeUndefined()
   })
 })
