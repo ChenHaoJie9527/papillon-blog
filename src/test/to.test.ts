@@ -15,4 +15,11 @@ describe('to', () => {
     expect(data).toBeUndefined()
     
   })
+  it('如果是一个空的reject，则返回一个错误', async () => {
+    const promise = Promise.reject()
+    const [err, data] = await to(promise)
+    expect(err).toBeInstanceOf(Error)
+    expect(err?.message).toBe('Empty error')
+    expect(data).toBeUndefined()
+  })
 })
