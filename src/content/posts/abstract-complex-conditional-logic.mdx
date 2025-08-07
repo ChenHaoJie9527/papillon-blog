@@ -1,0 +1,445 @@
+---
+title: '简化复杂条件判断逻辑的方案'
+published: '2025-08-07'
+draft: false
+description: '在日常开发中，我们经常会遇到需要根据不同的条件执行不同的逻辑的情况。过多的if-else 或者 switch 语句会让代码变得难以维护。本文将介绍几种简化复杂条件判断逻辑的方案。'
+tags: ['javascript', '业务开发']
+---
+
+## 难点分析
+
+在处理复杂的条件逻辑时，if/else if/else 链和 switch 语句确实可能导致代码冗余和可读性差，尤其当条件数量增多时。将这些复杂的判断逻辑抽象成函数，甚至更进一步地设计成更高级的模式，是提升代码质量的有效途径。
+
+```typescript
+    // 伪代码
+    if (condition1) {
+        // 执行逻辑1
+    } else if (condition2) {
+        // 执行逻辑2
+    } else if (condition3) {
+        // 执行逻辑3
+    } else if (condition4) {
+        // 执行逻辑4
+    } else {
+        // 执行逻辑5
+    }
+
+    switch (key) {
+        case value1:
+            // 执行逻辑1
+            break
+        case value2:
+            // 执行逻辑2
+            break
+        case value3:
+            // 执行逻辑3
+            break
+        case value4:
+            // 执行逻辑4
+            break
+        default:
+    }
+```
+
+在上面的例子中，我们可能会遇到以下问题：
+
+- 代码冗余
+- 可读性差
+- 难以维护
+- 难以扩展
+- 难以测试
+- 难以复用
+- 难以理解
+
+## 方案一：对象映射
+
+现在我们把条件和条件体抽象成一个函数，然后通过对象映射key-value的形式来实现，会得到：
+
+```typescript
+    // 伪代码
+    const conditionMap = {
+        condition1: () => {
+            // 执行逻辑1
+        },
+        condition2: () => {
+            // 执行逻辑2
+        },
+        condition3: () => {
+            // 执行逻辑3
+        },
+        condition4: () => {
+            // 执行逻辑4
+        },
+        condition5: () => {
+            // 执行逻辑5
+        },
+    }
+```
+
+现在我们就可以通过conditionMap[key]来执行对应的逻辑了。
+
+### 代码示例
+
+```typescript
+    // 传统方式：复杂的 if-else 链
+    function processUserActionTraditional(action: string, user: any) {
+        if (action === 'login') {
+            if (user.isAdmin) {
+                return { message: '管理员登录成功', redirect: '/admin' };
+            } else if (user.isVip) {
+                return { message: 'VIP用户登录成功', redirect: '/vip' };
+            } else {
+                return { message: '普通用户登录成功', redirect: '/dashboard' };
+            }
+        } else if (action === 'register') {
+            if (user.email.includes('@company.com')) {
+                return { message: '企业用户注册成功', redirect: '/enterprise' };
+            } else {
+                return { message: '个人用户注册成功', redirect: '/personal' };
+            }
+        } else if (action === 'logout') {
+            return { message: '退出登录成功', redirect: '/login' };
+        } else if (action === 'reset-password') {
+            return { message: '密码重置邮件已发送', redirect: '/login' };
+        } else {
+            return { message: '未知操作', redirect: '/error' };
+        }
+    }
+    
+    // 使用对象映射
+    const actionHandlers = {
+        login: (user: any) => {
+            if (user.isAdmin) {
+                return { message: '管理员登录成功', redirect: '/admin' };
+            } else if (user.isVip) {
+                return { message: 'VIP用户登录成功', redirect: '/vip' };
+            } else {
+                return { message: '普通用户登录成功', redirect: '/dashboard' };
+            }
+        },
+        register: (user: any) => {
+            if (user.email.includes('@company.com')) {
+                return { message: '企业用户注册成功', redirect: '/enterprise' };
+            } else {
+                return { message: '个人用户注册成功', redirect: '/personal' };
+            }
+        },
+        logout: () => {
+            return { message: '退出登录成功', redirect: '/login' }; 
+        },
+        'reset-password': () => {
+            return { message: '密码重置邮件已发送', redirect: '/login' };
+        },
+        default: () => {
+            return { message: '未知操作', redirect: '/error' };
+        }
+    }
+
+    function processUserActionAbstract(action: string, user: any) {
+        const handler = actionHandlers[action as keyof typeof actionHandlers]
+        if (handler) {
+            return handler(user)
+        } else {
+            return actionHandlers.default()
+        }
+    }
+
+    // 使用示例
+    const user = { isAdmin: true, email: 'admin@company.com' };
+    console.log('传统方式：', processUserActionTraditional('login', user))
+    console.log('抽象方式：', processUserActionAbstract('login', user))
+```
+
+这个示例代码展示2种不同的实现方式：
+
+- 传统方式：使用if-else if-else链来处理不同的条件
+- 抽象方式：使用对象映射来处理不同的条件
+
+从代码量上来看，抽象方式的代码量更少，更简洁。从可读性上来看，抽象方式的代码更易读，更易维护。从可扩展性上来看，抽象方式的代码更易扩展，更易测试。
+
+但是，其实还有更细粒度，更灵活的实现方式，那就是使用函数式编程的思维来实现。
+
+## 方案二：函数式编程
+
+函数式编程是一种编程范式，它将计算视为数学函数的求值，并避免改变状态和可变数据。函数式编程强调函数的纯度和无副作用，鼓励使用不可变数据和纯函数。
+
+核心思想：利用高阶函数（接受函数作为参数或返回函数的函数）和函数组合来表达复杂的逻辑。这有助于创建更模块化、更易测试的代码。
+
+优势：
+
+- 简洁性：减少样板代码
+- 可复用：轻松组合和重用函数
+- 纯函数：鼓励编写没有副作用的纯函数，提高代码可预测性
+- 声明式：更关注 ‘做什么’，而不是 ‘怎么做’
+
+### 代码示例
+
+```typescript
+    type Validators = {
+        message: string
+        condition: (value: any) => boolean
+    }
+    
+    // 验证规则定义，每个规则都是一个对象，包含一个条件函数和一个错误消息
+    const validators: Validators[] = [
+        {
+            condition: (value) => value === null || value === undefined,
+            message: '值不能为空'
+        },
+        {
+            condition: (value) => typeof value !== 'string',
+            message: '值必须是字符串类型'
+        },
+        {
+            condition: (value) => typeof value === 'string' && value.length < 5,
+            message: '字符串长度不能小于 5'
+        },
+        {
+            condition: (value) => typeof value === 'string' && !value.includes(' '),
+            message: '字符串不能包含空格'
+        }
+    ]
+
+    function validate(input: any, validators: Validators[]) {
+        // 使用 Array.prototype.find 高阶函数来查找第一个不满足条件的验证规则
+        // 这取代了传统的 if/else if 链
+        const failedValidation = validators.find(validator => validator.condition(input))
+        if (failedValidation) {
+            return {
+                isValid: false,
+                message: failedValidation.message
+            }
+        } else {
+            return {
+                isValid: true,
+                message: undefined, // 验证通过
+            }
+        }
+    }
+
+    console.log(validate("hello world", validators)); // { isValid: false, message: '字符串不能包含空格' }
+    console.log(validate("short", validators));       // { isValid: false, message: '字符串长度不能小于 5' }
+    console.log(validate(null, validators));          // { isValid: false, message: '值不能为空' }
+    console.log(validate(123, validators));           // { isValid: false, message: '值必须是字符串类型' }
+    console.log(validate("longstring", validators));  // { isValid: true, message: '验证通过' }
+
+    // 简化的函数式方式：使用纯函数映射
+    const actionHandlers = {
+        login: (user: any) => ({
+            message: user.isAdmin ? '管理员登录成功' : '用户登录成功',
+            redirect: user.isAdmin ? '/admin' : '/dashboard'
+        }),
+        register: (user: any) => ({
+            message: '注册成功',
+            redirect: '/dashboard'
+        }),
+        logout: () => ({
+            message: '退出登录成功',
+            redirect: '/login'
+        })
+    };
+
+    const processUserAction = (action: string, user: any) => {
+        const handler = actionHandlers[action as keyof typeof actionHandlers];
+        return handler ? handler(user) : { message: '未知操作', redirect: '/error' };
+    };
+
+    // 使用示例
+    const user = { isAdmin: true, username: 'admin', email: 'admin@example.com' };
+    console.log(processUserAction('login', user));
+```
+
+## 方案三：表驱动
+
+表驱动是一种编程模式，它将条件逻辑转换为数据结构，从而简化条件判断。将 ‘判断’ 转换为 ‘查找’，将 ‘执行’ 转换为 ‘读取’。
+
+```typescript
+    // 表驱动方式：将条件逻辑转换成数据结构
+    interface ActionTable {
+        [key: string]: {
+            message: string
+            redirect: string
+            condition?: (user: any) => boolean
+        }
+    }
+
+    // 定义动作表
+    const actionTable: ActionTable = {
+        'admin-login': {
+            message: '管理员登录成功',
+            redirect: '/admin',
+        },
+        'vip-login': {
+            message: 'VIP用户登录成功',
+            redirect: '/vip'
+        },
+        'user-login': {
+            message: '普通用户登录成功',
+            redirect: '/dashboard'
+        },
+        'company-register': {
+            message: '企业用户注册成功',
+            redirect: '/enterprise',
+            condition: (user: any) => user.email.includes('@company.com')
+        },
+        'personal-register': {
+            message: '个人用户注册成功',
+            redirect: '/personal'
+        },
+        'logout': {
+            message: '退出登录成功',
+            redirect: '/login'
+        },
+        'reset-password': {
+            message: '密码重置邮件已发送',
+            redirect: '/login'
+        }
+    }
+
+    // 用户角色映射表
+    const userRoleTable = {
+        admin: (user: any) => user.isAdmin,
+        vip: (user: any) => user.isVip && !user.isAdmin,
+        user: (user: any) => !user.isAdmin && !user.isVip
+    }
+
+    // 邮箱类型映射表
+    const emailTypeTable = {
+        company: (user: any) => user.email && user.email.includes('@company.com'),
+        personal: (user: any) => user.email && !user.email.includes('@company.com')
+    }
+
+    // 处理方法
+    function processUserActionTable(action: 'login' | 'register' | 'logout' | 'reset-password', user: any) {
+        // 登录动作
+        if (action === 'login') {
+            const role = Object.keys(userRoleTable).find(role => userRoleTable[role as keyof typeof userRoleTable](user))
+            const actionKey = `${role}-login`
+            return actionTable[actionKey]
+        }
+
+        // 注册动作
+        if (action === 'register') {
+            const emailType = Object.keys(emailTypeTable).find(type => emailTypeTable[type as keyof typeof emailTypeTable](user))
+            const actionKey = `${emailType}-register`
+            return actionTable[actionKey]
+        }
+
+        // 其他动作
+        return actionTable[action] || {message: '未知操作', redirect: '/error'}        
+    }
+
+    // 使用示例
+    const user = { isAdmin: true, isVip: false, email: 'admin@company.com' };
+    console.log(processUserActionTable('login', user));
+    console.log(processUserActionTable('register', user));
+    console.log(processUserActionTable('logout', user));
+    console.log(processUserActionTable('reset-password', user));
+```
+
+如果使用查表的方式，代码量会减少很多，但是可读性会降低，因为需要理解表的结构和映射关系。
+
+```typescript
+    // 定义动作表
+    const actionTable: ActionTable = {
+        'admin-login': {
+            message: '管理员登录成功',
+            redirect: '/admin'
+        },
+        'vip-login': {
+            message: 'VIP用户登录成功',
+            redirect: '/vip'
+        },
+        'user-login': {
+            message: '普通用户登录成功',
+            redirect: '/dashboard'
+        },
+        'company-register': {
+            message: '企业用户注册成功',
+            redirect: '/enterprise'
+        },
+        'personal-register': {
+            message: '个人用户注册成功',
+            redirect: '/personal'
+        },
+        'logout': {
+            message: '退出登录成功',
+            redirect: '/login'
+        },
+        'reset-password': {
+            message: '密码重置邮件已发送',
+            redirect: '/login'
+        }
+    };
+    const actionLookupTable = {
+        login: {
+            conditions: [
+                { test: (user: any) => user.isAdmin, key: 'admin-login'},
+                { test: (user: any) => user.isVip, key: 'vip-login'},
+                { test: () => true, key: 'user-login' } // 默认情况
+            ]
+        },
+        register: {
+            conditions: [
+                {test: (user: any) => user.email.includes('@company.com'), key: 'company-register'},
+                { test: () => true, key: 'personal-register' } // 默认情况
+            ]
+        },
+        logout: {
+            conditions: [
+                { test: () => true, key: 'logout' }
+            ]
+        },
+        'reset-password': {
+            conditions: [
+                { test: () => true, key: 'reset-password' }
+            ]
+        }
+    }
+
+    // 查表处理函数
+    function processUserActionLookup(action: 'login' | 'register' | 'logout' | 'reset-password', user: any) {
+        const actionConfig = actionLookupTable[action]
+        if (!actionConfig) {
+            return {message: '未知操作', redirect: '/error'}
+        }
+
+        const condition = actionConfig.conditions.find(condition => condition.test(user))
+        const actionKey = condition?.key
+        
+        return actionTable[actionKey]
+    }
+
+    // 使用示例
+    const testUsers = [
+        { isAdmin: true, email: 'admin@company.com' },
+        { isVip: true, email: 'vip@example.com' },
+        { isAdmin: false, isVip: false, email: 'user@example.com' },
+        { isAdmin: false, isVip: false, email: 'user@company.com' }
+    ];
+    console.log('查表方式：')
+    testUsers.forEach((user, index) => {
+        console.log(`用户 ${index + 1} 登录:`, processUserActionLookup('login', user));
+        console.log(`用户 ${index + 1} 注册:`, processUserActionLookup('register', user));
+        console.log(`用户 ${index + 1} 退出:`, processUserActionLookup('logout', user));
+        console.log(`用户 ${index + 1} 重置密码:`, processUserActionLookup('reset-password', user));
+    });
+```
+表驱动的优势：
+- **可读性强**：所有逻辑都清晰地定义在数据结构中
+- **易维护**：添加新的动作只需要在表中添加条目
+- **性能好**：查找操作比条件判断更快
+- **可扩展**：容易添加新的条件和动作
+- **数据驱动**：逻辑与数据分离，便于配置化管理
+
+## 总结
+
+在实际开发中，应该根据具体场景选择最合适的方案。
+
+- 如果条件逻辑简单，可以使用传统方式，比如if-else if-else链
+- 如果条件逻辑复杂，可以使用函数式编程，比如高阶函数和函数组合
+- 如果条件逻辑复杂，可以使用表驱动，比如查表的方式
+
+
+
+
