@@ -61,4 +61,22 @@ describe('to', () => {
     expect(err2).toEqual({ status: 500, message: 'Server error' })
     expect(data2).toBeUndefined()
   })
+  it('应该处理边界情况', async () => {
+    const [err1, data1] = await to(Promise.resolve(null))
+    expect(err1).toBeNull()
+    expect(data1).toBeNull()
+
+    const [err2, data2] = await to(Promise.resolve(undefined))
+    expect(err2).toBeNull()
+    expect(data2).toBeUndefined()
+
+    const [err3, data3] = await to(Promise.resolve(''))
+    expect(err3).toBeNull()
+    expect(data3).toBe('')
+    
+    const [err4, data4] = await to(Promise.resolve({}))
+    expect(err4).toBeNull()
+    expect(data4).toEqual({})
+    
+  })
 })
