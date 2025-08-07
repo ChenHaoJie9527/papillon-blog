@@ -73,10 +73,29 @@ describe('to', () => {
     const [err3, data3] = await to(Promise.resolve(''))
     expect(err3).toBeNull()
     expect(data3).toBe('')
-    
+
     const [err4, data4] = await to(Promise.resolve({}))
     expect(err4).toBeNull()
     expect(data4).toEqual({})
-    
+  })
+
+  it('应该处理复杂数据结构', async () => {
+    const data = {
+      users: [
+        {
+          id: 1,
+          name: 'John',
+        },
+      ],
+      metadata: {
+        total: 1,
+        page: 1,
+      },
+    }
+
+    const [err, result] = await to(Promise.resolve(data))
+
+    expect(err).toBeNull()
+    expect(result).toEqual(data)
   })
 })
