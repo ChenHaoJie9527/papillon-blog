@@ -107,10 +107,25 @@ describe('to', () => {
 
     // 字符串错误 + 扩展
     const [err1, data1] = await to(Promise.reject('Network error'), errorExt)
-    console.log('err1 =>', err1)
     expect(err1?.message).toBe('Network error')
     expect(err1?.source).toBe('api')
     expect(err1?.retryCount).toBe(1)
     expect(data1).toBeUndefined()
+  })
+
+  it('应该快速处理大量并发请求', async () => {
+    const promises = Array.from({ length: 100 }, (_, i) =>
+      to(Promise.resolve(`result-${i}`)),
+    )
+
+    const start = Date.now()
+    const results = await Promise.all(promises)
+    const end = Date.now()
+
+    expect(results).toHaveLength(100)
+    expect(
+      results.every(([err, data]) => err === null && data.startsWith('result-')),
+    ).toBe(true)
+    expect(end - start).toBeLessThan(1000) // 应该在1秒内完成
   })
 })
