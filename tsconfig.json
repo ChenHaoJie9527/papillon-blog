@@ -10,7 +10,9 @@
       "@layouts/*": ["src/layouts/*"],
       "@types": ["src/types"],
       "@content": ["src/content.config"],
-      "@utils": ["src/utils"]
+      "@utils": ["src/utils"],
+      "@lib/*": ["src/lib/*"],
+      "@hooks/*": ["src/hooks/*"]
     },
     "plugins": [
       {
@@ -18,6 +20,7 @@
       }
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "types": ["vitest/globals"]
   }
 }

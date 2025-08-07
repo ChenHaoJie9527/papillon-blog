@@ -6,11 +6,11 @@ const config: SiteConfig = {
   // The name of your site, used in the title and for SEO.
   title: 'Papillon',
   // The description of your site, used for SEO and RSS feed.
-  description: '专注于React、Vue、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
+  description: '专注于React、Next.js、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
   // The author of the site, used in the footer, SEO, and RSS feed.
   author: 'momotom(ChenHaoJie9527)',
   // Keywords for SEO, used in the meta tags.
-  tags: ['Astro', 'Terminal', 'Theme', 'MultiTerm', 'stelcodes'],
+  tags: ['Astro', 'Terminal', 'Theme'],
   // Path to the image used for generating social media previews.
   // Needs to be a square JPEG file due to limitations of the social card generator.
   // Try https://squoosh.app/ to easily convert images to JPEG.
