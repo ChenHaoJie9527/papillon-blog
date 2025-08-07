@@ -11,7 +11,7 @@ describe('to', () => {
     const promise = Promise.reject('Error')
 
     const [err, data] = await to(promise)
-    expect(err).toBe('Error')
+    expect(err?.message).toBe('Error')
     expect(data).toBeUndefined()
   })
   it('如果是一个空的reject，则返回一个错误', async () => {
@@ -35,7 +35,7 @@ describe('to', () => {
   it('应该处理不同类型的错误', async () => {
     // 字符串错误
     const [err1] = await to(Promise.reject('String error'))
-    expect(err1).toBe('String error')
+    expect(err1?.message).toBe('String error')
 
     // Error 对象
     const [err2] = await to(Promise.reject(new Error('Error object')))
@@ -97,5 +97,20 @@ describe('to', () => {
 
     expect(err).toBeNull()
     expect(result).toEqual(data)
+  })
+
+  it('应该正确处理错误扩展与不同类型错误的组合', async () => {
+    const errorExt = {
+      source: 'api',
+      retryCount: 1,
+    }
+
+    // 字符串错误 + 扩展
+    const [err1, data1] = await to(Promise.reject('Network error'), errorExt)
+    console.log('err1 =>', err1)
+    expect(err1?.message).toBe('Network error')
+    expect(err1?.source).toBe('api')
+    expect(err1?.retryCount).toBe(1)
+    expect(data1).toBeUndefined()
   })
 })
