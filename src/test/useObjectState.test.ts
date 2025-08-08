@@ -53,4 +53,25 @@ describe('useObjectState', () => {
       age: 20,
     })
   })
+
+  it('应该合并多个更新', () => {
+    const initialState = { name: 'Join', age: 10 }
+    const { result } = renderHook(() => useObjectState(initialState))
+
+    act(() => {
+      const [, setState] = result.current
+      setState({
+        age: 20,
+      })
+      setState({
+        name: 'Join2',
+      })
+    })
+
+    const [state] = result.current
+    expect(state).toEqual({
+      name: 'Join2',
+      age: 20,
+    })
+  })
 })
