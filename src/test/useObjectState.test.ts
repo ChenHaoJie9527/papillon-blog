@@ -91,8 +91,8 @@ describe('useObjectState', () => {
     })
   })
 
-  it("应该保持引用稳定性", () => {
-    const initialState = {name: 'Join', age: 10}
+  it('应该保持引用稳定性', () => {
+    const initialState = { name: 'Join', age: 10 }
     const { result, rerender } = renderHook(() => useObjectState(initialState))
 
     const firstRender = result.current
@@ -103,5 +103,26 @@ describe('useObjectState', () => {
 
     expect(firstRender[0]).toBe(secondRender[0])
     expect(firstRender[1]).toBe(secondRender[1])
+  })
+
+  it('应该处理 null 和 undefined', () => {
+    const initialState = { name: 'Join', age: 10 }
+    const { result } = renderHook(() => useObjectState(initialState))
+
+    act(() => {
+      const [, setState] = result.current
+      setState(null)
+    })
+
+    const [state] = result.current
+    expect(state).toEqual(initialState)
+
+    act(() => {
+      const [, setState] = result.current
+      setState(undefined)
+    })
+
+    const [state2] = result.current
+    expect(state2).toEqual(initialState)
   })
 })
