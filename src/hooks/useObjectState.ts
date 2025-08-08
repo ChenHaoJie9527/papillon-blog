@@ -12,15 +12,16 @@ function useObjectState<T extends Record<string, unknown>>(initialState: T) {
     if (typeof arg === 'function') {
       setState((s) => {
         const newState = arg(s)
-
-        return {
-          ...s,
-          ...newState,
+        if (isObject(newState)) {
+          return {
+            ...s,
+            ...newState,
+          }
         }
       })
     }
 
-    if (typeof arg === 'object' && arg !== null) {
+    if (isObject(arg) && arg !== null) {
       setState((s) => ({
         ...s,
         ...arg,
@@ -29,6 +30,10 @@ function useObjectState<T extends Record<string, unknown>>(initialState: T) {
   }, [])
 
   return [state, handlerState] as const
+}
+
+function isObject(value: unknown) {
+  return Object.prototype.toString.call(value) === '[object Object]'
 }
 
 export default useObjectState
