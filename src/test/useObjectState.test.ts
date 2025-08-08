@@ -75,13 +75,13 @@ describe('useObjectState', () => {
     })
   })
 
-  it("应该处理空对象更新", () => {
+  it('应该处理空对象更新', () => {
     const initialState = { name: 'Join', age: 10 }
     const { result } = renderHook(() => useObjectState(initialState))
 
     act(() => {
-        const [, setState] = result.current
-        setState({})
+      const [, setState] = result.current
+      setState({})
     })
 
     const [state] = result.current
@@ -89,5 +89,19 @@ describe('useObjectState', () => {
       name: 'Join',
       age: 10,
     })
+  })
+
+  it("应该保持引用稳定性", () => {
+    const initialState = {name: 'Join', age: 10}
+    const { result, rerender } = renderHook(() => useObjectState(initialState))
+
+    const firstRender = result.current
+
+    rerender()
+
+    const secondRender = result.current
+
+    expect(firstRender[0]).toBe(secondRender[0])
+    expect(firstRender[1]).toBe(secondRender[1])
   })
 })
