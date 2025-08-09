@@ -1,5 +1,5 @@
 import useQueue from '@hooks/useQueue'
-import { renderHook } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 
 describe('useQueue', () => {
@@ -7,5 +7,15 @@ describe('useQueue', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
     expect(result.current.queue).toEqual([1, 2, 3])
+  })
+
+  it('应该正确添加元素', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    act(() => {
+      result.current.add(4)
+    })
+
+    expect(result.current.queue).toEqual([1, 2, 3, 4])
   })
 })
