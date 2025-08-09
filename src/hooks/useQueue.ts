@@ -9,7 +9,7 @@ import { useCallback, useState } from 'react'
  * @return at 获取队列中指定位置的元素方法
  * @returns queue 当前队列
  */
-export function useQueue<T>(initialValue: readonly T[]) {
+export default function useQueue<T>(initialValue: readonly T[]) {
   const [queue, setQueue] = useState(initialValue)
 
   const add = useCallback((element: T) => {
