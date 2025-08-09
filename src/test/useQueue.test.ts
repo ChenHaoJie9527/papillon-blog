@@ -158,4 +158,18 @@ describe('useQueue', () => {
     expect(result.current.queue).toEqual([4, 5, 6])
     expect(result.current.size).toEqual(3)
   })
+
+  it('应该支持清空后重新设置', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    act(() => {
+      result.current.clear()
+    })
+    expect(result.current.queue).toEqual([])
+
+    act(() => {
+      result.current.setQueueState([9, 10])
+    })
+    expect(result.current.queue).toEqual([9, 10])
+  })
 })
