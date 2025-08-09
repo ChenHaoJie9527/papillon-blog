@@ -27,10 +27,15 @@ export default function useQueue<T>(initialValue: readonly T[]) {
     return firstItem
   }, [])
 
+  const clear = useCallback(() => {
+    setQueue([])
+  }, [])
+
   return {
     queue,
     add,
     size: queue.length,
     remove,
+    clear,
   }
 }

@@ -36,4 +36,15 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(2)
     expect(result.current.queue).toEqual([2, 3])
   })
+
+  it('应该正确清空队列', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    act(() => {
+      result.current.clear()
+    })
+
+    expect(result.current.size).toEqual(0)
+    expect(result.current.queue).toEqual([])
+  })
 })
