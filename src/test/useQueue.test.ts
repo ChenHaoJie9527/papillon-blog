@@ -147,4 +147,15 @@ describe('useQueue', () => {
       expect(result.current.at(1000)).toBeUndefined()
     })
   })
+
+  it('应该支持全量设置队列', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    act(() => {
+      result.current.setQueueState([4, 5, 6])
+    })
+
+    expect(result.current.queue).toEqual([4, 5, 6])
+    expect(result.current.size).toEqual(3)
+  })
 })
