@@ -24,4 +24,16 @@ describe('useQueue', () => {
 
     expect(result.current.size).toEqual(3)
   })
+
+  it('应该正确移除元素', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+    let firstItem: number | undefined
+    act(() => {
+      firstItem = result.current.remove()
+    })
+
+    expect(firstItem).toEqual(1)
+    expect(result.current.size).toEqual(2)
+    expect(result.current.queue).toEqual([2, 3])
+  })
 })
