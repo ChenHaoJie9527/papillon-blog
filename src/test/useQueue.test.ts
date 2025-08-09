@@ -47,4 +47,104 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(0)
     expect(result.current.queue).toEqual([])
   })
+
+  describe('useQueue at method', () => {
+    it('应该测试获取队列中指定位置的元素', () => {
+      const { result } = renderHook(() => useQueue([1, 2, 3]))
+      expect(result.current.at(0)).toEqual(1)
+      expect(result.current.at(1)).toEqual(2)
+      expect(result.current.at(2)).toEqual(3)
+      expect(result.current.at(3)).toBeUndefined()
+      expect(result.current.at(-1)).toEqual(3)
+    })
+
+    it('应该处理空队列的情况', () => {
+      const { result } = renderHook(() => useQueue([]))
+
+      expect(result.current.at(0)).toBeUndefined()
+      expect(result.current.at(1)).toBeUndefined()
+      expect(result.current.at(-1)).toBeUndefined()
+    })
+
+    it('应该处理边界索引', () => {
+      const { result } = renderHook(() => useQueue(['a', 'b', 'c']))
+
+      // 正常索引
+      expect(result.current.at(0)).toEqual('a')
+      expect(result.current.at(2)).toEqual('c')
+
+      // 超出范围的索引
+      expect(result.current.at(3)).toBeUndefined()
+      expect(result.current.at(10)).toBeUndefined()
+      expect(result.current.at(Number.MAX_SAFE_INTEGER)).toBeUndefined()
+
+      // 负数索引
+      expect(result.current.at(-1)).toEqual('c')
+      expect(result.current.at(-10)).toBeUndefined()
+      expect(result.current.at(Number.MIN_SAFE_INTEGER)).toBeUndefined()
+    })
+
+    it('应该处理特殊数值索引', () => {
+      const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+      // NaN: 将索引转换成整数，NaN转化为0
+      expect(result.current.at(NaN)).toEqual(1)
+
+      // Infinity
+      expect(result.current.at(Infinity)).toBeUndefined()
+      expect(result.current.at(-Infinity)).toBeUndefined()
+
+      // 小数 小数会被转换成整数，这是一个向下取整，0.5会变成0，1.9会变成1
+      expect(result.current.at(0.5)).toEqual(1)
+      expect(result.current.at(1.9)).toEqual(2)
+    })
+
+    it('应该在队列变化后正确获取元素', () => {
+      const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+      // 初始状态
+      expect(result.current.at(0)).toEqual(1)
+      expect(result.current.at(2)).toEqual(3)
+
+      // 添加元素后
+      act(() => {
+        result.current.add(4)
+      })
+      expect(result.current.at(0)).toEqual(1)
+      expect(result.current.at(3)).toEqual(4)
+
+      // 移除元素后
+      act(() => {
+        result.current.remove()
+      })
+      expect(result.current.at(0)).toEqual(2)
+      expect(result.current.at(2)).toEqual(4)
+      expect(result.current.at(3)).toBeUndefined()
+
+      // 清空后
+      act(() => {
+        result.current.clear()
+      })
+      expect(result.current.at(0)).toBeUndefined()
+    })
+
+    it('应该处理不同类型的数组元素', () => {
+      const mixedArray = [1, 'hello', { id: 1 }, [1, 2, 3]]
+      const { result } = renderHook(() => useQueue(mixedArray))
+
+      expect(result.current.at(0)).toEqual(1)
+      expect(result.current.at(1)).toEqual('hello')
+      expect(result.current.at(2)).toEqual({ id: 1 })
+      expect(result.current.at(3)).toEqual([1, 2, 3])
+    })
+
+    it('应该处理大数组的性能', () => {
+      const largeArray = Array.from({ length: 1000 }, (_, i) => i)
+      const { result } = renderHook(() => useQueue(largeArray))
+
+      expect(result.current.at(0)).toEqual(0)
+      expect(result.current.at(999)).toEqual(999)
+      expect(result.current.at(1000)).toBeUndefined()
+    })
+  })
 })

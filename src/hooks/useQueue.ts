@@ -31,11 +31,19 @@ export default function useQueue<T>(initialValue: readonly T[]) {
     setQueue([])
   }, [])
 
+  const at = useCallback(
+    (index: number) => {
+      return queue.at(index)
+    },
+    [queue],
+  )
+
   return {
     queue,
     add,
     size: queue.length,
     remove,
     clear,
+    at,
   }
 }
