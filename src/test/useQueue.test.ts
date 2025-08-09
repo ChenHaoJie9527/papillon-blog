@@ -18,4 +18,10 @@ describe('useQueue', () => {
 
     expect(result.current.queue).toEqual([1, 2, 3, 4])
   })
+
+  it('应该正确获取队列长度', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    expect(result.current.size).toEqual(3)
+  })
 })

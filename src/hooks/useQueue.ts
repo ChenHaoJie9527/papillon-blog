@@ -8,6 +8,7 @@ import { useCallback, useState } from 'react'
  * @returns clear 清空队列方法
  * @return at 获取队列中指定位置的元素方法
  * @returns queue 当前队列
+ * @returns size 队列长度
  */
 export default function useQueue<T>(initialValue: readonly T[]) {
   const [queue, setQueue] = useState(initialValue)
@@ -19,5 +20,6 @@ export default function useQueue<T>(initialValue: readonly T[]) {
   return {
     queue,
     add,
+    size: queue.length,
   }
 }
