@@ -159,6 +159,17 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(3)
   })
 
+  it('应该支持函数形式的 setQueueState', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3]))
+
+    act(() => {
+      result.current.setQueueState((s) => [...s, 7, 8])
+    })
+
+    expect(result.current.queue).toEqual([1, 2, 3, 7, 8])
+    expect(result.current.size).toEqual(5)
+  })
+
   it('应该支持清空后重新设置', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
