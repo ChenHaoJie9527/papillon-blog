@@ -200,9 +200,21 @@ describe('useQueue', () => {
 
   it('应该处理空队列的 remove 操作', () => {
     const { result } = renderHook(() => useQueue([]))
-  
+
     const removedItem = result.current.remove()
     expect(removedItem).toBeUndefined()
+    expect(result.current.queue).toEqual([])
+    expect(result.current.size).toEqual(0)
+  })
+
+  it('应该处理单元素队列的 remove 操作', () => {
+    const { result } = renderHook(() => useQueue([99]))
+
+    act(() => {
+      const removedItem = result.current.remove()
+      expect(removedItem).toEqual(99)
+    })
+
     expect(result.current.queue).toEqual([])
     expect(result.current.size).toEqual(0)
   })
