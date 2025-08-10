@@ -231,6 +231,19 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(0)
   })
 
+  it('应该保持类型安全', () => {
+    const { result } = renderHook(() => useQueue<string>(['a', 'b']))
+
+    // 这些应该通过类型检查
+    act(() => {
+      result.current.add('c')
+      result.current.setQueueState(['x', 'y', 'z'])
+    })
+
+    expect(result.current.queue).toEqual(['x', 'y', 'z'])
+    expect(result.current.at(0)).toEqual('x')
+  })
+
   it('应该支持清空后重新设置', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
