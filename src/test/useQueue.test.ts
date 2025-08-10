@@ -170,6 +170,17 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(5)
   })
 
+  it('应该支持函数形式的 setQueueState 进行复杂操作', () => {
+    const { result } = renderHook(() => useQueue([1, 2, 3, 4, 5]))
+
+    act(() => {
+      result.current.setQueueState((s) => s.filter((x) => x % 2 === 0))
+    })
+
+    expect(result.current.queue).toEqual([2, 4])
+    expect(result.current.size).toEqual(2)
+  })
+
   it('应该支持清空后重新设置', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
