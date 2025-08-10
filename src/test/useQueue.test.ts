@@ -56,6 +56,14 @@ describe('useQueue', () => {
     expect(result.current.queue).toEqual([])
   })
 
+  it('应该处理空队列的情况', () => {
+    const { result } = renderHook(() => useQueue([]))
+
+    expect(result.current.at(0)).toBeUndefined()
+    expect(result.current.at(1)).toBeUndefined()
+    expect(result.current.at(-1)).toBeUndefined()
+  })
+
   describe('useQueue at method', () => {
     it('应该测试获取队列中指定位置的元素', () => {
       const { result } = renderHook(() => useQueue([1, 2, 3]))
@@ -66,12 +74,13 @@ describe('useQueue', () => {
       expect(result.current.at(-1)).toEqual(3)
     })
 
-    it('应该处理空队列的情况', () => {
-      const { result } = renderHook(() => useQueue([]))
+    it('应该处理单元素数组', () => {
+      const { result } = renderHook(() => useQueue([42]))
 
-      expect(result.current.at(0)).toBeUndefined()
-      expect(result.current.at(1)).toBeUndefined()
-      expect(result.current.at(-1)).toBeUndefined()
+      expect(result.current.queue).toEqual([42])
+      expect(result.current.size).toEqual(1)
+      expect(result.current.at(0)).toEqual(42)
+      expect(result.current.at(-1)).toEqual(42)
     })
 
     it('应该处理边界索引', () => {
