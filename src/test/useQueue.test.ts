@@ -198,6 +198,15 @@ describe('useQueue', () => {
     expect(result.current.size).toEqual(2)
   })
 
+  it('应该处理空队列的 remove 操作', () => {
+    const { result } = renderHook(() => useQueue([]))
+  
+    const removedItem = result.current.remove()
+    expect(removedItem).toBeUndefined()
+    expect(result.current.queue).toEqual([])
+    expect(result.current.size).toEqual(0)
+  })
+
   it('应该支持清空后重新设置', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
