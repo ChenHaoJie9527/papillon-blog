@@ -9,6 +9,14 @@ describe('useQueue', () => {
     expect(result.current.queue).toEqual([1, 2, 3])
   })
 
+  it('应该处理空数组初始化', () => {
+    const { result } = renderHook(() => useQueue([]))
+
+    expect(result.current.queue).toEqual([])
+    expect(result.current.size).toEqual(0)
+    expect(result.current.at(0)).toBeUndefined()
+  })
+
   it('应该正确添加元素', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
