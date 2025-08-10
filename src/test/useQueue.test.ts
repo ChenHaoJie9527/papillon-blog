@@ -27,6 +27,18 @@ describe('useQueue', () => {
     expect(result.current.queue).toEqual([1, 2, 3, 4])
   })
 
+  it('应该处理添加 undefined 和 null 值', () => {
+    const { result } = renderHook(() => useQueue([1, 2]))
+
+    act(() => {
+      result.current.add(undefined as any)
+      result.current.add(null as any)
+    })
+
+    expect(result.current.queue).toEqual([1, 2, undefined, null])
+    expect(result.current.size).toEqual(4)
+  })
+
   it('应该正确获取队列长度', () => {
     const { result } = renderHook(() => useQueue([1, 2, 3]))
 
