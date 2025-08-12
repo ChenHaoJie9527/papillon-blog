@@ -74,6 +74,9 @@ importers:
       color:
         specifier: ^5.0.0
         version: 5.0.0
+      create-custom-context:
+        specifier: ^0.0.3
+        version: 0.0.3
       emoji-regex:
         specifier: ^10.4.0
         version: 10.4.0
@@ -1816,6 +1819,9 @@ packages:
   cookie@1.0.2:
     resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
     engines: {node: '>=18'}
+
+  create-custom-context@0.0.3:
+    resolution: {integrity: sha512-mamH7ebN/4G5IEt/7bxB5sm0FZOpJ3xBafSiDluv9VNDs6eTRLnUx3/vhgqyLItdIoE1tdfEforM20jfDaRaQQ==}
 
   cross-fetch@3.2.0:
     resolution: {integrity: sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q==}
@@ -5510,6 +5516,10 @@ snapshots:
   cookie-es@1.2.2: {}
 
   cookie@1.0.2: {}
+
+  create-custom-context@0.0.3:
+    dependencies:
+      react: 19.1.1
 
   cross-fetch@3.2.0:
     dependencies:

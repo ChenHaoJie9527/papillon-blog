@@ -36,6 +36,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "color": "^5.0.0",
+    "create-custom-context": "^0.0.3",
     "emoji-regex": "^10.4.0",
     "gemoji": "^8.1.0",
     "hast-util-from-html-isomorphic": "^2.0.0",

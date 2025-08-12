@@ -1,9 +1,9 @@
 /**
- * Valid CSS media query types that can be used with matchMedia API
- * Based on MDN Web Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries
+ * 可与 matchMedia API 一起使用的有效 CSS 媒体查询类型
+ * 基于 MDN Web Docs: https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries
  */
 
-// Display size and viewport queries
+// 显示大小和视口查询
 export type ViewportQueries =
   | `(width${string})`
   | `(min-width${string})`
@@ -17,7 +17,7 @@ export type ViewportQueries =
   | `(orientation: landscape)`
   | `(orientation: portrait)`
 
-// Display quality queries
+// 显示质量查询
 export type DisplayQueries =
   | `(resolution${string})`
   | `(min-resolution${string})`
@@ -52,32 +52,31 @@ export type DisplayQueries =
   | `(display-mode: minimal-ui)`
   | `(display-mode: browser)`
 
-
-// Common breakpoint queries (predefined for convenience)
+// 常见断点查询（预定义方便使用）
 export type BreakpointQueries =
   | `(max-width: ${number}px)`
   | `(min-width: ${number}px)`
   | `(max-height: ${number}px)`
   | `(min-height: ${number}px)`
 
-// Combined type for all valid media queries
+// 所有有效媒体查询的组合类型
 export type ValidMediaQuery =
   | ViewportQueries
   | DisplayQueries
   | BreakpointQueries
   | `(${string})` // Allow any valid CSS media query string
 
-// Type for complex media queries with logical operators
+// 复杂媒体查询类型，包含逻辑运算符
 export type ComplexMediaQuery =
   | ValidMediaQuery
   | `${ValidMediaQuery} and ${ValidMediaQuery}`
   | `${ValidMediaQuery} or ${ValidMediaQuery}`
   | `not ${ValidMediaQuery}`
 
-// Final type that includes all possible media query combinations
+// 最终类型，包含所有可能的媒体查询组合
 export type MediaQueryString = ComplexMediaQuery
 
-// Common media query presets for convenience
+// 常见媒体查询预设（方便使用）
 export const MediaQueryPresets = {
   // Viewport breakpoints
   mobile: '(max-width: 768px)',
