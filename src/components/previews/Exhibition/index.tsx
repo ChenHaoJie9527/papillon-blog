@@ -50,6 +50,7 @@ const [ExhibitionProvider, useExhibition] = createCustomContext(() => {
 	const Header = isDesktop ? DialogHeader : DrawerHeader;
 	const Title = isDesktop ? DialogTitle : DrawerTitle;
 	const Footer = isDesktop ? DialogFooter : DrawerFooter;
+	const Description = isDesktop ? DialogDescription : DrawerDescription;
 	return {
 		isDesktop,
 		Comp,
@@ -59,6 +60,7 @@ const [ExhibitionProvider, useExhibition] = createCustomContext(() => {
 		Header,
 		Title,
 		Footer,
+		Description,
 		drawerProps: !isDesktop
 			? {
 					autoFocus: true,
@@ -140,6 +142,19 @@ export function ExhibitionTitle({
 		<Title className={cn(className)} {...props}>
 			{children}
 		</Title>
+	);
+}
+
+export function ExhibitionDescription({
+	children,
+	className,
+	...props
+}: ExhibitionProps) {
+	const { Description } = useExhibition();
+	return (
+		<Description className={cn(className)} {...props}>
+			{children}
+		</Description>
 	);
 }
 
