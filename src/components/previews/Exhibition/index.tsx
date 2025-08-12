@@ -44,13 +44,16 @@ interface ExhibitionProps extends BaseProps {
 const [ExhibitionProvider, useExhibition] = createCustomContext(() => {
 	const isDesktop = useMediaQuery("mobile");
 	const Comp = isDesktop ? Dialog : Drawer;
-
+	const Trigger = isDesktop ? DialogTrigger : DrawerTrigger;
 	return {
 		isDesktop,
 		Comp,
-		drawerProps: !isDesktop ? {
-      autoFocus: true,
-    } : {},
+		Trigger,
+		drawerProps: !isDesktop
+			? {
+					autoFocus: true,
+				}
+			: {},
 	};
 });
 
@@ -62,5 +65,18 @@ export function Exhibition({ children, ...props }: RootExhibitionProps) {
 				{children}
 			</Comp>
 		</ExhibitionProvider>
+	);
+}
+
+export function ExhibitionTrigger({
+	children,
+	className,
+	...props
+}: ExhibitionProps) {
+	const { Trigger } = useExhibition();
+	return (
+		<Trigger className={cn(className)} {...props}>
+			{children}
+		</Trigger>
 	);
 }
