@@ -78,11 +78,10 @@ export type MediaQueryString = ComplexMediaQuery
 
 // 常见媒体查询预设（方便使用）
 export const MediaQueryPresets = {
-  // Viewport breakpoints
-  mobile: '(max-width: 768px)',
-  tablet: '(min-width: 769px) and (max-width: 1024px)',
-  desktop: '(min-width: 1025px)',
-  largeDesktop: '(min-width: 1440px)',
+  mobile: '(max-width: 640px)', // 移动端：≤ 640px (sm)
+  tablet: '(min-width: 641px) and (max-width: 1024px)', // 平板：641px - 1024px
+  desktop: '(min-width: 1025px)', // 桌面端：≥ 1025px (lg+)
+  largeDesktop: '(min-width: 1440px)', // 大桌面：≥ 1440px (2xl)
 
   // Orientation
   landscape: '(orientation: landscape)',
