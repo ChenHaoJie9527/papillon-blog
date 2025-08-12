@@ -24,6 +24,7 @@
     "@expressive-code/plugin-line-numbers": "^0.41.3",
     "@fontsource-variable/jetbrains-mono": "^5.2.6",
     "@pagefind/default-ui": "^1.3.0",
+    "@radix-ui/react-dialog": "^1.1.14",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.1.11",
     "@types/hast": "^3.0.4",
@@ -32,11 +33,14 @@
     "astro": "^5.11.1",
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "color": "^5.0.0",
     "emoji-regex": "^10.4.0",
     "gemoji": "^8.1.0",
     "hast-util-from-html-isomorphic": "^2.0.0",
     "hastscript": "^9.0.1",
+    "lucide-react": "^0.539.0",
     "markdown-it": "^14.1.0",
     "mdast": "^3.0.0",
     "mdast-util-directive": "^3.1.0",
@@ -58,10 +62,12 @@
     "satori": "^0.15.2",
     "satori-html": "^0.3.2",
     "shiki": "^3.9.1",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.4",
@@ -76,6 +82,7 @@
     "prettier-plugin-astro": "0.14.1",
     "sass-embedded": "^1.89.2",
     "sharp": "^0.34.3",
+    "tw-animate-css": "^1.3.6",
     "vitest": "^3.2.4"
   }
 }

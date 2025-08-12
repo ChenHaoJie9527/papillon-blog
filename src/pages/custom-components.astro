@@ -1,0 +1,164 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { t } from "../i18n";
+import BlockHeader from "@components/BlockHeader.astro";
+
+const currentLocale = "zh";
+
+const components = [
+	{
+		id: "dialog-modal",
+		title: "对话框",
+		description:
+			"对话框组件，在PC端与Mobile端都支持，基于shadcn/ui的Dialog组件封装",
+		category: "UI",
+		tags: ["dialog", "modal"],
+		preview: "dialog-preview",
+		code: `
+<!-- 按钮组件示例 -->
+<button class="btn btn-primary">主要按钮</button>
+<button class="btn btn-secondary">次要按钮</button>
+<button class="btn btn-outline">轮廓按钮</button>
+	`,
+	},
+];
+---
+
+<Layout 
+title={t(currentLocale, 'nav.components')}
+description={t(currentLocale, 'nav.components')}
+>
+    <BlockHeader>组件展示</BlockHeader>
+      <!-- 搜索和筛选区域 -->
+    <div class="mb-8 p-4 bg-accent/5 rounded-xl border border-accent/10">
+        <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div class="flex-1 max-w-md">
+            <input 
+            type="text" 
+            placeholder="搜索组件..." 
+            class="w-full px-4 py-2 bg-background border border-accent rounded-lg focus:border-accent focus:outline-none"
+            id="search-input"
+            />
+        </div>
+        <div class="flex gap-2">
+            <select class="px-3 py-2 text-accent bg-background border border-accent rounded-lg focus:border-accent focus:outline-none">
+                <option value="">所有分类</option>
+                <option value="UI">UI 组件</option>
+                <option value="Layout">布局组件</option>
+                <option value="Form">表单组件</option>
+            </select>
+            <button class="px-4 py-2 bg-accent text-background rounded-lg hover:bg-accent/90 transition-colors">
+                筛选
+            </button>
+        </div>
+        </div>
+    </div>
+    <!-- 组件网格 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {components.map((component) => (
+      <div class="component-card bg-background border border-accent/10 rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-300 hover:shadow-lg">
+        <!-- 组件预览区域 -->
+        <div class="p-6 bg-accent/5 border-b border-accent/10">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-accent">{component.title}</h3>
+            <span class="px-2 py-1 text-xs bg-accent/20 text-accent rounded-full">
+              {component.category}
+            </span>
+          </div>
+          <p class="text-sm text-accent mb-4">{component.description}</p>
+          
+          <!-- 预览区域 -->
+          <div class="preview-area bg-background border border-accent rounded-lg p-4 min-h-[120px] flex items-center justify-center">
+            <div class="text-center">
+              <div class="text-4xl mb-2">🎨</div>
+              <p class="text-sm text-foreground/60">组件预览</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 代码展示区域 -->
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-accent">代码示例</span>
+            <button 
+              class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors"
+              data-code={component.code}
+            >
+              复制
+            </button>
+          </div>
+          <pre class="code-block text-xs bg-accent/5 border border-accent rounded-lg p-3 overflow-x-auto">
+            <code class="text-accent">{component.code}</code>
+          </pre>
+        </div>
+
+        <!-- 标签区域 -->
+        <div class="px-4 pb-4">
+          <div class="flex flex-wrap gap-1">
+            {component.tags.map((tag) => (
+              <span class="text-xs px-2 py-1 bg-accent/10 text-accent rounded-full">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</Layout>
+
+<style>
+    .component-card {
+        transition: all 0.3s ease;
+    }
+    .component-card:hover {
+        transform:translateY(-2px);
+    }
+
+    .preview-area {
+        min-height: 120px;
+    }
+
+    .code-block {
+        font-family: 'JetBrains Mono Variable', monospace;
+    }
+</style>
+<script>
+   // 搜索功能
+  const searchInput = document.getElementById('search-input');
+  const componentCards = document.querySelectorAll('.component-card');
+  
+  searchInput?.addEventListener('input', (e) => {
+    const searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
+    
+    componentCards.forEach((card) => {
+      const title = card.querySelector('h3')?.textContent?.toLowerCase() || '';
+      const description = card.querySelector('p')?.textContent?.toLowerCase() || '';
+      const tags = Array.from(card.querySelectorAll('span')).map(span => span.textContent?.toLowerCase()).join(' ');
+      
+      const isMatch = title.includes(searchTerm) || 
+                     description.includes(searchTerm) || 
+                     tags.includes(searchTerm);
+      
+      (card as HTMLElement).style.display = isMatch ? 'block' : 'none';
+    });
+  });
+
+  // 复制代码功能
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const button = e.target as HTMLButtonElement;
+      const code = button.dataset.code || '';
+      
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = '已复制!';
+        setTimeout(() => {
+          button.textContent = '复制';
+        }, 2000);
+      } catch (err) {
+        console.error('复制失败:', err);
+      }
+    });
+  });
+</script>

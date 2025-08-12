@@ -35,6 +35,10 @@ const config: SiteConfig = {
       url: 'https://github.com/ChenHaoJie9527/papillon-blog',
       external: true,
     },
+    {
+      name: 'Components',
+      url: '/custom-components',
+    },
   ],
   // The theming configuration for the site.
   themes: {

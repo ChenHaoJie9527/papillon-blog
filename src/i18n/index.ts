@@ -8,6 +8,7 @@ export const translations = {
       latestPosts: 'Latest Posts',
       next: 'Next',
       previous: 'Previous',
+      components: 'Components',
     },
     // Common
     common: {
@@ -68,6 +69,7 @@ export const translations = {
       latestPosts: 'Últimas Publicaciones',
       next: 'Siguiente',
       previous: 'Anterior',
+      components: 'Componentes',
     },
     // Common
     common: {
@@ -128,6 +130,7 @@ export const translations = {
       latestPosts: '最新文章',
       next: '下一页',
       previous: '上一页',
+      components: '组件',
     },
     // Common
     common: {
