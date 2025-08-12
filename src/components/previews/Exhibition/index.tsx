@@ -45,10 +45,12 @@ const [ExhibitionProvider, useExhibition] = createCustomContext(() => {
 	const isDesktop = useMediaQuery("mobile");
 	const Comp = isDesktop ? Dialog : Drawer;
 	const Trigger = isDesktop ? DialogTrigger : DrawerTrigger;
+	const Close = isDesktop ? DialogClose : DrawerClose;
 	return {
 		isDesktop,
 		Comp,
 		Trigger,
+		Close,
 		drawerProps: !isDesktop
 			? {
 					autoFocus: true,
@@ -78,5 +80,18 @@ export function ExhibitionTrigger({
 		<Trigger className={cn(className)} {...props}>
 			{children}
 		</Trigger>
+	);
+}
+
+export function ExhibitionClose({
+	children,
+	className,
+	...props
+}: ExhibitionProps) {
+	const { Close } = useExhibition();
+	return (
+		<Close className={cn(className)} {...props}>
+			{children}
+		</Close>
 	);
 }
