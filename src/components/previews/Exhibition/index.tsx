@@ -46,11 +46,15 @@ const [ExhibitionProvider, useExhibition] = createCustomContext(() => {
 	const Comp = isDesktop ? Dialog : Drawer;
 	const Trigger = isDesktop ? DialogTrigger : DrawerTrigger;
 	const Close = isDesktop ? DialogClose : DrawerClose;
+	const Content = isDesktop ? DialogContent : DrawerContent;
+	const Header = isDesktop ? DialogHeader : DrawerHeader;
 	return {
 		isDesktop,
 		Comp,
 		Trigger,
 		Close,
+		Content,
+		Header,
 		drawerProps: !isDesktop
 			? {
 					autoFocus: true,
@@ -93,5 +97,31 @@ export function ExhibitionClose({
 		<Close className={cn(className)} {...props}>
 			{children}
 		</Close>
+	);
+}
+
+export function ExhibitionContent({
+	children,
+	className,
+	...props
+}: ExhibitionProps) {
+	const { Content } = useExhibition();
+	return (
+		<Content className={cn(className)} {...props}>
+			{children}
+		</Content>
+	);
+}
+
+export function ExhibitionHeader({
+	children,
+	className,
+	...props
+}: ExhibitionProps) {
+	const { Header } = useExhibition();
+	return (
+		<Header className={cn(className)} {...props}>
+			{children}
+		</Header>
 	);
 }
