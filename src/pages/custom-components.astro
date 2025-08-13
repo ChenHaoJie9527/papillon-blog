@@ -17,7 +17,7 @@ const components = [
 		description:
 			"对话框组件，在PC端与Mobile端都支持，基于shadcn/ui的Dialog组件封装",
 		category: "UI",
-		tags: ["hook"],
+		tags: ["hooks"],
 		preview: "dialog-preview",
 		usageCode: `
     <Exhibition>
@@ -446,9 +446,9 @@ description={t(currentLocale, 'nav.components')}
         <div class="px-4 pb-4">
           <div class="flex flex-wrap gap-1">
             {component.tags.map((tag) => (
-              <span class="text-xs px-2 py-1 bg-accent/10 text-accent rounded-full">
+              <a title={`查看所有 ${tag} 组件`} href={`/tags/${encodeURIComponent(tag)}`} class="tag-link text-xs px-2 py-1 bg-accent/10 text-accent rounded-full hover:bg-accent/20 transition-colors">
                 #{tag}
-              </span>
+              </a>
             ))}
           </div>
         </div>
@@ -471,6 +471,16 @@ description={t(currentLocale, 'nav.components')}
 
     .code-block {
         font-family: 'JetBrains Mono Variable', monospace;
+    }
+
+    .tag-link {
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .tag-link:hover {
+        transform:translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 </style>
 <script>
