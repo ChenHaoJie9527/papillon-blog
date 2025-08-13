@@ -1,6 +1,6 @@
 ---
 title: 'useMediaQuery: 构建响应式 React 应用的强大 Hook'
-published: 2025-08-13
+published: 2025-08-12
 draft: false
 description: '深入探讨 useMediaQuery 自定义 Hook 的实现原理、SSR 兼容性处理、TypeScript 类型安全和实际应用场景，实现响应式布局'
 tags: ['react', 'typescript', 'hooks']
