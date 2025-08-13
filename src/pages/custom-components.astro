@@ -3,7 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import { t } from "../i18n";
 import BlockHeader from "@components/BlockHeader.astro";
 import ComponentPreview from "@components/ComponentPreview";
-import { ExhibitionDemo } from "@components/previews/Exhibition";
+import { ExhibitionDemo, ExhibitionStateDemo } from "@components/previews/Exhibition";
 
 const currentLocale = "zh";
 
@@ -72,7 +72,11 @@ description={t(currentLocale, 'nav.components')}
           <!-- 预览区域 -->
           <div class="preview-area bg-background border border-accent rounded-lg p-4 min-h-[120px] flex items-center justify-center">
             <ComponentPreview client:load>
-                <ExhibitionDemo client:load />  
+              <div class="flex gap-2">
+                <ExhibitionDemo client:load />
+                <ExhibitionStateDemo client:load />
+              </div>
+                
             </ComponentPreview>
           </div>
         </div>

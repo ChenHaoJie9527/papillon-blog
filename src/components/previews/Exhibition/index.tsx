@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useMemo, createContext, useContext, useState, Fragment } from "react";
 
 import { cn } from "@components/lib/utils";
 import { useMediaQuery } from "@hooks/useMediaQuery";
@@ -55,11 +55,11 @@ interface ExhibitionContextType {
 }
 
 // 创建 Context
-const ExhibitionContext = React.createContext<ExhibitionContextType | null>(null);
+const ExhibitionContext = createContext<ExhibitionContextType | null>(null);
 
 // 自定义 Hook
 function useExhibitionContext() {
-	const context = React.useContext(ExhibitionContext);
+	const context = useContext(ExhibitionContext);
 	if (!context) {
 		throw new Error("Exhibition components must be used within Exhibition");
 	}
@@ -82,25 +82,38 @@ export function Exhibition({ children, ...props }: RootExhibitionProps) {
 	const Footer = isDesktop ? DialogFooter : DrawerFooter;
 	const Description = isDesktop ? DialogDescription : DrawerDescription;
 
-	const contextValue = React.useMemo(() => ({
-		isDesktop,
-		Comp,
-		Trigger,
-		Close,
-		Content,
-		Header,
-		Title,
-		Footer,
-		Description,
-		drawerProps: !isDesktop ? { autoFocus: true } : {},
-	}), [isDesktop]);
+	const contextValue = useMemo(
+		() => ({
+			isDesktop,
+			Comp,
+			Trigger,
+			Close,
+			Content,
+			Header,
+			Title,
+			Footer,
+			Description,
+			drawerProps: !isDesktop ? { autoFocus: true } : {},
+		}),
+		[
+			isDesktop,
+			Comp,
+			Trigger,
+			Close,
+			Content,
+			Header,
+			Title,
+			Footer,
+			Description,
+		],
+	);
 
 	return (
-		<ExhibitionContext.Provider value={contextValue}>
+		<ExhibitionContext value={contextValue}>
 			<Comp {...props} {...contextValue.drawerProps}>
 				{children}
 			</Comp>
-		</ExhibitionContext.Provider>
+		</ExhibitionContext>
 	);
 }
 
@@ -210,7 +223,14 @@ export function ExhibitionFooter({
 export function ExhibitionDemo() {
 	return (
 		<Exhibition>
-			<ExhibitionTrigger>组件打开弹窗</ExhibitionTrigger>
+			<ExhibitionTrigger asChild>
+				<button
+					className="btn border-accent border rounded-md p-2"
+					type="button"
+				>
+					组件打开弹窗
+				</button>
+			</ExhibitionTrigger>
 			<ExhibitionContent>
 				<ExhibitionHeader>
 					<ExhibitionTitle>组件标题</ExhibitionTitle>
@@ -223,13 +243,55 @@ export function ExhibitionDemo() {
 					</p>
 				</ExhibitionBody>
 				<ExhibitionFooter>
-					<ExhibitionClose asChild>
-						<button className="btn btn-outline" type="button">
-							关闭弹窗
-						</button>
+					<ExhibitionClose asChild className=" justify-around">
+						<div className="flex gap-2 w-full">
+							<button type="button" className="btn btn-outline">
+								取消
+							</button>
+							<button type="button" className="btn btn-outline">
+								确认
+							</button>
+						</div>
 					</ExhibitionClose>
 				</ExhibitionFooter>
 			</ExhibitionContent>
 		</Exhibition>
+	);
+}
+
+export function ExhibitionStateDemo() {
+	const [open, setOpen] = useState(false);
+
+	return (
+		<div>
+			<button
+				className="btn border-accent border rounded-md p-2"
+				type="button"
+				onClick={() => setOpen(true)}
+			>
+				状态打开弹窗
+			</button>
+			<Exhibition open={open} onOpenChange={setOpen}>
+				<ExhibitionContent>
+					<ExhibitionHeader>
+						<ExhibitionTitle>组件标题</ExhibitionTitle>
+						<ExhibitionDescription>组件描述</ExhibitionDescription>
+					</ExhibitionHeader>
+					<ExhibitionBody>
+						<p>
+							This component is built using shadcn/ui&apos;s dialog and drawer
+							component, which is built on top of Vaul.
+						</p>
+					</ExhibitionBody>
+					<ExhibitionFooter>
+						<ExhibitionClose asChild className="">
+							<button type="button" className="btn btn-outline">
+								取消
+							</button>
+						</ExhibitionClose>
+					</ExhibitionFooter>
+				</ExhibitionContent>
+			</Exhibition>
+		</div>
 	);
 }
