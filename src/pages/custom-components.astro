@@ -3,25 +3,339 @@ import Layout from "@layouts/Layout.astro";
 import { t } from "../i18n";
 import BlockHeader from "@components/BlockHeader.astro";
 import ComponentPreview from "@components/ComponentPreview";
-import { ExhibitionDemo, ExhibitionStateDemo } from "@components/previews/Exhibition";
+import {
+	ExhibitionDemo,
+	ExhibitionStateDemo,
+} from "@components/previews/Exhibition";
 
 const currentLocale = "zh";
 
 const components = [
 	{
 		id: "dialog-modal",
-		title: "对话框",
+		title: "Exhibition 对话框",
 		description:
 			"对话框组件，在PC端与Mobile端都支持，基于shadcn/ui的Dialog组件封装",
 		category: "UI",
-		tags: ["dialog", "modal"],
+		tags: ["hook"],
 		preview: "dialog-preview",
-		code: `
-<!-- 按钮组件示例 -->
-<button class="btn btn-primary">主要按钮</button>
-<button class="btn btn-secondary">次要按钮</button>
-<button class="btn btn-outline">轮廓按钮</button>
-	`,
+		usageCode: `
+    <Exhibition>
+      <ExhibitionTrigger asChild>
+        <button className="btn">打开弹窗</button>
+      </ExhibitionTrigger>
+      <ExhibitionContent>
+        <ExhibitionHeader>
+          <ExhibitionTitle>标题</ExhibitionTitle>
+          <ExhibitionDescription>描述</ExhibitionDescription>
+        </ExhibitionHeader>
+        <ExhibitionBody>内容</ExhibitionBody>
+        <ExhibitionFooter>
+          <ExhibitionClose asChild>
+            <button className="btn">关闭</button>
+          </ExhibitionClose>
+        </ExhibitionFooter>
+      </ExhibitionContent>
+    </Exhibition>`,
+		sourceCode: `
+    "use client";
+
+    import { useMemo, createContext, useContext, useState, Fragment } from "react";
+
+    import { cn } from "@components/lib/utils";
+    import { useMediaQuery } from "@hooks/useMediaQuery";
+
+    import {
+      Dialog,
+      DialogClose,
+      DialogContent,
+      DialogDescription,
+      DialogFooter,
+      DialogHeader,
+      DialogTitle,
+      DialogTrigger,
+    } from "@components/ui/dialog";
+    import {
+      Drawer,
+      DrawerClose,
+      DrawerContent,
+      DrawerDescription,
+      DrawerFooter,
+      DrawerHeader,
+      DrawerTitle,
+      DrawerTrigger,
+    } from "@components/ui/drawer";
+
+    interface BaseProps {
+      children: React.ReactNode;
+    }
+
+    interface RootExhibitionProps extends BaseProps {
+      open?: boolean;
+      onOpenChange?: (open: boolean) => void;
+    }
+
+    interface ExhibitionProps extends BaseProps {
+      className?: React.HTMLAttributes<HTMLDivElement>["className"];
+      asChild?: true;
+    }
+
+    // 定义 Context 类型
+    interface ExhibitionContextType {
+      isDesktop: boolean;
+      Comp: typeof Dialog | typeof Drawer;
+      Trigger: typeof DialogTrigger | typeof DrawerTrigger;
+      Close: typeof DialogClose | typeof DrawerClose;
+      Content: typeof DialogContent | typeof DrawerContent;
+      Header: typeof DialogHeader | typeof DrawerHeader;
+      Title: typeof DialogTitle | typeof DrawerTitle;
+      Footer: typeof DialogFooter | typeof DrawerFooter;
+      Description: typeof DialogDescription | typeof DrawerDescription;
+      drawerProps: Record<string, any>;
+    }
+
+    // 创建 Context
+    const ExhibitionContext = createContext<ExhibitionContextType | null>(null);
+
+    // 自定义 Hook
+    function useExhibitionContext() {
+      const context = useContext(ExhibitionContext);
+      if (!context) {
+        throw new Error("Exhibition components must be used within Exhibition");
+      }
+      return context;
+    }
+
+    // 主组件
+    export function Exhibition({ children, ...props }: RootExhibitionProps) {
+      const isDesktop = useMediaQuery("desktop", {
+        defaultValue: true, // 在SSR时默认为桌面端
+        initializeWithValue: false, // 避免SSR时的水合问题
+      });
+
+      const Comp = isDesktop ? Dialog : Drawer;
+      const Trigger = isDesktop ? DialogTrigger : DrawerTrigger;
+      const Close = isDesktop ? DialogClose : DrawerClose;
+      const Content = isDesktop ? DialogContent : DrawerContent;
+      const Header = isDesktop ? DialogHeader : DrawerHeader;
+      const Title = isDesktop ? DialogTitle : DrawerTitle;
+      const Footer = isDesktop ? DialogFooter : DrawerFooter;
+      const Description = isDesktop ? DialogDescription : DrawerDescription;
+
+      const contextValue = useMemo(
+        () => ({
+          isDesktop,
+          Comp,
+          Trigger,
+          Close,
+          Content,
+          Header,
+          Title,
+          Footer,
+          Description,
+          drawerProps: !isDesktop ? { autoFocus: true } : {},
+        }),
+        [
+          isDesktop,
+          Comp,
+          Trigger,
+          Close,
+          Content,
+          Header,
+          Title,
+          Footer,
+          Description,
+        ],
+      );
+
+      return (
+        <ExhibitionContext value={contextValue}>
+          <Comp {...props} {...contextValue.drawerProps}>
+            {children}
+          </Comp>
+        </ExhibitionContext>
+      );
+    }
+
+    export function ExhibitionTrigger({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Trigger } = useExhibitionContext();
+      return (
+        <Trigger className={cn(className)} {...props}>
+          {children}
+        </Trigger>
+      );
+    }
+
+    export function ExhibitionClose({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Close } = useExhibitionContext();
+      return (
+        <Close className={cn(className)} {...props}>
+          {children}
+        </Close>
+      );
+    }
+
+    export function ExhibitionContent({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Content } = useExhibitionContext();
+      return (
+        <Content className={cn(className)} {...props}>
+          {children}
+        </Content>
+      );
+    }
+
+    export function ExhibitionHeader({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Header } = useExhibitionContext();
+      return (
+        <Header className={cn(className)} {...props}>
+          {children}
+        </Header>
+      );
+    }
+
+    export function ExhibitionTitle({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Title } = useExhibitionContext();
+      return (
+        <Title className={cn(className)} {...props}>
+          {children}
+        </Title>
+      );
+    }
+
+    export function ExhibitionDescription({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Description } = useExhibitionContext();
+      return (
+        <Description className={cn(className)} {...props}>
+          {children}
+        </Description>
+      );
+    }
+
+    export function ExhibitionBody({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      return (
+        <div className={cn("px-4 md:px-0", className)} {...props}>
+          {children}
+        </div>
+      );
+    }
+
+    export function ExhibitionFooter({
+      children,
+      className,
+      ...props
+    }: ExhibitionProps) {
+      const { Footer } = useExhibitionContext();
+      return (
+        <Footer className={cn(className)} {...props}>
+          {children}
+        </Footer>
+      );
+    }
+
+    export function ExhibitionDemo() {
+      return (
+        <Exhibition>
+          <ExhibitionTrigger asChild>
+            <button
+              className="btn border-accent border rounded-md p-2"
+              type="button"
+            >
+              组件打开弹窗
+            </button>
+          </ExhibitionTrigger>
+          <ExhibitionContent>
+            <ExhibitionHeader>
+              <ExhibitionTitle>组件标题</ExhibitionTitle>
+              <ExhibitionDescription>组件描述</ExhibitionDescription>
+            </ExhibitionHeader>
+            <ExhibitionBody>
+              <p>
+                This component is built using shadcn/ui&apos;s dialog and drawer
+                component, which is built on top of Vaul.
+              </p>
+            </ExhibitionBody>
+            <ExhibitionFooter>
+              <ExhibitionClose asChild className=" justify-around">
+                <div className="flex gap-2 w-full">
+                  <button type="button" className="btn btn-outline">
+                    取消
+                  </button>
+                  <button type="button" className="btn btn-outline">
+                    确认
+                  </button>
+                </div>
+              </ExhibitionClose>
+            </ExhibitionFooter>
+          </ExhibitionContent>
+        </Exhibition>
+      );
+    }
+
+    export function ExhibitionStateDemo() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <div>
+          <button
+            className="btn border-accent border rounded-md p-2"
+            type="button"
+            onClick={() => setOpen(true)}
+          >
+            状态打开弹窗
+          </button>
+          <Exhibition open={open} onOpenChange={setOpen}>
+            <ExhibitionContent>
+              <ExhibitionHeader>
+                <ExhibitionTitle>组件标题</ExhibitionTitle>
+                <ExhibitionDescription>组件描述</ExhibitionDescription>
+              </ExhibitionHeader>
+              <ExhibitionBody>
+                <p>
+                  This component is built using shadcn/ui&apos;s dialog and drawer
+                  component, which is built on top of Vaul.
+                </p>
+              </ExhibitionBody>
+              <ExhibitionFooter>
+                <ExhibitionClose asChild className="">
+                  <button type="button" className="btn btn-outline">
+                    取消
+                  </button>
+                </ExhibitionClose>
+              </ExhibitionFooter>
+            </ExhibitionContent>
+          </Exhibition>
+        </div>
+      );
+    }
+      `,
 	},
 ];
 ---
@@ -71,10 +385,10 @@ description={t(currentLocale, 'nav.components')}
           
           <!-- 预览区域 -->
           <div class="preview-area bg-background border border-accent rounded-lg p-4 min-h-[120px] flex items-center justify-center">
-            <ComponentPreview client:load>
+            <ComponentPreview client:idle>
               <div class="flex gap-2">
-                <ExhibitionDemo client:load />
-                <ExhibitionStateDemo client:load />
+                <ExhibitionDemo client:idle />
+                <ExhibitionStateDemo client:idle />
               </div>
                 
             </ComponentPreview>
@@ -83,18 +397,49 @@ description={t(currentLocale, 'nav.components')}
 
         <!-- 代码展示区域 -->
         <div class="p-4">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-accent">代码示例</span>
-            <button 
-              class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors"
-              data-code={component.code}
-            >
-              复制
-            </button>
+          <!-- 使用示例 -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-accent">使用示例</span>
+              <button 
+                class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors"
+                data-code={component.usageCode}
+              >
+                复制
+              </button>
+            </div>
+            <pre class="code-block text-xs bg-accent/5 border border-accent rounded-lg p-3 overflow-x-auto">
+              <code class="text-accent">{component.usageCode}</code>
+            </pre>
           </div>
-          <pre class="code-block text-xs bg-accent/5 border border-accent rounded-lg p-3 overflow-x-auto">
-            <code class="text-accent">{component.code}</code>
-          </pre>
+
+          <!-- 源码区域（可展开/收缩） -->
+          <div class="source-code-section">
+            <button 
+              class="source-toggle-btn w-full flex items-center justify-between p-3 bg-accent/5 border border-accent/10 rounded-lg hover:bg-accent/10 transition-colors"
+              data-component-id={component.id}
+            >
+              <span class="text-sm font-medium text-accent">查看源码</span>
+              <svg class="toggle-icon w-4 h-4 text-accent transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            
+            <div class="source-code-content hidden mt-3">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-medium text-accent">组件源码</span>
+                <button 
+                  class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors"
+                  data-code={component.sourceCode}
+                >
+                  复制
+                </button>
+              </div>
+              <pre class="code-block text-xs bg-accent/5 border border-accent rounded-lg p-3 overflow-x-auto max-h-96 overflow-y-auto">
+                <code class="text-accent">{component.sourceCode}</code>
+              </pre>
+            </div>
+          </div>
         </div>
 
         <!-- 标签区域 -->
@@ -129,7 +474,7 @@ description={t(currentLocale, 'nav.components')}
     }
 </style>
 <script>
-   // 搜索功能
+  // 搜索功能
   const searchInput = document.getElementById('search-input');
   const componentCards = document.querySelectorAll('.component-card');
   
@@ -163,6 +508,30 @@ description={t(currentLocale, 'nav.components')}
         }, 2000);
       } catch (err) {
         console.error('复制失败:', err);
+      }
+    });
+  });
+
+  // 源码展开/收缩功能
+  document.querySelectorAll('.source-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const button = e.target as HTMLButtonElement;
+      // const componentId = button.dataset.componentId;
+      const content = button.parentElement?.querySelector('.source-code-content');
+      const icon = button.querySelector('.toggle-icon');
+      
+      if (content && icon) {
+        const isHidden = content.classList.contains('hidden');
+        
+        if (isHidden) {
+          content.classList.remove('hidden');
+          (icon as HTMLElement).style.transform = 'rotate(180deg)';
+          button.querySelector('span')!.textContent = '收起源码';
+        } else {
+          content.classList.add('hidden');
+          (icon as HTMLElement).style.transform = 'rotate(0deg)';
+          button.querySelector('span')!.textContent = '查看源码';
+        }
       }
     });
   });
