@@ -4,13 +4,16 @@ import { t } from "../i18n";
 import BlockHeader from "@components/BlockHeader.astro";
 import ComponentPreview from "@components/ComponentPreview";
 import CodeBlock from "@components/CodeBlock";
+
 import {
 	ExhibitionDemo,
 	ExhibitionStateDemo,
 } from "@components/previews/Exhibition";
+
 import {
 	LeftIconEffectButton,
 	RightIconEffectButton,
+	GooeyRightButton,
 } from "@components/previews/Expansion";
 
 import type { ComponentsData } from "../custom-components";
@@ -80,6 +83,7 @@ description={t(currentLocale, 'nav.components')}
                 {component.previewType === "extension" && <div class="flex gap-2 w-full">
                   <LeftIconEffectButton client:load />
                   <RightIconEffectButton client:load />
+                  <GooeyRightButton client:load />
                 </div>}
                 {/* 未来可以在这里添加更多组件的条件渲染 */}
                 {/* {component.previewType === "other-component" && (

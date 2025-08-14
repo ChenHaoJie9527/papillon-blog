@@ -44,3 +44,10 @@ export function RightIconEffectButton() {
 		</Button>
 	);
 }
+
+/**
+ * 粘性向右效果
+ */
+export function GooeyRightButton() {
+	return <Button effect="gooeyRight">Gooey Right</Button>;
+}
