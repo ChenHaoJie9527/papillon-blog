@@ -30,6 +30,27 @@
   --default-font-family: var(--theme-font), monospace;
 }
 
+/* 在 @theme 外部定义关键帧和动画 */
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 定义动画类 */
+.animate-shine {
+  animation: shine 2s ease-out infinite;
+}
+
+.animate-gradient-flow {
+  animation: gradientFlow 10s ease 0s infinite normal none running;
+}
+
 header {
   view-transition-name: none;
 }

@@ -58,3 +58,10 @@ export function GooeyRightButton() {
 export function GooeyLeftButton() {
 	return <Button effect="gooeyLeft">Gooey Left</Button>;
 }
+
+/**
+ * 闪烁效果
+ */
+export function ShineButton() {
+	return <Button effect="shine">Shine</Button>;
+}
