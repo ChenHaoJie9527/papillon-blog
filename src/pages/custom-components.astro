@@ -16,6 +16,7 @@ import {
 	GooeyRightButton,
 	GooeyLeftButton,
 	ShineButton,
+	ShineHoverButton,
 } from "@components/previews/Expansion";
 
 import type { ComponentsData } from "../custom-components";
@@ -82,12 +83,13 @@ description={t(currentLocale, 'nav.components')}
                     <ExhibitionStateDemo client:load />
                   </>
                 )}
-                {component.previewType === "extension" && <div class="flex gap-2 w-full">
+                {component.previewType === "extension" && <div class="flex gap-2 w-full flex-wrap">
                   <LeftIconEffectButton client:load />
                   <RightIconEffectButton client:load />
                   <GooeyRightButton client:load />
                   <GooeyLeftButton client:load />
                   <ShineButton client:load />
+                  <ShineHoverButton client:load />
                 </div>}
                 {/* 未来可以在这里添加更多组件的条件渲染 */}
                 {/* {component.previewType === "other-component" && (

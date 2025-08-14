@@ -30,7 +30,7 @@ const buttonVariants = cva(
 				shine:
 					"relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:[animation:shine_3s_ease-out_infinite]",
 				shineHover:
-					"relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] before:bg-[length:250%_250%,100%_100%] before:bg-[position:200%_0,0_0] before:bg-no-repeat before:transition-[background-position_0s_ease] hover:before:bg-[position:-100%_0,0_0] before:duration-1000",
+					"relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:transition-[background-position] before:duration-[1200ms] hover:before:bg-[position:-200%_0]",
 				gooeyRight:
 					"relative z-0 overflow-hidden transition-all duration-500 before:absolute before:inset-0 before:z-[-1] before:translate-x-[150%] before:translate-y-[150%] before:scale-[2.5] before:rounded-[100%] before:bg-white/10 before:transition-transform before:duration-1000 hover:before:translate-x-[0%] hover:before:translate-y-[0%]",
 				gooeyLeft:

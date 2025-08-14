@@ -65,3 +65,10 @@ export function GooeyLeftButton() {
 export function ShineButton() {
 	return <Button effect="shine">Shine</Button>;
 }
+
+/**
+ * 悬停闪烁效果
+ */
+export function ShineHoverButton() {
+	return <Button effect="shineHover">Shine Hover</Button>;
+}
