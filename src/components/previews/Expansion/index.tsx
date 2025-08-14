@@ -79,3 +79,14 @@ export function ShineHoverButton() {
 export function HoverBorderButton() {
 	return <Button effect="ringHover">Hover Border</Button>;
 }
+
+/**
+ * 悬停下划线效果
+ */
+export function LinkUnderlineButton() {
+	return (
+		<Button variant="link" effect="hoverUnderline" className="px-0">
+			Link hover underline
+		</Button>
+	);
+}

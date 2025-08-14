@@ -18,6 +18,7 @@ import {
 	ShineButton,
 	ShineHoverButton,
 	HoverBorderButton,
+	LinkUnderlineButton,
 } from "@components/previews/Expansion";
 
 import type { ComponentsData } from "../custom-components";
@@ -92,6 +93,7 @@ description={t(currentLocale, 'nav.components')}
                   <ShineButton client:load />
                   <ShineHoverButton client:load />
                   <HoverBorderButton client:load /> 
+                  <LinkUnderlineButton client:load /> 
                 </div>}
                 {/* 未来可以在这里添加更多组件的条件渲染 */}
                 {/* {component.previewType === "other-component" && (
