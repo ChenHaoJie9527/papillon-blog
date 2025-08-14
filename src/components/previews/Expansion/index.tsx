@@ -90,3 +90,14 @@ export function LinkUnderlineButton() {
 		</Button>
 	);
 }
+
+/**
+ * 悬停下划线效果，不显示下划线
+ */
+export function LinkNoUnderlineButton() {
+	return (
+		<Button variant="link" effect="underline" className="px-0">
+			Link underline
+		</Button>
+	);
+}

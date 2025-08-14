@@ -36,7 +36,7 @@ const buttonVariants = cva(
 				gooeyLeft:
 					"relative z-0 overflow-hidden transition-all duration-500 after:absolute after:inset-0 after:z-[-1] after:translate-x-[-150%] after:translate-y-[150%] after:scale-[2.5] after:rounded-[100%] after:bg-white/10 after:transition-transform after:duration-1000  hover:after:translate-x-[0%] hover:after:translate-y-[0%]",
 				underline:
-					"relative !no-underline after:absolute after:bg-primary after:bottom-2 after:h-[1px] after:w-2/3 after:origin-bottom-left after:scale-x-100 hover:after:origin-bottom-right hover:after:scale-x-0 after:transition-transform after:ease-in-out after:duration-300",
+					"relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-left after:scale-x-100 hover:after:origin-bottom-right hover:after:scale-x-0 after:transition-transform after:ease-in-out after:duration-300",
 				hoverUnderline:
 					"relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300",
 				gradientSlideShow:
