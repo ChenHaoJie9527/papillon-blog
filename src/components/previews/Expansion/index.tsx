@@ -46,8 +46,15 @@ export function RightIconEffectButton() {
 }
 
 /**
- * 粘性向右效果
+ * 粘性从右向左效果
  */
 export function GooeyRightButton() {
 	return <Button effect="gooeyRight">Gooey Right</Button>;
+}
+
+/**
+ * 粘性从左向右效果
+ */
+export function GooeyLeftButton() {
+	return <Button effect="gooeyLeft">Gooey Left</Button>;
 }
