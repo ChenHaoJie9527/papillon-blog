@@ -72,3 +72,10 @@ export function ShineButton() {
 export function ShineHoverButton() {
 	return <Button effect="shineHover">Shine Hover</Button>;
 }
+
+/**
+ * 悬停边框效果
+ */
+export function HoverBorderButton() {
+	return <Button effect="ringHover">Hover Border</Button>;
+}
