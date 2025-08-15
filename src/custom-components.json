@@ -3,7 +3,7 @@
         {
             "id": "dialog-modal",
             "title": "Exhibition 对话框",
-            "description": "对话框组件，在PC端与Mobile端都支持，基于shadcn/ui的Dialog组件封装",
+            "description": "对话框组件，在PC端与Mobile端都支持，基于shadcn/ui的Dialog和Drawer组件封装",
             "category": "UI",
             "tags": [
                 "hooks"

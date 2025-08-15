@@ -20,6 +20,7 @@ import {
 	HoverBorderButton,
 	LinkUnderlineButton,
 	LinkNoUnderlineButton,
+	GradientSlideShowButton,
 } from "@components/previews/Expansion";
 
 import type { ComponentsData } from "../custom-components";
@@ -96,6 +97,7 @@ description={t(currentLocale, 'nav.components')}
                   <HoverBorderButton client:load /> 
                   <LinkUnderlineButton client:load /> 
                   <LinkNoUnderlineButton client:load /> 
+                  <GradientSlideShowButton client:load />
                 </div>}
                 {/* 未来可以在这里添加更多组件的条件渲染 */}
                 {/* {component.previewType === "other-component" && (

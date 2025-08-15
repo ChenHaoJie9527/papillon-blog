@@ -92,7 +92,7 @@ export function LinkUnderlineButton() {
 }
 
 /**
- * 悬停下划线效果，不显示下划线
+ * 显示下划线，hover下划线消失
  */
 export function LinkNoUnderlineButton() {
 	return (
@@ -100,4 +100,11 @@ export function LinkNoUnderlineButton() {
 			Link underline
 		</Button>
 	);
+}
+
+/**
+ * 背景渐变色按钮
+ */
+export function GradientSlideShowButton() {
+	return <Button effect="gradientSlideShow">Gradient Button</Button>;
 }

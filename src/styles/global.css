@@ -28,6 +28,12 @@
   --color-magenta: var(--theme-magenta);
   --color-cyan: var(--theme-cyan);
   --default-font-family: var(--theme-font), monospace;
+
+  /* 添加渐变颜色变量 */
+  --gradient-lime: #a3e635;
+  --gradient-ocean: #06b6d4;
+  --gradient-wine: #be185d;
+  --gradient-rust: #ea580c;
 }
 
 /* 在 @theme 外部定义关键帧和动画 */
