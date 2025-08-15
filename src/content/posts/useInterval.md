@@ -1,0 +1,138 @@
+---
+title: '创建一个设置定时器的hook'
+published: 2025-08-15
+draft: false
+description: '一个用于设置定时器的 React Hook，支持动态更新回调函数和间隔时间。'
+tags: ['javascript', 'typescript', 'react', 'hooks']
+---
+
+# useInterval Hook
+
+一个用于设置定时器的 React Hook，支持动态更新回调函数和间隔时间。
+
+## 功能特性
+
+- ✅ 支持动态更新回调函数
+- ✅ 支持动态更新间隔时间
+- ✅ 支持暂停定时器（传入 `null`）
+- ✅ 支持立即执行选项
+- ✅ 返回清除定时器的函数
+- ✅ 自动清理，防止内存泄漏
+
+## 使用方法
+
+### 基本用法
+
+```tsx
+import useInterval from './hooks/useInterval'
+
+function MyComponent() {
+  const [count, setCount] = useState(0)
+
+  // 每秒递增计数器
+  const clearInterval = useInterval(() => {
+    setCount((c) => c + 1)
+  }, 1000)
+
+  return (
+    <div>
+      <p>计数: {count}</p>
+      <button onClick={clearInterval}>停止</button>
+    </div>
+  )
+}
+```
+
+### 立即执行
+
+```tsx
+function MyComponent() {
+  const [count, setCount] = useState(0)
+
+  // 立即执行一次，然后每秒递增计数器
+  const clearInterval = useInterval(
+    () => {
+      setCount((c) => c + 1)
+    },
+    1000,
+    { immediate: true },
+  )
+
+  return (
+    <div>
+      <p>计数: {count}</p>
+      <button onClick={clearInterval}>停止</button>
+    </div>
+  )
+}
+```
+
+### 动态控制定时器
+
+```tsx
+function MyComponent() {
+  const [isRunning, setIsRunning] = useState(true)
+  const [count, setCount] = useState(0)
+
+  // 根据 isRunning 状态控制定时器
+  const clearInterval = useInterval(
+    () => {
+      setCount((c) => c + 1)
+    },
+    isRunning ? 1000 : null,
+  )
+
+  return (
+    <div>
+      <p>计数: {count}</p>
+      <button onClick={() => setIsRunning(!isRunning)}>
+        {isRunning ? '暂停' : '开始'}
+      </button>
+      <button onClick={clearInterval}>停止</button>
+    </div>
+  )
+}
+```
+
+### 动态更新间隔时间
+
+```tsx
+function MyComponent() {
+  const [interval, setInterval] = useState(1000)
+  const [count, setCount] = useState(0)
+
+  useInterval(() => {
+    setCount((c) => c + 1)
+  }, interval)
+
+  return (
+    <div>
+      <p>计数: {count}</p>
+      <button onClick={() => setInterval(500)}>加速</button>
+      <button onClick={() => setInterval(2000)}>减速</button>
+    </div>
+  )
+}
+```
+
+## API
+
+### 参数
+
+- `callback: () => void` - 要执行的回调函数
+- `ms: number | null` - 间隔时间（毫秒），传入 `null` 可以暂停定时器
+- `options?: { immediate?: boolean }` - 可选配置项
+  - `immediate?: boolean` - 是否立即执行回调函数，默认为 `false`
+
+### 返回值
+
+- `() => void` - 清除定时器的函数
+
+## 注意事项
+
+1. 当组件卸载时，定时器会自动清理
+2. 回调函数会在每次渲染时更新，确保使用最新的状态
+3. 传入 `null` 作为间隔时间可以暂停定时器而不清除它
+4. 返回的清除函数可以手动停止定时器
+5. 当 `immediate` 为 `true` 时，回调函数会在定时器启动时立即执行一次
+6. 即使设置了 `immediate: true`，当 `ms` 为 `null` 时也不会执行回调函数
