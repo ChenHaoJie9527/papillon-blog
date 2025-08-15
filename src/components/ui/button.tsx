@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-
+import { Spinner } from "@components/ui/Spinner";
 import { cn } from "@components/lib/utils";
 
 const buttonVariants = cva(
@@ -176,7 +176,7 @@ function Button({
 			{...props}
 		>
 			{/* loading 左侧图标 */}
-			{loading && loadingIconPlacement === "left" && <div></div>}
+			{loading && loadingIconPlacement === "left" && <Spinner size="sm" />}
 
 			{/* icon */}
 			{Icon &&
@@ -193,7 +193,7 @@ function Button({
 			<Slottable>{loading ? loadingText : children}</Slottable>
 
 			{/* loading 右侧图标 */}
-			{loading && loadingIconPlacement === "right" && <div></div>}
+			{loading && loadingIconPlacement === "right" && <Spinner size="sm" />}
 
 			{Icon &&
 				iconPlacement === "right" &&

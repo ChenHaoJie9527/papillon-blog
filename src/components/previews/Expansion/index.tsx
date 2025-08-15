@@ -108,3 +108,25 @@ export function LinkNoUnderlineButton() {
 export function GradientSlideShowButton() {
 	return <Button effect="gradientSlideShow">Gradient Button</Button>;
 }
+
+/**
+ * 左侧loading
+ */
+export function LeftLoadingButton() {
+	return (
+		<Button loading loadingIconPlacement="left">
+			Loading
+		</Button>
+	);
+}
+
+/**
+ * 右侧loading
+ */
+export function RightLoadingButton() {
+	return (
+		<Button loading loadingIconPlacement="right" variant="outline">
+			Loading
+		</Button>
+	);
+}
