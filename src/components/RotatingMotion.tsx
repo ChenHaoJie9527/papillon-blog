@@ -140,3 +140,45 @@ export function RotatingMotionDemo() {
 
 	return <RotatingMotion items={items} />;
 }
+
+/**
+ * 复杂组件组合
+ */
+export function ComplexDemo() {
+	return (
+		<RotatingMotion
+			items={[
+				{
+					content: (
+						<div className="flex items-center gap-2">
+							<span className="text-2xl">🚀</span>
+							<span className="font-bold">启动项目</span>
+						</div>
+					),
+					key: "launch",
+					duration: 3000,
+				},
+				{
+					content: (
+						<div className="flex items-center gap-2">
+							<span className="text-2xl">⚡</span>
+							<span className="font-bold">优化性能</span>
+						</div>
+					),
+					key: "optimize",
+					duration: 3000,
+				},
+				{
+					content: (
+						<div className="flex items-center gap-2">
+							<span className="text-2xl">🎯</span>
+							<span className="font-bold">部署上线</span>
+						</div>
+					),
+					key: "deploy",
+					duration: 3000,
+				},
+			]}
+		/>
+	);
+}
