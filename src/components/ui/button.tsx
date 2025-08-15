@@ -159,7 +159,7 @@ function Button({
 	icon: Icon,
 	iconPlacement,
 	loading,
-	loadingText,
+	loadingText = "Loading",
 	children,
 	hideIconOnLoading = false,
 	loadingIconPlacement = "right",
@@ -175,6 +175,9 @@ function Button({
 			disabled={loading}
 			{...props}
 		>
+			{/* loading 左侧图标 */}
+			{loading && loadingIconPlacement === "left" && <div></div>}
+
 			{/* icon */}
 			{Icon &&
 				iconPlacement === "left" &&
@@ -187,7 +190,10 @@ function Button({
 					<Icon />
 				))}
 
-			<Slottable>{children}</Slottable>
+			<Slottable>{loading ? loadingText : children}</Slottable>
+
+			{/* loading 右侧图标 */}
+			{loading && loadingIconPlacement === "right" && <div></div>}
 
 			{Icon &&
 				iconPlacement === "right" &&
