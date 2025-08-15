@@ -29,6 +29,7 @@ export default function CodeBlock({
 	return (
 		<div className="relative">
 			<pre
+				suppressHydrationWarning
 				className={`language-${language} rounded-md !m-0 !bg-background ${showLineNumbers ? "line-numbers" : ""}`}
 			>
 				<code ref={codeRef} className={`language-${language}`}>
