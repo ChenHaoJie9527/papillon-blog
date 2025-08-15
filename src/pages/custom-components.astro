@@ -23,6 +23,7 @@ import {
 	GradientSlideShowButton,
 	LeftLoadingButton,
 	RightLoadingButton,
+  BaseCopyButton
 } from "@components/previews/Expansion";
 
 import type { ComponentsData } from "../custom-components";
@@ -81,27 +82,28 @@ description={t(currentLocale, 'nav.components')}
           
           <!-- 预览区域 -->
           <div class="preview-area bg-background border border-accent rounded-lg p-4 min-h-[120px] flex items-center justify-center">
-            <ComponentPreview client:load>
+            <ComponentPreview client:idle>
               <div class="flex gap-2">
                 {component.previewType === "exhibition" && (
                   <>
-                    <ExhibitionDemo client:load />
-                    <ExhibitionStateDemo client:load />
+                    <ExhibitionDemo client:idle />
+                    <ExhibitionStateDemo client:idle />
                   </>
                 )}
                 {component.previewType === "extension" && <div class="flex gap-2 w-full flex-wrap">
-                  <LeftIconEffectButton client:load />
-                  <RightIconEffectButton client:load />
-                  <GooeyRightButton client:load />
-                  <GooeyLeftButton client:load />
-                  <ShineButton client:load />
-                  <ShineHoverButton client:load />
-                  <HoverBorderButton client:load /> 
-                  <LinkUnderlineButton client:load /> 
-                  <LinkNoUnderlineButton client:load /> 
-                  <GradientSlideShowButton client:load />
-                  <LeftLoadingButton client:load />
-                  <RightLoadingButton client:load />
+                  <LeftIconEffectButton client:idle />
+                  <RightIconEffectButton client:idle />
+                  <GooeyRightButton client:idle />
+                  <GooeyLeftButton client:idle />
+                  <ShineButton client:idle />
+                  <ShineHoverButton client:idle />
+                  <HoverBorderButton client:idle /> 
+                  <LinkUnderlineButton client:idle /> 
+                  <LinkNoUnderlineButton client:idle /> 
+                  <GradientSlideShowButton client:idle />
+                  <LeftLoadingButton client:idle />
+                  <RightLoadingButton client:idle />
+                  <BaseCopyButton client:idle />
                 </div>}
                 {/* 未来可以在这里添加更多组件的条件渲染 */}
                 {/* {component.previewType === "other-component" && (

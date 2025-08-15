@@ -1,5 +1,5 @@
 import { Button } from "@components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Copy } from "lucide-react";
 
 /**
  * 左侧图标按钮
@@ -127,6 +127,14 @@ export function RightLoadingButton() {
 	return (
 		<Button loading loadingIconPlacement="right" variant="outline">
 			Loading
+		</Button>
+	);
+}
+
+export function BaseCopyButton() {
+	return (
+		<Button copyText="Copy Text" onCopy={() => {}} successText={<Check />}>
+			<Copy />
 		</Button>
 	);
 }

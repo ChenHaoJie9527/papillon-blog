@@ -5,6 +5,7 @@ import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Spinner } from "@components/ui/Spinner";
 import { cn } from "@components/lib/utils";
+import useCopy from "@hooks/useCopy";
 
 const buttonVariants = cva(
 	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 box-border",
@@ -57,6 +58,22 @@ const buttonVariants = cva(
 	},
 );
 
+type CopyProps = {
+	copyText?: string;
+	onCopy?: (text: string) => void;
+	successText?: React.ReactNode;
+	timeout?: number;
+};
+
+type CopyRefProps = {
+	copyText?: never;
+	onCopy?: never;
+	successText?: React.ReactNode;
+	timeout?: never;
+};
+
+export type CopyButtonProps = CopyProps | CopyRefProps;
+
 type IconProps = {
 	// 检索React组件T的类型
 	icon?: React.ElementType;
@@ -87,6 +104,7 @@ export type ButtonIconProps = IconProps | IconRefProps;
  * 3. ButtonIconProps - 图标相关属性
  * 4. LoadingProps - 加载状态相关属性
  * 5. asChild - 是否作为子组件渲染
+ * 6. CopyButtonProps - 复制相关属性
  *
  * @property {string} [variant] - 按钮样式变体
  *   - "default" - 默认样式（主色调背景）
@@ -123,30 +141,11 @@ export type ButtonIconProps = IconProps | IconRefProps;
  *
  * @property {boolean} [asChild] - 是否作为子组件渲染（使用 Radix UI Slot）
  *
- * @example
- * ```tsx
- * // 基本用法
- * <Button>Click me</Button>
- *
- * // 带图标
- * <Button icon={IconComponent} iconPlacement="left">
- *   With Icon
- * </Button>
- *
- * // 加载状态
- * <Button loading loadingText="Loading...">
- *   Submit
- * </Button>
- *
- * // 特效
- * <Button effect="shineHover" variant="outline">
- *   Shiny Button
- * </Button>
- * ```
  */
 export type ButtonProps = React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants> &
 	ButtonIconProps &
+	CopyButtonProps &
 	LoadingProps & {
 		asChild?: boolean;
 	};
@@ -164,15 +163,60 @@ function Button({
 	hideIconOnLoading = false,
 	loadingIconPlacement = "right",
 	asChild = false,
+	copyText,
+	onCopy,
+	successText = "Copied!",
+	timeout = 3000,
 	...props
 }: ButtonProps) {
 	const Comp = asChild ? Slot : "button";
+
+	const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+	const { copied, copyHandle, resetHandle } = useCopy();
+
+	React.useEffect(() => {
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+			}
+		};
+	}, []);
+
+	const handleCopy = async () => {
+		if (!copyText) {
+			return;
+		}
+
+		try {
+			await copyHandle(copyText);
+			onCopy?.(copyText);
+
+			// 设置定时器自动重置状态
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+			}
+
+			timerRef.current = setTimeout(() => {
+				resetHandle();
+			}, timeout);
+		} catch (err) {
+			console.error("Failed to copy text: ", err);
+		}
+	};
+
+	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		if (copyText) {
+			handleCopy();
+		}
+		props.onClick?.(e);
+	};
 
 	return (
 		<Comp
 			data-slot="button"
 			className={cn(buttonVariants({ variant, size, className, effect }))}
 			disabled={loading}
+			onClick={handleClick}
 			{...props}
 		>
 			{/* loading 左侧图标 */}
@@ -190,7 +234,9 @@ function Button({
 					<Icon />
 				))}
 
-			<Slottable>{loading ? loadingText : children}</Slottable>
+			<Slottable>
+				{loading ? loadingText : copied ? successText : children}
+			</Slottable>
 
 			{/* loading 右侧图标 */}
 			{loading && loadingIconPlacement === "right" && <Spinner size="sm" />}
