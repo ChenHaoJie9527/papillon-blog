@@ -1,0 +1,159 @@
+---
+title: "var、let、const 的区别"
+description: "var、let、const 的区别"
+tags: ["javascript"]
+published: 2025-08-15
+draft: false
+---
+
+## var、let、const 的区别
+
+### var
+
+var 是 JavaScript 中最早的变量声明方式，它在 ES6 之前被广泛使用。它的特点是：
+
+- 全局作用域和函数作用域
+- 状态提升
+- 重复声明
+- 可变性：变量可以被重新赋值
+
+```js
+// 全局作用域
+var a = 1;
+
+function test() {
+    console.log(a); // undefined 状态提升
+    var a = 2; // 函数作用域下的a会遮蔽全局作用域下的a
+    console.log(a); // 2 - 访问的是局部变量a
+    a = 3; // 局部变量a被重新赋值
+    console.log(a); // 3 可变性
+    b = 1; // 全局变量b被声明
+    console.log(b); // 1 可变性
+}
+
+console.log(a); // 1 访问全局作用域下的变量a
+console.log(b); // undefined 因为b没有被声明，所以是undefined
+test(); // 执行函数，在函数内部作用域中创建局部变量a，并遮蔽全局作用域下的变量a
+console.log(a); // 1 - 访问全局作用域下的变量a
+console.log(b); // 1 - 访问全局作用域下的变量b
+```
+
+通过以上代码，可以知道 var 对于全局作用域和函数作用域的变量声明是不同的。
+
+
+### let
+
+let 是 ES6 中引入的新的变量声明方式，它的特点是：
+
+- 块级作用域
+- 暂时性死区
+- 不存在变量提升
+- 不允许重复声明
+- 可变性: 变量可以被重新赋值
+
+```js
+console.log(a); // ReferenceError: a is not defined 暂时性死区
+let a = 1; // 全局作用域下的变量a
+
+function test() {
+    console.log(a); // ReferenceError: a is not defined 暂时性死区
+    let a = 3; // 局部变量，由于是块级作用域，遮蔽全局作用域下的变量a
+    console.log(a); // 3 - 访问的是局部变量a
+
+    if (true) {
+        let a = 4; // 块级作用域下的变量a
+        console.log(a); // 4 - 访问的是块级作用域下的变量a
+    }
+    console.log(a); // 3 - 访问的是局部变量a
+}
+
+console.log(a); // 1 - 访问全局作用域下的变量a
+
+test(); // 执行函数，在函数内部作用域中创建局部变量a，并遮蔽全局作用域下的变量a
+
+a = 2; // 全局作用域下的变量a被重新赋值
+console.log(a); // 2 - 访问全局作用域下的变量a
+```
+
+### const
+
+const 是 ES6 中引入的新的变量声明方式，它的特点是：
+
+- 块级作用域
+- 不存在变量提升
+- 不允许重复声明
+- 不可变性: 变量不能被重新赋值
+- 核心：保证变量引用的不变性，而不是变量值的不变性
+
+```js
+const a = 1; // 全局作用域下的变量a
+
+function test() {
+    console.log(a); // ReferenceError: a is not defined 暂时性死区
+    const a = 2; // 局部变量，由于是块级作用域，遮蔽全局作用域下的变量a
+    console.log(a); // 2 - 访问的是局部变量a
+}
+
+console.log(a); // 1 - 访问全局作用域下的变量a
+test(); // 执行函数，在函数内部作用域中创建局部变量a，并遮蔽全局作用域下的变量a
+a = 2; // 报错，因为const声明的变量不能被重新赋值
+
+// 核心：保证变量引用的不变性，而不是变量值的不变性，这是相对于数据类型而言
+// 简单数据类型而言，const既保证引用不变，也保证值不变
+const a = 1;
+a = 2; // 报错，因为const声明的变量不能被重新赋值
+
+const b = "hello";
+b = "world"; // 报错，因为const声明的变量不能被重新赋值
+
+// 对于复杂数据类型，const只保证引用不变，不能保证值不变
+const obj = {
+    a: 1
+};
+obj.a = 2; // 可以对对象的属性进行修改
+
+obj = {b: 2}; // 报错，因为const声明的变量不能被重新赋值
+
+const arr = [1, 2, 3];
+arr.push(4); // 可以对数组进行修改
+
+arr = [1, 2, 3, 4]; // 报错，因为const声明的变量不能被重新赋值
+
+```
+
+### 暂时性死区
+
+适用于 let 和 const，因为它们在声明之前不能访问。
+ - 区域：从作用域 `{` 开始，到声明 `let/const` 结束 之前, 访问变量会报错
+ - 作用：防止变量在声明之前被访问，从而导致意外的错误
+ - 示例：
+
+```js
+console.log(a); // ReferenceError: a is not defined
+let a = 1;
+```
+
+### 全局对象
+- `var` 在全局作用域下声明对变量会挂载到全局对象上，在浏览器环节顶层对象是 `window`，在node环节顶层对象是 `global`
+- `let` 和 `const` 在全局作用域下声明对变量不会挂载到全局对象上，在浏览器环节顶层对象是 `undefined`，在node环节顶层对象是 `undefined`，这是ES6的严格模式下，`let` 和 `const` 不会挂载到全局对象上
+
+```js
+var a = 1;
+console.log(window.a); // 1
+
+let b = 1;
+console.log(window.b); // undefined
+```
+
+### 优先使用const
+
+默认优先使用`const`，因为`const`的不可变性可以避免意外的变量修改，同时也可以避免变量提升带来的问题。
+只有当确定变量需要被重新赋值时，才使用`let`。
+
+### 总结
+
+- `var` 是ES6之前的方式，现在不推荐使用
+- `let` 是ES6引入的方式，块级作用域，不存在变量提升，不允许重复声明，可变性
+- `const` 是ES6引入的方式，块级作用域，不存在变量提升，不允许重复声明，不可变性
+- 优先使用`const`，只有当确定变量需要被重新赋值时，才使用`let`
+- 使用`let`和`const`时，要注意暂时性死区的问题
