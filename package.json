@@ -49,6 +49,7 @@
     "mdast-util-find-and-replace": "^3.0.2",
     "mdast-util-to-markdown": "^2.1.2",
     "mdast-util-to-string": "^4.0.0",
+    "motion": "^12.23.12",
     "prismjs": "^1.30.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
