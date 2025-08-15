@@ -6,13 +6,91 @@ published: 2025-08-15
 draft: false
 ---
 
-import RotatingMotion from "../../components/RotatingMotion";
+import RotatingMotion, { RotatingMotionDemo } from "../../components/RotatingMotion";
 
 ## 一个可以通过旋转效果，平滑的实现文本变化的动画效果
 
-### 效果展示
+### 简单文本轮播
 
-<RotatingMotion text={["Hello", "World", "React", "Motion"]} client:only />
+<RotatingMotion items={["Hello", "World", "React", "Motion"]} client:only />
+
+```tsx
+<RotatingMotion items={["Hello", "World", "React", "Motion"]} />
+```
+
+### 对象数组轮播
+
+<RotatingMotion items={[
+    {
+        content: "React",
+        key: "react",
+        duration: 3000,
+    },
+    {
+        content: "Vue",
+        key: "vue",
+        duration: 3000,
+    },
+    {
+        content: "Angular",
+        key: "angular",
+        duration: 3000,
+    },
+    {
+        content: "Svelte",
+        key: "svelte",
+        duration: 3000,
+    }
+]} client:only />
+
+```tsx
+<RotatingMotion items={[
+    {
+        content: "React",
+        key: "react",
+        duration: 3000,
+    },
+    {
+        content: "Vue",
+        key: "vue",
+        duration: 3000,
+    },
+    {
+        content: "Angular",
+        key: "angular",
+        duration: 3000,
+    },
+    {
+        content: "Svelte",
+        key: "svelte",
+        duration: 3000,
+    }
+]} />
+```
+
+### 自定义配置轮播
+
+<RotatingMotionDemo client:only />
+
+```tsx
+import { Apple, Star } from "lucide-react";
+const items = [
+		{ content: "Hello", key: "hello", duration: 1000 },
+		{ content: <span>Apple</span>, key: "apple", duration: 2000 },
+		{
+			content: <Apple className="w-6 h-6" />,
+			key: "apple-icon",
+			duration: 1500,
+		},
+		{
+			content: <Star className="w-6 h-6 text-yellow-500" />,
+			key: "star",
+			duration: 1800,
+		},
+	];
+
+<RotatingMotion items={items} />;
+```
 
 ### 实现原理
 
