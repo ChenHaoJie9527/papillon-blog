@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Apple, Star } from "lucide-react";
+import useInterval from "../hooks/useInterval";
 
 import {
 	motion,
@@ -44,7 +45,6 @@ export default function RotatingMotion({
 	...props
 }: RotatingMotionProps) {
 	const [index, setIndex] = useState(0);
-	const intervalRef = useRef<any>(null);
 
 	// 将 items 转换为数组
 	const itemsArray = isArray(items) ? items : [items];
@@ -73,21 +73,12 @@ export default function RotatingMotion({
 		? (currentItem as RotatingItem).duration || duration
 		: duration;
 
-	useEffect(() => {
-		if (itemsArray.length <= 1) {
-			return;
-		}
-
-		intervalRef.current = setInterval(() => {
+	useInterval(
+		() => {
 			setIndex((s) => (s + 1) % itemsArray.length);
-		}, currentDuration);
-
-		return () => {
-			if (intervalRef.current) {
-				clearInterval(intervalRef.current);
-			}
-		};
-	}, [itemsArray, currentDuration]);
+		},
+		itemsArray.length > 1 ? currentDuration : null,
+	);
 
 	return (
 		<div className="p-4 border border-foreground/20 rounded-lg bg-background/50 dark:bg-background/30 backdrop-blur-sm">
