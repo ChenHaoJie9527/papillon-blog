@@ -1,5 +1,5 @@
 ---
-title: '创建一个设置定时器的hook'
+title: 'useInterval: 创建一个设置 interval 定时器 Hook'
 published: 2025-08-15
 draft: false
 description: '一个用于设置定时器的 React Hook，支持动态更新回调函数和间隔时间。'
