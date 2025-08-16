@@ -1,0 +1,125 @@
+---
+title: '数据类型和typeof局限性'
+published: 2025-08-16
+draft: false
+description: 'JavaScript类型系统与typeof操作符'
+tags: ['javascript']
+---
+
+## 核心概念
+
+`Javascript` 的数据类型分为2大类，基本类型与对象类型
+
+基本类型有7类，分别是：
+
+- string
+- number
+- boolean
+- undefined
+- null
+- symbol
+- bigint
+
+对象类型有:
+
+- Object
+- Array
+- Function
+- Date
+- Regexp
+- Map
+- Set
+- 包装对象（String, Number, Boolean）
+
+### typeof 作用和局限性
+
+typeof 用于判断基本数据类型是准确的，除了`null`以外
+
+```js
+console.log(typeof 1); // number
+console.log(typeof "1"); // string
+console.log(typeof true); // boolean
+console.log(typeof undefined); // undefined
+console.log(typeof null); // object
+console.log(typeof Symbol()); // symbol
+console.log(typeof BigInt(1)); // bigint
+```
+
+typeof 对于对象类型，除了函数都会返回 object
+
+```js
+console.log(typeof {}); // object
+console.log(typeof []); // object
+console.log(typeof new Date()); // object
+console.log(typeof new RegExp()); // object
+console.log(typeof new Map()); // object
+console.log(typeof new Set()); // object
+console.log(typeof new Error()); // object
+console.log(typeof null); // object 历史遗留问题
+```
+
+### 包装对象
+
+包装对象是什么？
+
+包装对象是对象类型，但是typeof会返回对应的包装对象类型
+
+```js
+console.log(typeof new String("1")); // object
+console.log(typeof new Number(1)); // object
+console.log(typeof new Boolean(true)); // object
+```
+
+为什么需要包装对象？
+
+```js
+// 基本类型没有方法
+const str = "hello";
+console.log(str.toUpperCase()); // HELLO
+
+// javascript 引擎会隐式创建包装对象
+// 相当于临时执行：new String(str).toUpperCase()
+// 使用完后就立即销毁包装对象
+
+```
+
+### 对象类型继承关系图
+
+```text
+Object (基类)
+├── Array
+├── Date  
+├── RegExp
+├── String
+├── Number
+├── Boolean
+└── Error
+    ├── TypeError
+    ├── ReferenceError
+    └── ...
+```
+
+### 如何更具体的判断对象类型
+
+- 使用 `instanceof` 判断对象类型
+- 使用 `Object.prototype.toString.call()` 判断对象类型
+
+```js
+// instanceof
+console.log([] instanceof Array); // true
+console.log({} instanceof Object); // true
+console.log(new Date() instanceof Date); // true
+console.log(new RegExp() instanceof RegExp); // true
+console.log(new Map() instanceof Map); // true
+console.log(new Set() instanceof Set); // true
+console.log(new Error() instanceof Error); // true
+
+// Object.prototype.toString.call()
+console.log(Object.prototype.toString.call([])); // [object Array]
+console.log(Object.prototype.toString.call({})); // [object Object]
+console.log(Object.prototype.toString.call(new Date())); // [object Date]
+console.log(Object.prototype.toString.call(new RegExp())); // [object RegExp]
+console.log(Object.prototype.toString.call(new Map())); // [object Map]
+console.log(Object.prototype.toString.call(new Set())); // [object Set]
+console.log(Object.prototype.toString.call(new Error())); // [object Error]
+```
