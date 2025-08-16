@@ -6,6 +6,8 @@ description: '一个用于设置定时器的 React Hook，支持动态更新回�
 tags: ['javascript', 'typescript', 'react', 'hooks']
 ---
 
+import { BaseIntervalDemo, ImmediateIntervalDemo, DynamicControlIntervalDemo } from '../../components/IntervalDemo'
+
 # useInterval Hook
 
 一个用于设置定时器的 React Hook，支持动态更新回调函数和间隔时间。
@@ -22,6 +24,8 @@ tags: ['javascript', 'typescript', 'react', 'hooks']
 ## 使用方法
 
 ### 基本用法
+
+<BaseIntervalDemo client:only />
 
 ```tsx
 import useInterval from './hooks/useInterval'
@@ -44,6 +48,8 @@ function MyComponent() {
 ```
 
 ### 立即执行
+
+<ImmediateIntervalDemo client:only />
 
 ```tsx
 function MyComponent() {
@@ -68,6 +74,8 @@ function MyComponent() {
 ```
 
 ### 动态控制定时器
+
+<DynamicControlIntervalDemo client:only />
 
 ```tsx
 function MyComponent() {

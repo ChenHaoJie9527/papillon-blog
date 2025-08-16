@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Apple, Star } from "lucide-react";
 import useInterval from "../hooks/useInterval";
+import { DemoContainer } from "./ui/DemoContainer";
 
 import {
 	motion,
@@ -81,7 +82,7 @@ export default function RotatingMotion({
 	);
 
 	return (
-		<div className="p-4 border border-foreground/20 rounded-lg bg-background/50 dark:bg-background/30 backdrop-blur-sm">
+		<DemoContainer>
 			<div className={cn("overflow-hidden py-1", containerClassName)}>
 				<AnimatePresence mode="wait">
 					<motion.div
@@ -105,7 +106,7 @@ export default function RotatingMotion({
 					</motion.div>
 				</AnimatePresence>
 			</div>
-		</div>
+		</DemoContainer>
 	);
 }
 
