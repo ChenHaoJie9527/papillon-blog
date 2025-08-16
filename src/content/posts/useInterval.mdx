@@ -6,7 +6,7 @@ description: '一个用于设置定时器的 React Hook，支持动态更新回�
 tags: ['javascript', 'typescript', 'react', 'hooks']
 ---
 
-import { BaseIntervalDemo, ImmediateIntervalDemo, DynamicControlIntervalDemo } from '../../components/IntervalDemo'
+import { BaseIntervalDemo, ImmediateIntervalDemo, DynamicControlIntervalDemo, DynamicUpdateIntervalDemo, ClearIntervalDemo } from '../../components/IntervalDemo'
 
 # useInterval Hook
 
@@ -104,6 +104,8 @@ function MyComponent() {
 
 ### 动态更新间隔时间
 
+<DynamicUpdateIntervalDemo client:only />
+
 ```tsx
 function MyComponent() {
   const [interval, setInterval] = useState(1000)
@@ -123,6 +125,29 @@ function MyComponent() {
 }
 ```
 
+### 清除定时器
+
+<ClearIntervalDemo client:only />
+
+```tsx
+function MyComponent() {
+  const [count, setCount] = useState(0)
+
+  const clearInterval = useInterval(() => {
+    setCount((c) => c + 1)
+  }, 1000)
+
+  return (
+    <div>
+      <p>计数: {count}</p>
+      <button onClick={clearInterval} type="button">
+        清除定时器
+      </button>
+    </div>
+  )
+}
+```
+
 ## API
 
 ### 参数
@@ -131,6 +156,7 @@ function MyComponent() {
 - `ms: number | null` - 间隔时间（毫秒），传入 `null` 可以暂停定时器
 - `options?: { immediate?: boolean }` - 可选配置项
   - `immediate?: boolean` - 是否立即执行回调函数，默认为 `false`
+- `clearInterval: () => void` - 清除定时器的函数，返回值
 
 ### 返回值
 

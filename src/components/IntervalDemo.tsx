@@ -69,3 +69,44 @@ export function DynamicControlIntervalDemo() {
 		</DemoContainer>
 	);
 }
+
+/**
+ * 动态更新间隔时间
+ */
+export function DynamicUpdateIntervalDemo() {
+	const [count, setCount] = useState(0);
+	const [interval, setInterval] = useState(1000);
+
+	useInterval(() => {
+		setCount((c) => c + 1);
+	}, interval);
+
+	return (
+		<DemoContainer>
+			<p>Count: {count}</p>
+			<button type="button" onClick={() => setInterval(interval + 1000)}>
+				增加间隔时间
+			</button>
+		</DemoContainer>
+	);
+}
+
+/**
+ * 清除定时器
+ */
+export function ClearIntervalDemo() {
+	const [count, setCount] = useState(0);
+
+	const clearInterval = useInterval(() => {
+		setCount((c) => c + 1);
+	}, 1000);
+
+	return (
+		<DemoContainer>
+			<p>Count: {count}</p>
+			<button type="button" onClick={() => clearInterval()}>
+				清除定时器
+			</button>
+		</DemoContainer>
+	);
+}
