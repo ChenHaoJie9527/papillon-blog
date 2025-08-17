@@ -1,0 +1,84 @@
+---
+title: '值类型和引用类型'
+published: 2025-08-17
+draft: false
+description: 'JavaScript 值类型和引用类型'
+tags: ['javascript']
+---
+
+## 核心概念
+
+从数据存储方式的角度分析Javascript数据类型，可以分为2大类，值类型和引用类型
+
+### 值类型
+
+值类型存在在栈空间中，通常是基本数据类型：string | number | boolean | undefined | null | symbol | bigint
+这类的数据类型占据空间小，简单，传输效率快，易于操作。
+
+```js
+const a = 1;    
+const b = a; // 将a的值赋值给b
+b = 2; // 修改b的值，不会影响a
+console.log(a); // 1
+console.log(b); // 2
+console.log(a === b); // false
+
+// 将一个值类型赋值给另一个变量，会创建一个新值，两个变量互不影响
+
+```
+
+### 引用类型
+
+引用类型存在在堆空间中，通常是对象类型：object | array | function | date | regexp | map | set | error | ...
+这类的数据类型占据空间大，复杂，传输效率慢，不易操作。
+
+```js
+const a = {
+    name: 'John',
+    age: 20
+}
+const b = a; // 将a的引用赋值给b
+b.age = 21; // 修改b的值，会影响a
+console.log(a); // { name: 'John', age: 21 }
+console.log(b); // { name: 'John', age: 21 }
+console.log(a === b); // true a 和 b 引用相同，指向堆空间中同一个对象
+
+// 将一个引用类型赋值给另一个变量，会创建一个新引用，两个变量的引用相同，指向同一个对象
+```
+
+### 函数参数传递
+
+函数是JavaScript中的第一等公民，可以作为参数传递，也可以作为返回值返回。
+针对函数参数传递，可以分为2种情况：值类型与引用类型
+
+```js
+// 值类型
+function fn(a) {
+    a = 2;
+}
+
+const a = 1;
+fn(a);
+console.log(a); // 1
+
+// 值类型作为函数参数传递，会创建一个新值，两个变量互不影响
+```
+
+```js
+// 引用类型
+function fn(a) {
+    a.age = 21; // 修改a的值，会影响b
+
+    a = { age: 100 } // 重新赋值，不会影响外部的a
+
+}
+
+const a = {
+    age: 10
+}
+
+fn(a);
+console.log(a); // { age: 21 }
+
+// 引用类型作为函数参数传递，会创建一个新引用，两个变量的引用相同，指向同一个对象
+```
