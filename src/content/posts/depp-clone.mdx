@@ -1,0 +1,192 @@
+---
+title: '深浅拷贝的本质'
+published: 2025-08-17
+draft: false
+description: 'JavaScript 深浅拷贝'
+tags: ['javascript']
+---
+
+## 核心概念
+
+在JavaScript中，深拷贝，浅拷贝的本质是对引用类型数据的一种复制行为
+
+- 浅拷贝：创建一个新对象，将目标对象的属性值逐个复制到新对象中，如果属性值是基本类型，则复制值本身。如果属性值是引用类型，则复制其引用地址。因此新对象与目标对象的引用类型属性值仍然指向同一个对象
+
+- 深拷贝：创建一个新对象，递归复制目标对象的属性值，不仅复制目标对象本身，还会复制目标对象所引用的所有对象，最终新对象与目标对象完全独立，互不干扰
+
+### 为什么需要它们
+
+- 避免操作数据时引起意外副作用，引用类型数据复杂多变，往往是集合或者列表，直接操作数据带来的风险很大，通过副本可以避免这种风险
+
+- 状态不可变性，在现代前端框架中，状态管理是核心概念，状态不可变性是状态管理的基础，通过深拷贝可以实现状态不可变性，有助于框架的性能优化
+
+- 数据隔离，在某些场景，需要将数据进行隔离，避免数据污染，通过深拷贝可以实现数据隔离，有助于框架的性能优化
+
+### 用法
+
+- 浅拷贝实现
+
+    1.`Object.assign`：将所有可枚举属性的值从一个或多个源对象复制到目标对象
+
+    ```js
+    const obj = {
+        name: 'John',
+        age: 20,
+        address: {
+            city: 'Beijing',
+            street: '123 Main St'
+        }
+    }
+
+    const shallowCopy = Object.assign({}, obj);
+    shallowCopy.name = "Tom"
+    console.log(obj.name); // John 不受影响
+    shallowCopy.address.city = 'Shanghai';
+    console.log(obj.address.city); // Shanghai 受影响
+    ```
+
+    2.`...` 扩展运算符：将对象的属性逐个复制到新对象中，与`Object.assign`类似，但更简洁
+
+    ```js
+    const obj = {
+        name: 'John',
+        age: 20,
+        address: {
+            city: 'Beijing',
+            street: '123 Main St'
+        }
+    }
+
+    const shallowCopy = { ...obj };
+    shallowCopy.name = "Tom"
+    console.log(obj.name); // John 不受影响
+    shallowCopy.address.city = 'Shanghai';
+    console.log(obj.address.city); // Shanghai 受影响
+    ```
+
+- 深拷贝实现
+    1.`JSON.parse(JSON.stringify())`：将对象转换为JSON字符串，再转换回对象，这种方法可以实现深拷贝，但有以下局限性：
+
+    - 无法处理循环引用
+    - 会忽略 `undefined` 和 `symbol` 属性和 `function`
+    - 把 `Date` 对象转换为字符串
+    - 把 `RegExp` 对象转换为空对象
+    - 把 `Error` 对象转换为空对象
+    - 把 `Map` 和 `Set` 对象转换为空对象
+    - 把 `BigInt` 对象转换为字符串
+    - 把 `Symbol` 对象转换为字符串
+
+    ```js
+    const obj = {
+        name: 'John',
+        age: 20,
+        address: {
+            city: 'Beijing',
+            street: '123 Main St'
+        },
+        d: new Date(),
+        e: undefined,
+        h: function() {
+            console.log('hello');
+        }
+    }
+
+    const deepCopy = JSON.parse(JSON.stringify(obj));
+    deepCopy.name = 'Tom';
+    deepCopy.address.city = 'Shanghai';
+    console.log(deepCopy.address.city); // Shanghai
+    console.log(obj.address.city); // Beijing 不受影响
+    console.log(typeof deepCopy.d); // string 被转换为字符串
+    console.log(deepCopy.h); // undefined 函数被忽略
+    console.log(e in deepCopy); // false 忽略 undefined
+    ```
+
+    2.`structuredClone`：浏览器原生支持的深拷贝方法，可以处理循环引用，函数，Symbol，BigInt，RegExp，Date，Map，Set，undefined 等，但有以下局限性：
+
+    - 不支持IE浏览器
+    - 不支持Node.js环境
+    - 不支持Web Worker环境
+    
+    ```js
+    const obj = {
+        name: 'John',
+        age: 20,
+        address: {
+            city: 'Beijing',
+            street: '123 Main St'
+        },
+        d: new Date(),
+        e: undefined,
+        h: function() {
+            console.log('hello');
+        }
+    }
+
+    const deepCopy = structuredClone(obj);
+    deepCopy.name = 'Tom';
+    deepCopy.address.city = 'Shanghai';
+    console.log(deepCopy.address.city); // Shanghai
+    console.log(obj.address.city); // Beijing 不受影响
+    console.log(typeof deepCopy.d); // Date 对象被正确复制
+    console.log(deepCopy.h); // 函数被正确复制
+    console.log(e in deepCopy); // false 忽略 undefined
+    ```
+
+    3.手动递归方法
+
+    ```js
+    function cloneDeep(obj, hash = new WeakMap()) {
+        if (obj === null || Object.prototype.toString.call(obj) !== '[object Object]') {
+            return obj
+        }
+
+        // 处理循环引用
+        if (hash.has(obj)) {
+            return hash.get(obj)
+        }
+
+        const clone = Array.isArray(obj) ? [] : {}
+        // 将当前对象和克隆对象都存入 hash
+        hash.set(obj, clone)
+
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                const element = obj[key];
+                clone[key] = cloneDeep(element, hash)
+            }
+        }
+
+        return clone
+    }
+
+    const obj = {
+        name: 'John',
+        age: 20,
+        address: {
+            city: 'Beijing',
+            street: '123 Main St'
+        },
+        d: new Date(),
+        e: undefined,
+        h: function() {
+            console.log('hello');
+        }
+    }
+
+    const deepCopy = cloneDeep(obj);
+    deepCopy.name = 'Tom';
+    deepCopy.address.city = 'Shanghai';
+    console.log(deepCopy.address.city); // Shanghai
+    console.log(obj.address.city); // Beijing 不受影响
+    ```
+
+### 总结
+
+- 性能开销：深拷贝会比浅拷贝更加消耗性能，深拷贝需要递归遍历对象的每个属性，而浅拷贝只需要遍历一次，对于嵌套对象，深拷贝的性能开销会更大
+
+- 选择合适的方案：
+    1.如果对象层级只有一层，使用浅拷贝会更高效
+    2.对于深拷贝，使用 `structuredClone` 会更好，因为它可以处理循环引用，函数，Symbol，BigInt，RegExp，Date，Map，Set，undefined 等
+    3.`JSON.parse` 是一个备选方案，仅仅适用于数据结构简单且符合JSON格式的数据
+    4.手动递归方法是最灵活的，可以处理任何数据结构，但需要手动实现，性能开销最大，可以使用第三方库提供的工具函数，如`lodash.cloneDeep` `es-toolkit.cloneDeep`
+
