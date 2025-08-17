@@ -1,0 +1,72 @@
+---
+title: '对象遍历方法对比'
+published: 2025-08-17
+draft: false
+description: 'JavaScript 对象遍历方法对比'
+tags: ['javascript']
+---
+
+import CodeRunner from '../../components/CodeRunner'
+
+## 核心概念
+
+在JavaScript中，遍历对象的方式有很多种，但不同的方法在性能开销，速度，可读性，可维护性等方面有较大的差异
+
+可以围绕三方面来进行对比
+- 可枚举性
+- 原型链
+- Symbols属性
+
+### 示例
+
+```js
+const sym = Symbol('sym') // 定义一个Symbol属性
+const proto = {
+    name: 'proto',
+}
+
+const obj = Object.create(proto) // 创建一个对象，并继承proto对象，proto成为新对象的原型对象
+// obj => proto => Object.prototype => null
+
+obj.ownProperty = 'ownProperty' // 定义一个普通属性
+obj[sym] = 'sym' // 定义一个Symbol属性
+
+console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
+
+```
+
+然后列举一些常用遍历对象的方法，并进行对比
+
+### 可枚举性
+
+- `for...in`：遍历对象的枚举属性，包括原型链上的属性，无法遍历Symbol属性
+- `Object.keys`：遍历对象的枚举属性，不包括原型链上的属性
+- `Object.values`：遍历对象的枚举属性，不包括原型链上的属性
+- `Object.entries`：遍历对象的枚举属性，不包括原型链上的属性
+
+### 实际演示
+
+1.for...in 遍历示例
+
+<CodeRunner 
+    client:only
+    code={`
+    const sym = Symbol('sym');
+    const proto = { name: 'proto' }; // 不会
+    const obj = Object.create(proto);
+    obj.ownProperty = 'ownProperty';
+    obj[sym] = 'sym';
+
+    console.log(obj); // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
+
+    console.log('=== for...in 遍历结果 ===');
+    for (let key in obj) {
+    console.log(key + ': ' + obj[key]);
+    }
+
+    // for...in 遍历方式：
+    // 1. 遍历对象的枚举属性，包括原型链上的属性，无法遍历Symbol属性
+    // 2. 不能保证遍历的顺序
+    // 3. 性能较差，因为需要遍历原型链上的属性
+    `} 
+/>
