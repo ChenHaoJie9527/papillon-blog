@@ -31,7 +31,12 @@ const obj = Object.create(proto) // 创建一个对象，并继承proto对象，
 obj.ownProperty = 'ownProperty' // 定义一个普通属性
 obj[sym] = 'sym' // 定义一个Symbol属性
 
-console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
+Object.defineProperty(obj, 'nonEnumProp', {
+    value: 'non-enumerable value',
+    enumerable: false,
+});
+
+console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym', nonEnumProp: 'non-enumerable value' }
 
 ```
 
@@ -57,7 +62,12 @@ console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
     obj.ownProperty = 'ownProperty';
     obj[sym] = 'sym';
 
-    console.log(obj); // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
+    Object.defineProperty(obj, 'nonEnumProp', {
+        value: 'non-enumerable value',
+        enumerable: false,
+    });
+
+    console.log(obj); // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym', nonEnumProp: 'non-enumerable value' }
 
     console.log('=== for...in 遍历结果 ===');
     for (let key in obj) {
@@ -70,3 +80,107 @@ console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym' }
     // 3. 性能较差，因为需要遍历原型链上的属性
     `} 
 />
+
+2.Object.keys 遍历示例
+
+<CodeRunner 
+    client:only
+    code={`
+    const sym = Symbol('sym');
+    const proto = { name: 'proto' }; // 不会
+    const obj = Object.create(proto);
+    obj.ownProperty = 'ownProperty';
+    obj[sym] = 'sym';
+
+    Object.defineProperty(obj, 'nonEnumProp', {
+        value: 'non-enumerable value',
+        enumerable: false,
+    });
+
+    console.log(obj); // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym', nonEnumProp: 'non-enumerable value' }
+
+    console.log('=== Object.keys 遍历结果 ===');
+    Object.keys(obj).forEach(key => {
+    console.log(key + ': ' + obj[key]);
+    });
+
+    // Object.keys 遍历方式：
+    // 1.只遍历自身属性，不包括原型链上的属性
+    // 2.无法遍历Symbol属性
+    `} 
+/>
+
+3.Reflect.ownKeys 遍历示例
+
+<CodeRunner 
+    client:only
+    code={`
+    const sym = Symbol('sym');
+    const proto = { name: 'proto' }; // 不会
+    const obj = Object.create(proto);
+    obj.ownProperty = 'ownProperty';
+    obj[sym] = 'sym';
+
+    Object.defineProperty(obj, 'nonEnumProp', {
+        value: 'non-enumerable value',
+        enumerable: false,
+    });
+
+    console.log(obj); // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym', nonEnumProp: 'non-enumerable value' }
+
+    console.log('=== Reflect.ownKeys 遍历结果 ===');
+    console.log(Reflect.ownKeys(obj)); // [ 'ownProperty', 'nonEnumProp', Symbol(sym), ]
+
+    // Reflect.ownKeys ：
+    // 1.返回对象自身的所有属性，包括不可枚举属性，包括Symbol属性
+    `} 
+/>
+
+### 注意事项
+
+1. `for...in` 陷阱，默认情况下，`for...in` 会遍历原型链，这是常见问题，为了避免这种意外行为，我们可以在循环体中使用 `hasOwnProperty` 方法来判断属性是否是对象自身的属性
+
+<CodeRunner
+    client:only
+    code={`
+const sym = Symbol('sym') // 定义一个Symbol属性
+const proto = {
+    name: 'proto',
+}
+
+const obj = Object.create(proto) // 创建一个对象，并继承proto对象，proto成为新对象的原型对象
+// obj => proto => Object.prototype => null
+
+obj.ownProperty = 'ownProperty' // 定义一个普通属性
+obj[sym] = 'sym' // 定义一个Symbol属性
+
+Object.defineProperty(obj, 'nonEnumProp', {
+    value: 'non-enumerable value',
+    enumerable: false,
+});
+
+console.log(obj) // { ownProperty: 'ownProperty', [Symbol(sym)]: 'sym', nonEnumProp: 'non-enumerable value' }
+
+// 不使用hasOwnProperty
+const result = []
+for (const key in obj) {
+   result.push(key)
+}
+
+// 使用hasOwnProperty
+const ownResult = []
+for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        ownResult.push(key)
+    }
+}
+
+console.log(result); // [ 'ownProperty', 'name' ] 只会遍历自身属性和原型链上的属性
+console.log(ownResult); // [ 'ownProperty' ] 只会遍历自身属性
+    `}
+/>
+
+2.性能方面： 
+
+- `Object.keys` 通常会比 `for...in` + `hasOwnProperty` 更快，因为 `Object.keys` 不涉及原型链查找
+- `Reflect.ownKeys` 因为会遍历自身属性，原型链，和Symbol属性，所以性能较差，但全面性更好
