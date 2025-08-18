@@ -1,0 +1,393 @@
+---
+title: 'useThrottle: 创建一个节流 Hook'
+published: 2025-08-18
+draft: false
+description: '一个用于节流的 React Hook，可以控制函数执行频率，确保在指定时间间隔内最多执行一次，适用于滚动、按钮点击、游戏控制等场景。'
+tags: ['javascript', 'typescript', 'react', 'hooks', 'throttle']
+---
+
+import { BasicThrottleDemo, ScrollThrottleDemo, ButtonClickThrottleDemo, MouseMoveThrottleDemo, GameControlThrottleDemo } from '../../components/ThrottleDemo'
+
+# useThrottle Hook
+
+一个用于节流的 React Hook，可以控制函数执行频率，确保在指定的时间间隔内最多执行一次，有效防止函数过于频繁调用。
+
+## 功能特性
+
+- ✅ 支持任意参数的函数节流
+- ✅ 确保函数在指定间隔内最多执行一次
+- ✅ TypeScript 类型支持
+- ✅ 使用 `useCallback` 优化性能
+- ✅ 支持动态更新延迟时间
+- ✅ 内存友好，使用 `useRef` 避免闭包问题
+
+## 什么是节流？
+
+节流（Throttle）是一种优化技术，用于限制函数的执行频率。与防抖不同，节流确保函数在指定的时间间隔内最多执行一次，无论调用多少次。
+
+### 节流 vs 防抖
+
+| 特性 | 节流 (Throttle) | 防抖 (Debounce) |
+|------|----------------|-----------------|
+| 执行时机 | 固定间隔执行 | 延迟结束后执行 |
+| 执行频率 | 保证执行 | 可能不执行 |
+| 适用场景 | 滚动事件、按钮点击 | 搜索输入、窗口调整 |
+| 首次调用 | 立即执行 | 延迟执行 |
+
+## 使用方法
+
+### 基本用法
+
+<BasicThrottleDemo client:only />
+
+```tsx
+import useThrottle from './hooks/useThrottle'
+
+function MyComponent() {
+  const [inputValue, setInputValue] = useState("")
+  const [throttledValue, setThrottledValue] = useState("")
+
+  // 输入后在 1 秒内只执行一次，无论输入多快，都只执行一次
+  const throttledSetValue = useThrottle((value: string) => {
+    setThrottledValue(value)
+  }, 1000)
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    throttledSetValue(value)
+  }
+
+  return (
+    <div>
+      <input value={inputValue} onChange={handleInputChange} />
+      <p>节流后的值: {throttledValue}</p>
+    </div>
+  )
+}
+```
+
+### 滚动事件节流
+
+<ScrollThrottleDemo client:only />
+
+```tsx
+function ScrollComponent() {
+  const [scrollY, setScrollY] = useState(0)
+
+  // 滚动后在 1 秒内只执行一次，无论滚动多快，都只执行一次
+  const throttledSetScroll = useThrottle((y: number) => {
+    setScrollY(y)
+  }, 1000)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      throttledSetScroll(window.scrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [throttledSetScroll])
+
+  return (
+    <div>
+      <p>滚动位置: {scrollY}px</p>
+    </div>
+  )
+}
+```
+
+### 按钮点击节流
+
+<ButtonClickThrottleDemo client:only />
+
+```tsx
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = useCallback(() => {
+    setIsSubmitting(true)
+    // 执行提交逻辑
+    submitForm().finally(() => setIsSubmitting(false))
+  }, [])
+
+  const throttledSubmit = useThrottle(handleSubmit, 1000)
+
+  return (
+    <button 
+      onClick={throttledSubmit}
+      disabled={isSubmitting}
+    >
+      {isSubmitting ? '提交中...' : '提交'}
+    </button>
+  )
+}
+```
+
+### 鼠标移动节流
+
+<MouseMoveThrottleDemo client:only />
+
+```tsx
+function MouseTracker() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
+  // 鼠标移动后在 1 秒内只执行一次，无论移动多快，都只执行一次
+  const throttledSetPosition = useThrottle((x: number, y: number) => {
+    setMousePosition({ x, y })
+  }, 1000)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    throttledSetPosition(x, y)
+  }
+
+  return (
+    <div onMouseMove={handleMouseMove} className="h-64 bg-gray-100">
+      <p>鼠标位置: ({mousePosition.x}, {mousePosition.y})</p>
+    </div>
+  )
+}
+```
+
+### 游戏控制节流
+
+<GameControlThrottleDemo client:only />
+
+```tsx
+function GameComponent() {
+  const [playerPosition, setPlayerPosition] = useState(50)
+
+  const throttledMove = useThrottle((direction: 'left' | 'right') => {
+    setPlayerPosition((prev) => {
+      const newPos = direction === 'left' 
+        ? Math.max(0, prev - 10) 
+        : Math.min(100, prev + 10)
+      return newPos
+    })
+  }, 300)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        throttledMove('left')
+      } else if (e.key === 'ArrowRight') {
+        throttledMove('right')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [throttledMove])
+
+  return (
+    <div className="h-8 bg-gray-200 relative">
+      <div 
+        className="absolute top-1 w-6 h-6 bg-blue-500 rounded"
+        style={{ left: `${playerPosition}%` }}
+      />
+    </div>
+  )
+}
+```
+
+## API
+
+### 参数
+
+- `cb: T` - 需要节流的函数，支持任意参数
+- `delay: number` - 延迟时间（毫秒）
+
+### 返回值
+
+- `T` - 节流后的函数，保持原函数的类型签名
+
+### 类型定义
+
+```typescript
+function useThrottle<T extends (...args: any[]) => any>(
+  cb: T,
+  delay: number,
+): T
+```
+
+## 实现原理
+
+### 核心逻辑
+
+```typescript
+export default function useThrottle<T extends (...args: any[]) => any>(
+  cb: T,
+  delay: number,
+) {
+  const lastTime = useRef(0)  // 记录上次执行时间
+
+  const throttled = useCallback(
+    (...args: Parameters<T>) => {
+      const now = Date.now()
+
+      if (now - lastTime.current >= delay) {  // 检查是否超过延迟时间
+        lastTime.current = now                // 更新执行时间
+        cb(...args)                           // 执行回调
+      }
+    },
+    [cb, delay],
+  ) as T
+
+  return throttled
+}
+```
+
+### 关键点解析
+
+1. **使用 `useRef` 存储时间**: 确保时间戳在组件重新渲染时不会丢失
+2. **时间间隔检查**: 每次调用时检查当前时间与上次执行时间的差值
+3. **条件执行**: 只有当时间间隔 ≥ delay 时才执行函数
+4. **使用 `useCallback`**: 避免不必要的重新创建函数
+5. **类型安全**: 使用 TypeScript 泛型保持原函数的类型签名
+
+## 应用场景
+
+### 1. 滚动事件处理
+
+处理滚动事件时，使用节流来避免过于频繁的更新。
+
+```tsx
+const throttledScroll = useThrottle(() => {
+  updateScrollPosition()
+}, 100)
+```
+
+### 2. 按钮快速点击
+
+防止用户快速点击按钮导致重复操作。
+
+```tsx
+const throttledClick = useThrottle(() => {
+  handleSubmit()
+}, 1000)
+```
+
+### 3. 游戏控制
+
+在游戏中控制角色移动，确保移动频率合理。
+
+```tsx
+const throttledMove = useThrottle((direction) => {
+  movePlayer(direction)
+}, 300)
+```
+
+### 4. 实时数据更新
+
+更新实时数据时，控制更新频率。
+
+```tsx
+const throttledUpdate = useThrottle((data) => {
+  updateChart(data)
+}, 500)
+```
+
+### 5. 鼠标移动跟踪
+
+跟踪鼠标移动时，减少更新频率。
+
+```tsx
+const throttledMouseMove = useThrottle((x, y) => {
+  updateCursorPosition(x, y)
+}, 200)
+```
+
+## 性能优化
+
+### 1. 内存管理
+
+使用 `useRef` 避免闭包陷阱，确保时间戳正确存储。
+
+### 2. 函数优化
+
+使用 `useCallback` 确保节流函数只在依赖项变化时重新创建。
+
+### 3. 执行频率控制
+
+通过合理设置延迟时间，平衡性能和用户体验。
+
+## 注意事项
+
+1. **延迟时间选择**: 根据具体场景选择合适的延迟时间
+   - 滚动事件: 100-200ms
+   - 按钮点击: 1000ms
+   - 游戏控制: 200-500ms
+   - 鼠标移动: 200-300ms
+
+2. **首次调用行为**: 第一次调用会立即执行（如果时间间隔已满足）
+
+3. **函数依赖**: 确保传入的函数是稳定的，避免不必要的重新创建
+
+4. **参数传递**: 正确传递所有参数给原函数
+
+## 与其他 Hook 的对比
+
+| Hook | 用途 | 执行时机 | 适用场景 |
+|------|------|----------|----------|
+| `useThrottle` | 节流 | 固定间隔 | 滚动、按钮点击 |
+| `useDebounce` | 防抖 | 延迟结束后 | 搜索、窗口调整 |
+| `useInterval` | 定时器 | 固定间隔 | 倒计时、轮询 |
+
+## 进阶用法
+
+### 1. 组合使用
+
+可以将节流与其他 Hook 组合使用：
+
+```tsx
+function AdvancedComponent() {
+  const [data, setData] = useState([])
+  
+  const throttledFetch = useThrottle(async (query) => {
+    const result = await fetchData(query)
+    setData(result)
+  }, 500)
+
+  const debouncedSearch = useDebounce((term) => {
+    throttledFetch(term)
+  }, 300)
+
+  return (
+    <input onChange={(e) => debouncedSearch(e.target.value)} />
+  )
+}
+```
+
+### 2. 动态延迟
+
+可以根据条件动态调整延迟时间：
+
+```tsx
+function DynamicThrottle() {
+  const [isSlowMode, setIsSlowMode] = useState(false)
+  const delay = isSlowMode ? 1000 : 300
+
+  const throttledAction = useThrottle(() => {
+    performAction()
+  }, delay)
+
+  return (
+    <div>
+      <button onClick={() => setIsSlowMode(!isSlowMode)}>
+        {isSlowMode ? '快速模式' : '慢速模式'}
+      </button>
+      <button onClick={throttledAction}>执行操作</button>
+    </div>
+  )
+}
+```
+
+## 总结
+
+`useThrottle` Hook 是一个简单而有效的工具，可以控制函数执行频率，确保在指定时间间隔内最多执行一次。通过合理使用节流技术，可以显著提升应用性能，特别是在处理高频事件时。
+
+记住，选择合适的延迟时间很重要，太短可能无法达到节流效果，太长可能影响用户体验。根据具体场景和用户行为模式来调整参数，找到最佳的性能和用户体验平衡点。
