@@ -1,0 +1,277 @@
+---
+title: 'useDebounce: 创建一个防抖 Hook'
+published: 2025-08-18
+draft: false
+description: '一个用于防抖的 React Hook，可以有效控制函数执行频率，适用于搜索、窗口调整、按钮点击等场景。'
+tags: ['javascript', 'typescript', 'react', 'hooks', 'debounce']
+---
+
+import { BasicDebounceDemo, WindowResizeDebounceDemo, ButtonClickDebounceDemo } from '../../components/DenounceDemo'
+
+# useDebounce Hook
+
+一个用于防抖的 React Hook，可以有效控制函数执行频率，避免频繁调用导致的性能问题。
+
+## 功能特性
+
+- ✅ 支持任意参数的函数防抖
+- ✅ 自动清理定时器，防止内存泄漏
+- ✅ TypeScript 类型支持
+- ✅ 使用 `useCallback` 优化性能
+- ✅ 支持动态更新延迟时间
+
+## 什么是防抖？
+
+防抖（Debounce）是一种优化技术，用于限制函数的执行频率。当函数被连续调用时，只有在指定的延迟时间后没有新的调用，函数才会执行。
+
+### 防抖 vs 节流
+
+| 特性 | 防抖 (Debounce) | 节流 (Throttle) |
+|------|----------------|-----------------|
+| 执行时机 | 延迟结束后执行 | 固定间隔执行 |
+| 适用场景 | 搜索输入、窗口调整 | 滚动事件、按钮点击 |
+| 执行次数 | 可能不执行 | 必定执行 |
+
+## 使用方法
+
+### 基本用法
+
+<BasicDebounceDemo client:only />
+
+```tsx
+import useDebounce from './hooks/useDebounce'
+
+function MyComponent() {
+  const [inputValue, setInputValue] = useState("")
+  const [debouncedValue, setDebouncedValue] = useState("")
+
+  // 只有当用户停止输入 1 秒后，才会执行 setDebouncedValue 函数
+  const debouncedSetValue = useDebounce((value: string) => {
+    setDebouncedValue(value)
+  }, 1000)
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    debouncedSetValue(value)
+  }
+
+  return (
+    <div>
+      <input value={inputValue} onChange={handleInputChange} />
+      <p>防抖后的值: {debouncedValue}</p>
+    </div>
+  )
+}
+```
+
+### 窗口大小调整防抖
+
+<WindowResizeDebounceDemo client:only />
+
+```tsx
+function WindowSizeComponent() {
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  })
+
+  // 只有当用户停止调整窗口大小 1 秒后，才会执行 setWindowSize 函数
+  const debouncedSetWindowSize = useDebounce((width: number, height: number) => {
+    setWindowSize({ width, height })
+  }, 1000)
+
+  useEffect(() => {
+    const handleResize = () => {
+      debouncedSetWindowSize(window.innerWidth, window.innerHeight)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [debouncedSetWindowSize])
+
+  return (
+    <div>
+      <p>窗口宽度: {windowSize.width}px</p>
+      <p>窗口高度: {windowSize.height}px</p>
+    </div>
+  )
+}
+```
+
+### 按钮点击防抖
+
+<ButtonClickDebounceDemo client:only />
+
+```tsx
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = useCallback(() => {
+    setIsSubmitting(true)
+    // 执行提交逻辑
+    submitForm().finally(() => setIsSubmitting(false))
+  }, [])
+
+  const debouncedSubmit = useDebounce(handleSubmit, 1000)
+
+  return (
+    <button 
+      onClick={debouncedSubmit}
+      disabled={isSubmitting}
+    >
+      {isSubmitting ? '提交中...' : '提交'}
+    </button>
+  )
+}
+```
+
+## API
+
+### 参数
+
+- `cb: T` - 需要防抖的函数，支持任意参数
+- `delay: number` - 延迟时间（毫秒）
+
+### 返回值
+
+- `T` - 防抖后的函数，保持原函数的类型签名
+
+### 类型定义
+
+```typescript
+function useDebounce<T extends (...args: any[]) => any>(
+  cb: T,
+  delay: number,
+): T
+```
+
+## 实现原理
+
+### 核心逻辑
+
+```typescript
+export default function useDebounce<T extends (...args: any[]) => any>(
+  cb: T,
+  delay: number,
+) {
+  const timer = useRef<NodeJS.Timeout | null>(null)
+
+  const debounced = useCallback(
+    (...args: Parameters<T>) => {
+      // 清除之前的定时器
+      if (timer.current) {
+        clearTimeout(timer.current)
+      }
+
+      // 设置新的定时器
+      timer.current = setTimeout(() => {
+        cb(...args)
+      }, delay)
+    },
+    [cb, delay],
+  ) as T
+
+  return debounced
+}
+```
+
+### 关键点解析
+
+1. **使用 `useRef` 存储定时器**: 确保定时器在组件重新渲染时不会丢失
+2. **清除之前的定时器**: 每次调用时先清除之前的定时器，实现防抖效果
+3. **使用 `useCallback`**: 避免不必要的重新创建函数
+4. **类型安全**: 使用 TypeScript 泛型保持原函数的类型签名
+
+## 应用场景
+
+### 1. 搜索输入
+
+在搜索框中，用户输入时不需要每次都发送请求，可以使用防抖来延迟请求发送。
+
+```tsx
+const debouncedSearch = useDebounce((query: string) => {
+  searchAPI(query)
+}, 300)
+```
+
+### 2. 窗口大小调整
+
+监听窗口大小变化时，可以使用防抖来避免频繁更新布局。
+
+```tsx
+const debouncedResize = useDebounce(() => {
+  updateLayout()
+}, 200)
+```
+
+### 3. 表单验证
+
+在用户输入时进行实时验证，使用防抖来减少验证频率。
+
+```tsx
+const debouncedValidate = useDebounce((value: string) => {
+  validateField(value)
+}, 500)
+```
+
+### 4. API 请求
+
+防止用户快速点击按钮导致重复请求。
+
+```tsx
+const debouncedSubmit = useDebounce(() => {
+  submitForm()
+}, 1000)
+```
+
+### 5. 滚动事件
+
+处理滚动事件时，使用防抖来优化性能。
+
+```tsx
+const debouncedScroll = useDebounce(() => {
+  updateScrollPosition()
+}, 100)
+```
+
+## 性能优化
+
+### 1. 自动清理
+
+当组件卸载时，定时器会自动清理，防止内存泄漏。
+
+### 2. 依赖优化
+
+使用 `useCallback` 确保防抖函数只在依赖项变化时重新创建。
+
+### 3. 类型安全
+
+完整的 TypeScript 支持，提供良好的开发体验。
+
+## 注意事项
+
+1. **延迟时间选择**: 根据具体场景选择合适的延迟时间
+   - 搜索输入: 300-500ms
+   - 窗口调整: 200-300ms
+   - 按钮点击: 1000ms
+
+2. **函数依赖**: 确保传入的函数是稳定的，避免不必要的重新创建
+
+3. **内存管理**: Hook 会自动清理定时器，无需手动管理
+
+4. **异步函数**: 支持异步函数，但不会等待异步操作完成
+
+## 与其他 Hook 的对比
+
+| Hook | 用途 | 执行时机 | 适用场景 |
+|------|------|----------|----------|
+| `useDebounce` | 防抖 | 延迟结束后 | 搜索、窗口调整 |
+| `useThrottle` | 节流 | 固定间隔 | 滚动、按钮点击 |
+| `useInterval` | 定时器 | 固定间隔 | 倒计时、轮询 |
+
+## 总结
+
+`useDebounce` Hook 是一个简单而强大的工具，可以有效控制函数执行频率，提升应用性能。通过合理使用防抖技术，可以显著改善用户体验，特别是在处理用户输入和事件监听时。
+
+记住，选择合适的延迟时间很重要，太短可能无法达到防抖效果，太长可能影响用户体验。根据具体场景和用户行为模式来调整参数。
