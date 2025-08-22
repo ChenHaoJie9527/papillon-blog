@@ -6,13 +6,10 @@ description: '深入对比 html2canvas 和 dom-to-image-more 两个 DOM 截图�
 tags: ['canvas', 'performance']
 ---
 
-import ScreenshotDemo from '../../components/ScreenshotDemo'
-
 # html2canvas vs dom-to-image-more: 深度对比与内存优化
 
 在前端开发中，将 DOM 元素转换为图像是一个常见的需求，比如生成分享图片、保存页面截图、创建海报等。目前主流的解决方案有 `html2canvas` 和 `dom-to-image-more`，它们在实现原理、内存占用和性能表现上存在显著差异。
 
-<ScreenshotDemo client:only />
 
 ## 核心原理对比
 
