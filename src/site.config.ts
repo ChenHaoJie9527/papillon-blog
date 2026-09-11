@@ -1,26 +1,26 @@
 import type { SiteConfig } from '@types'
 
 const config: SiteConfig = {
-  // Absolute URL to the root of your published site, used for generating links and sitemaps.
+  // 您已发布网站的根目录的绝对网址，用于生成链接和网站地图。
   site: 'https://papillon-x.netlify.app',
-  // The name of your site, used in the title and for SEO.
+  // 网站的名称，用于标题和SEO。
   title: 'Papillon',
-  // The description of your site, used for SEO and RSS feed.
+  // 网站的描述，用于SEO和RSS订阅。
   description: '专注于React、Next.js、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
-  // The author of the site, used in the footer, SEO, and RSS feed.
+  // 网站的作者，用于页脚、SEO和RSS订阅。
   author: 'momotom(ChenHaoJie9527)',
-  // Keywords for SEO, used in the meta tags.
+  // SEO的关键词，用于元标签。
   tags: ['Astro', 'Terminal', 'Theme'],
-  // Path to the image used for generating social media previews.
-  // Needs to be a square JPEG file due to limitations of the social card generator.
-  // Try https://squoosh.app/ to easily convert images to JPEG.
+  // 用于生成社交媒体预览的图片路径。
+  // 由于社交媒体卡生成器的限制，需要是方形JPEG文件。
+  // 尝试使用https://squoosh.app/轻松转换图像为JPEG。
   socialCardAvatarImage: './src/content/avatar.jpg',
-  // Font imported from @fontsource or elsewhere, used for the entire site.
-  // To change this see src/styles/global.css and import a different font.
+  // 从@fontsource或其他地方导入的字体，用于整个网站。
+  // 要更改此内容，请参阅src/styles/global.css并导入不同的字体。
   font: 'JetBrains Mono Variable',
-  // For pagination, the number of posts to display per page.
+  // 分页，每页显示的帖子数量。
   pageSize: 5,
-  // The navigation links to display in the header.
+  // 导航链接，显示在页眉中。
   navLinks: [
     {
       name: 'Home',
@@ -40,17 +40,17 @@ const config: SiteConfig = {
       url: '/custom-components',
     },
   ],
-  // The theming configuration for the site.
+  // 网站的主题配置。
   themes: {
-    // The theming mode. One of "single" | "select" | "light-dark-auto".
+    // 主题模式。"single" | "select" | "light-dark-auto"。
     mode: 'select',
-    // The default theme identifier, used when themeMode is "select" or "light-dark-auto".
-    // Make sure this is one of the themes listed in `themes` or "auto" for "light-dark-auto" mode.
+    // 默认主题标识符，当themeMode为"select"或"light-dark-auto"时使用。
+    // 确保这是`themes`中列出的主题之一，或"auto"用于"light-dark-auto"模式。
     default: 'houston',
-    // Shiki themes to bundle with the site.
+    // 与网站捆绑在一起的Shiki主题。
     // https://expressive-code.com/guides/themes/#using-bundled-themes
-    // These will be used to theme the entire site along with syntax highlighting.
-    // To use light-dark-auto mode, only include a light and a dark theme in that order.
+    // 这些将用于主题整个网站，以及语法高亮。
+    // 要使用light-dark-auto模式，只需按顺序包含一个亮色和一个暗色主题。
     // include: [
     //   'github-light',
     //   'github-dark',
@@ -118,7 +118,7 @@ const config: SiteConfig = {
       'vitesse-light',
     ],
   },
-  // Social links to display in the footer.
+  // 社交媒体链接，显示在页脚中。
   socialLinks: {
     github: 'https://github.com/ChenHaoJie9527/papillon-blog',
     // mastodon: 'https://github.com/ChenHaoJie9527/papillon-blog',
@@ -127,17 +127,18 @@ const config: SiteConfig = {
     // bluesky: 'https://github.com/ChenHaoJie9527/papillon-blog',
     // twitter: 'https://github.com/ChenHaoJie9527/papillon-blog',
   },
-  // Configuration for Giscus comments.
-  // To set up Giscus, follow the instructions at https://giscus.app/
-  // You'll need a GitHub repository with discussions enabled and the Giscus app installed.
-  // Take the values from the generated script tag at https://giscus.app and fill them in here.
-  // If you don't want to use Giscus, set this to undefined.
+  // Giscus评论的配置。
+  // 要设置Giscus，请按照https://giscus.app/的说明进行操作。
+  // 要设置Giscus，请按照https://giscus.app/的说明进行操作。
+  // 您需要一个带有讨论功能的GitHub存储库，并安装Giscus应用程序。
+  // 从https://giscus.app生成的脚本标签中获取值，并将其填入此处。
+  // 如果您不想使用Giscus，请将其设置为undefined。
   giscus: {
     repo: 'ChenHaoJie9527/papillon-blog',
     repoId: 'R_kgDOPXEF4g',
     category: 'General',
     categoryId: 'DIC_kwDOPXEF4s4CttwV',
-    reactionsEnabled: true, // Enable reactions on post itself
+    reactionsEnabled: true, // 启用帖子本身的反应
   },
 }
 
