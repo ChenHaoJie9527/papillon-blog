@@ -1,0 +1,218 @@
+---
+import ComponentPreview from '@components/ComponentPreview'
+import CodeBlock from '@components/CodeBlock'
+import {
+  ExhibitionDemo,
+  ExhibitionStateDemo,
+} from '@components/previews/Exhibition'
+import {
+  LeftIconEffectButton,
+  RightIconEffectButton,
+  GooeyRightButton,
+  GooeyLeftButton,
+  ShineButton,
+  ShineHoverButton,
+  HoverBorderButton,
+  LinkUnderlineButton,
+  LinkNoUnderlineButton,
+  GradientSlideShowButton,
+  LeftLoadingButton,
+  RightLoadingButton,
+  BaseCopyButton,
+} from '@components/previews/Expansion'
+import type { ComponentConfig } from '../custom-components'
+import { t } from '../i18n'
+
+interface Props {
+  component: ComponentConfig
+}
+
+const { component } = Astro.props
+---
+
+<article>
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <h1 class="text-2xl font-semibold text-accent text-balance">{component.title}</h1>
+    <span class="px-2 py-1 text-xs bg-accent/20 text-accent rounded-full shrink-0">
+      {component.category}
+    </span>
+  </div>
+  <p class="text-sm text-foreground/80 mb-5 text-pretty">{component.description}</p>
+
+  <div class="preview-area bg-accent/5 border border-accent/20 rounded-xl p-4 min-h-[120px] flex items-center justify-center mb-6">
+    <ComponentPreview client:idle>
+      <div class="flex gap-2 w-full flex-wrap justify-center">
+        {
+          component.previewType === 'exhibition' && (
+            <>
+              <ExhibitionDemo client:idle />
+              <ExhibitionStateDemo client:idle />
+            </>
+          )
+        }
+        {
+          component.previewType === 'extension' && (
+            <>
+              <LeftIconEffectButton client:idle />
+              <RightIconEffectButton client:idle />
+              <GooeyRightButton client:idle />
+              <GooeyLeftButton client:idle />
+              <ShineButton client:idle />
+              <ShineHoverButton client:idle />
+              <HoverBorderButton client:idle />
+              <LinkUnderlineButton client:idle />
+              <LinkNoUnderlineButton client:idle />
+              <GradientSlideShowButton client:idle />
+              <LeftLoadingButton client:idle />
+              <RightLoadingButton client:idle />
+              <BaseCopyButton client:idle />
+            </>
+          )
+        }
+      </div>
+    </ComponentPreview>
+  </div>
+
+  <div class="mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-sm font-medium text-accent">{t('components.usage')}</span>
+      <button
+        class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
+        data-code={component.usageCode}
+        data-copy={t('components.copy')}
+        data-copied={t('components.copied')}
+        type="button"
+      >
+        {t('components.copy')}
+      </button>
+    </div>
+    <div class="code-block text-xs bg-accent/5 border border-accent/20 rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
+      <CodeBlock client:load code={component.usageCode} language="tsx" showLineNumbers={true} />
+    </div>
+  </div>
+
+  <div class="source-code-section">
+    <button
+      class="source-toggle-btn w-full flex items-center justify-between p-3 bg-accent/5 border border-accent/10 rounded-lg hover:bg-accent/10"
+      data-component-id={component.id}
+      data-show={t('components.viewSource')}
+      data-hide={t('components.hideSource')}
+      type="button"
+      aria-expanded="false"
+    >
+      <span class="text-sm font-medium text-accent">{t('components.viewSource')}</span>
+      <svg class="toggle-icon w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </button>
+
+    <div class="source-code-content mt-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm font-medium text-accent">{t('components.sourceCode')}</span>
+        <button
+          class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
+          data-code={component.sourceCode}
+          data-copy={t('components.copy')}
+          data-copied={t('components.copied')}
+          type="button"
+        >
+          {t('components.copy')}
+        </button>
+      </div>
+      <div class="code-block text-xs bg-accent/5 border border-accent/20 rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
+        <CodeBlock client:load code={component.sourceCode} language="tsx" showLineNumbers={true} />
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-1 mt-5">
+    {
+      component.tags.map((tag) => (
+        <a
+          title={tag}
+          href={`/tags/${encodeURIComponent(tag)}`}
+          class="text-xs px-2 py-1 bg-accent/10 text-accent rounded-full no-underline hover:bg-accent/20"
+        >
+          #{tag}
+        </a>
+      ))
+    }
+  </div>
+</article>
+
+<style>
+  .code-block {
+    font-family: var(--font-mono);
+  }
+
+  .source-code-content {
+    display: none;
+  }
+
+  .source-code-content.is-open {
+    display: block;
+  }
+
+  .toggle-icon {
+    transform: rotate(0deg);
+  }
+
+  .source-toggle-btn[aria-expanded='true'] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .source-code-content {
+      opacity: 0;
+      transform: translateY(-12px);
+      transition-property: opacity, transform, display;
+      transition-duration: 150ms;
+      transition-timing-function: ease-out;
+      transition-behavior: allow-discrete;
+    }
+
+    .source-code-content.is-open {
+      opacity: 1;
+      transform: translateY(0);
+      transition-duration: 300ms;
+    }
+
+    .toggle-icon {
+      transition: transform 150ms ease-out;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const button = e.currentTarget as HTMLButtonElement
+      const code = button.dataset.code || ''
+      const original = button.textContent
+
+      try {
+        await navigator.clipboard.writeText(code)
+        button.textContent = button.dataset.copied || original
+        setTimeout(() => {
+          button.textContent = button.dataset.copy || original
+        }, 2000)
+      } catch (err) {
+        console.error(err)
+      }
+    })
+  })
+
+  document.querySelectorAll('.source-toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const button = e.currentTarget as HTMLButtonElement
+      const content = button.parentElement?.querySelector('.source-code-content')
+      const label = button.querySelector('span')
+
+      if (content && label) {
+        const isOpen = content.classList.toggle('is-open')
+        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
+        label.textContent = isOpen ? button.dataset.hide || '' : button.dataset.show || ''
+      }
+    })
+  })
+</script>

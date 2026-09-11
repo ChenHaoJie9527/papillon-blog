@@ -1,284 +1,94 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import { t } from "../i18n";
-import BlockHeader from "@components/BlockHeader.astro";
-import ComponentPreview from "@components/ComponentPreview";
-import CodeBlock from "@components/CodeBlock";
+import Layout from '@layouts/Layout.astro'
+import { t } from '../i18n'
+import BlockHeader from '@components/BlockHeader.astro'
+import type { ComponentsData } from '../custom-components'
 
-import {
-	ExhibitionDemo,
-	ExhibitionStateDemo,
-} from "@components/previews/Exhibition";
-
-import {
-	LeftIconEffectButton,
-	RightIconEffectButton,
-	GooeyRightButton,
-	GooeyLeftButton,
-	ShineButton,
-	ShineHoverButton,
-	HoverBorderButton,
-	LinkUnderlineButton,
-	LinkNoUnderlineButton,
-	GradientSlideShowButton,
-	LeftLoadingButton,
-	RightLoadingButton,
-  BaseCopyButton
-} from "@components/previews/Expansion";
-
-import type { ComponentsData } from "../custom-components";
-
-const componentsData: ComponentsData = await import(
-	"../custom-components.json"
-);
-
-const { components } = componentsData;
-const categories = [...new Set(components.map((component) => component.category))];
+const componentsData: ComponentsData = await import('../custom-components.json')
+const { components } = componentsData
+const categories = [...new Set(components.map((component) => component.category))]
 
 const categoryLabel = (category: string) => {
-  const key = `components.category${category}`;
-  const translated = t(key);
-  return translated === key ? category : translated;
-};
+  const key = `components.category${category}`
+  const translated = t(key)
+  return translated === key ? category : translated
+}
 ---
 
-<Layout 
-title={t('nav.components')}
-description={t('nav.components')}
->
-    <BlockHeader>{t('components.showcase')}</BlockHeader>
-    <div class="mb-8 p-4 bg-accent/5 rounded-xl border border-accent/10">
-        <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end justify-between">
-        <div class="flex-1 max-w-md">
-            <label for="search-input" class="block text-sm font-medium text-accent mb-2">
-              {t('components.searchLabel')}
-            </label>
-            <input 
-            type="search"
-            id="search-input"
-            name="component-search"
-            autocomplete="off"
-            placeholder={t('components.searchPlaceholder')}
-            class="w-full text-base px-4 py-2 bg-background border border-accent rounded-lg"
-            />
-        </div>
-        <div class="flex gap-2 items-end">
-            <div>
-              <label for="category-filter" class="block text-sm font-medium text-accent mb-2">
-                {t('components.category')}
-              </label>
-              <select
-                id="category-filter"
-                class="px-3 py-2 text-base text-accent bg-background border border-accent rounded-lg"
-              >
-                <option value="">{t('components.allCategories')}</option>
-                {categories.map((category) => (
-                  <option value={category}>{categoryLabel(category)}</option>
-                ))}
-              </select>
-            </div>
-            <button
-              id="clear-filters"
-              type="button"
-              class="px-4 py-2 border-2 border-accent/40 text-accent rounded-lg hover:bg-accent/10"
-            >
-                {t('components.clearFilters')}
-            </button>
-        </div>
-        </div>
-    </div>
-    <p id="components-empty" class="hidden text-foreground/80 mb-6" role="status">
-      {t('components.noMatches')}
-    </p>
-  <div class="grid grid-cols-1 gap-6" id="components-grid">
-    {components.map((component) => (
-      <div
-        class="component-card bg-background border border-accent/10 rounded-xl overflow-hidden hover:border-accent/30"
-        data-category={component.category}
-        data-title={component.title}
-        data-description={component.description}
-        data-tags={component.tags.join(' ')}
-      >
-        <div class="p-6 bg-accent/5 border-b border-accent/10">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-semibold text-accent">{component.title}</h2>
-            <span class="px-2 py-1 text-xs bg-accent/20 text-accent rounded-full">
-              {component.category}
-            </span>
-          </div>
-          <p class="text-sm text-accent mb-4 text-pretty">{component.description}</p>
-          
-          <div class="preview-area bg-background border border-accent rounded-lg p-4 min-h-[120px] flex items-center justify-center">
-            <ComponentPreview client:idle>
-              <div class="flex gap-2">
-                {component.previewType === "exhibition" && (
-                  <>
-                    <ExhibitionDemo client:idle />
-                    <ExhibitionStateDemo client:idle />
-                  </>
-                )}
-                {component.previewType === "extension" && <div class="flex gap-2 w-full flex-wrap">
-                  <LeftIconEffectButton client:idle />
-                  <RightIconEffectButton client:idle />
-                  <GooeyRightButton client:idle />
-                  <GooeyLeftButton client:idle />
-                  <ShineButton client:idle />
-                  <ShineHoverButton client:idle />
-                  <HoverBorderButton client:idle /> 
-                  <LinkUnderlineButton client:idle /> 
-                  <LinkNoUnderlineButton client:idle /> 
-                  <GradientSlideShowButton client:idle />
-                  <LeftLoadingButton client:idle />
-                  <RightLoadingButton client:idle />
-                  <BaseCopyButton client:idle />
-                </div>}
-              </div>
-            </ComponentPreview>
-          </div>
-        </div>
-
-        <div class="p-4">
-          <div class="mb-4">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-sm font-medium text-accent">{t('components.usage')}</span>
-              <button 
-                class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
-                data-code={component.usageCode}
-                data-copy={t('components.copy')}
-                data-copied={t('components.copied')}
-                type="button"
-              >
-                {t('components.copy')}
-              </button>
-            </div>
-            <div class="code-block text-xs bg-accent/5 border border-accent rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
-              <CodeBlock client:load code={component.usageCode} language="tsx" showLineNumbers={true} />
-            </div>
-          </div>
-
-          <div class="source-code-section">
-            <button 
-              class="source-toggle-btn w-full flex items-center justify-between p-3 bg-accent/5 border border-accent/10 rounded-lg hover:bg-accent/10"
-              data-component-id={component.id}
-              data-show={t('components.viewSource')}
-              data-hide={t('components.hideSource')}
-              type="button"
-              aria-expanded="false"
-            >
-              <span class="text-sm font-medium text-accent">{t('components.viewSource')}</span>
-              <svg class="toggle-icon w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            
-            <div class="source-code-content mt-3">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-sm font-medium text-accent">{t('components.sourceCode')}</span>
-                <button 
-                  class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
-                  data-code={component.sourceCode}
-                  data-copy={t('components.copy')}
-                  data-copied={t('components.copied')}
-                  type="button"
-                >
-                  {t('components.copy')}
-                </button>
-              </div>
-                <div class="code-block text-xs bg-accent/5 border border-accent rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
-                  <CodeBlock client:load code={component.sourceCode} language="tsx" showLineNumbers={true} />
-                </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="px-4 pb-4">
-          <div class="flex flex-wrap gap-1">
-            {component.tags.map((tag) => (
-              <a title={`${tag}`} href={`/tags/${encodeURIComponent(tag)}`} class="tag-link text-xs px-2 py-1 bg-accent/10 text-accent rounded-full hover:bg-accent/20">
-                #{tag}
-              </a>
-            ))}
-          </div>
-        </div>
+<Layout title={t('nav.components')} description={t('nav.components')}>
+  <BlockHeader>{t('components.showcase')}</BlockHeader>
+  <div class="mb-8 p-4 bg-accent/5 rounded-xl border border-accent/10">
+    <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end justify-between">
+      <div class="flex-1 max-w-md">
+        <label for="search-input" class="block text-sm font-medium text-accent mb-2">
+          {t('components.searchLabel')}
+        </label>
+        <input
+          type="search"
+          id="search-input"
+          name="component-search"
+          autocomplete="off"
+          placeholder={t('components.searchPlaceholder')}
+          class="w-full text-base px-4 py-2 bg-background border border-accent rounded-lg"
+        />
       </div>
-    ))}
+      <div class="flex gap-2 items-end">
+        <div>
+          <label for="category-filter" class="block text-sm font-medium text-accent mb-2">
+            {t('components.category')}
+          </label>
+          <select
+            id="category-filter"
+            class="px-3 py-2 text-base text-accent bg-background border border-accent rounded-lg"
+          >
+            <option value="">{t('components.allCategories')}</option>
+            {categories.map((category) => (
+              <option value={category}>{categoryLabel(category)}</option>
+            ))}
+          </select>
+        </div>
+        <button
+          id="clear-filters"
+          type="button"
+          class="px-4 py-2 border-2 border-accent/40 text-accent rounded-lg hover:bg-accent/10"
+        >
+          {t('components.clearFilters')}
+        </button>
+      </div>
+    </div>
+  </div>
+  <p id="components-empty" class="hidden text-foreground/80 mb-6" role="status">
+    {t('components.noMatches')}
+  </p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="components-grid">
+    {
+      components.map((component) => (
+        <a
+          href={`/custom-components/${component.id}`}
+          class="component-card flex flex-col border border-accent/15 rounded-xl p-4 bg-accent/5 no-underline hover:border-accent/40 hover:bg-accent/10"
+          data-category={component.category}
+          data-title={component.title}
+          data-description={component.description}
+          data-tags={component.tags.join(' ')}
+        >
+          <h2 class="text-lg font-semibold text-accent mb-2 text-balance">{component.title}</h2>
+          <p class="text-sm text-foreground/75 text-pretty">{component.description}</p>
+        </a>
+      ))
+    }
   </div>
 </Layout>
 
 <style>
-    .preview-area {
-        min-height: 120px;
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .component-card {
+      transition-property: border-color, background-color;
+      transition-duration: 150ms;
+      transition-timing-function: ease-out;
     }
-
-    .code-block {
-        font-family: var(--font-mono);
-    }
-
-    .tag-link {
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .source-code-content {
-      display: none;
-    }
-
-    .source-code-content.is-open {
-      display: block;
-    }
-
-    .toggle-icon {
-      transform: rotate(0deg);
-    }
-
-    .source-toggle-btn[aria-expanded='true'] .toggle-icon {
-      transform: rotate(180deg);
-    }
-
-    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .component-card {
-        transition-property: border-color, transform;
-        transition-duration: 150ms;
-        transition-timing-function: ease-out;
-      }
-      .component-card:hover {
-        transform: translateY(-2px);
-      }
-      .tag-link:hover {
-        transform: translateY(-2px);
-      }
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .source-code-content {
-        opacity: 0;
-        transform: translateY(-12px);
-        transition-property: opacity, transform, display;
-        transition-duration: 150ms;
-        transition-timing-function: ease-out;
-        transition-behavior: allow-discrete;
-      }
-
-      .source-code-content.is-open {
-        opacity: 1;
-        transform: translateY(0);
-        transition-duration: 300ms;
-      }
-
-      @starting-style {
-        .source-code-content.is-open {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-      }
-
-      .toggle-icon {
-        transition-property: transform;
-        transition-duration: 150ms;
-        transition-timing-function: ease-out;
-      }
-    }
+  }
 </style>
+
 <script>
   const searchInput = document.getElementById('search-input') as HTMLInputElement | null
   const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement | null
@@ -317,37 +127,5 @@ description={t('nav.components')}
     if (categoryFilter) categoryFilter.value = ''
     applyFilters()
     searchInput?.focus()
-  })
-
-  document.querySelectorAll('.copy-btn').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const button = e.currentTarget as HTMLButtonElement
-      const code = button.dataset.code || ''
-      const original = button.textContent
-      
-      try {
-        await navigator.clipboard.writeText(code)
-        button.textContent = button.dataset.copied || original
-        setTimeout(() => {
-          button.textContent = button.dataset.copy || original
-        }, 2000)
-      } catch (err) {
-        console.error(err)
-      }
-    })
-  })
-
-  document.querySelectorAll('.source-toggle-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const button = e.currentTarget as HTMLButtonElement
-      const content = button.parentElement?.querySelector('.source-code-content')
-      const label = button.querySelector('span')
-      
-      if (content && label) {
-        const isOpen = content.classList.toggle('is-open')
-        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
-        label.textContent = isOpen ? button.dataset.hide || '' : button.dataset.show || ''
-      }
-    })
   })
 </script>
