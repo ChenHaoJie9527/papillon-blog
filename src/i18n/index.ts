@@ -24,6 +24,46 @@ export const translations = {
       loading: 'Loading...',
       error: 'Error',
       backToTop: 'Back to top',
+      skipToContent: 'Skip to content',
+      close: 'Close',
+      clear: 'Clear',
+    },
+    theme: {
+      select: 'Select theme',
+      searchPlaceholder: 'Filter themes',
+      noResults: 'No matching themes',
+    },
+    tags: {
+      showMore: 'Show more tags',
+      showLess: 'Show fewer tags',
+    },
+    components: {
+      showcase: 'Component gallery',
+      searchLabel: 'Search components',
+      searchPlaceholder: 'Search components...',
+      category: 'Category',
+      allCategories: 'All categories',
+      categoryUI: 'UI',
+      categoryLayout: 'Layout',
+      categoryForm: 'Form',
+      clearFilters: 'Clear filters',
+      noMatches: 'No components match these filters',
+      usage: 'Usage',
+      viewSource: 'View source',
+      hideSource: 'Hide source',
+      sourceCode: 'Source',
+      copy: 'Copy',
+      copied: 'Copied',
+    },
+    codeRunner: {
+      run: 'Run',
+      clear: 'Clear output',
+      running: 'Running',
+      output: 'Output',
+      console: 'Console',
+      returnValue: 'Return value',
+      noReturn: 'Finished with no return value',
+      error: 'Error',
     },
     // Footer
     footer: {
@@ -85,6 +125,46 @@ export const translations = {
       loading: 'Cargando...',
       error: 'Error',
       backToTop: 'Volver arriba',
+      skipToContent: 'Saltar al contenido',
+      close: 'Cerrar',
+      clear: 'Borrar',
+    },
+    theme: {
+      select: 'Elegir tema',
+      searchPlaceholder: 'Filtrar temas',
+      noResults: 'Ningún tema coincide',
+    },
+    tags: {
+      showMore: 'Mostrar más etiquetas',
+      showLess: 'Mostrar menos etiquetas',
+    },
+    components: {
+      showcase: 'Galería de componentes',
+      searchLabel: 'Buscar componentes',
+      searchPlaceholder: 'Buscar componentes...',
+      category: 'Categoría',
+      allCategories: 'Todas las categorías',
+      categoryUI: 'UI',
+      categoryLayout: 'Diseño',
+      categoryForm: 'Formulario',
+      clearFilters: 'Borrar filtros',
+      noMatches: 'Ningún componente coincide con estos filtros',
+      usage: 'Uso',
+      viewSource: 'Ver código',
+      hideSource: 'Ocultar código',
+      sourceCode: 'Código fuente',
+      copy: 'Copiar',
+      copied: 'Copiado',
+    },
+    codeRunner: {
+      run: 'Ejecutar',
+      clear: 'Borrar salida',
+      running: 'Ejecutando',
+      output: 'Salida',
+      console: 'Consola',
+      returnValue: 'Valor de retorno',
+      noReturn: 'Terminado sin valor de retorno',
+      error: 'Error',
     },
     // Footer
     footer: {
@@ -146,6 +226,46 @@ export const translations = {
       loading: '加载中...',
       error: '错误',
       backToTop: '返回顶部',
+      skipToContent: '跳到正文',
+      close: '关闭',
+      clear: '清除',
+    },
+    theme: {
+      select: '选择主题',
+      searchPlaceholder: '筛选主题',
+      noResults: '没有匹配的主题',
+    },
+    tags: {
+      showMore: '显示更多标签',
+      showLess: '收起标签',
+    },
+    components: {
+      showcase: '组件展示',
+      searchLabel: '搜索组件',
+      searchPlaceholder: '搜索组件...',
+      category: '分类',
+      allCategories: '所有分类',
+      categoryUI: 'UI',
+      categoryLayout: '布局',
+      categoryForm: '表单',
+      clearFilters: '清除筛选',
+      noMatches: '没有符合筛选条件的组件',
+      usage: '使用示例',
+      viewSource: '查看源码',
+      hideSource: '收起源码',
+      sourceCode: '组件源码',
+      copy: '复制',
+      copied: '已复制',
+    },
+    codeRunner: {
+      run: '运行代码',
+      clear: '清空输出',
+      running: '运行中',
+      output: '输出结果',
+      console: '控制台输出',
+      returnValue: '返回值',
+      noReturn: '代码执行完成（无返回值）',
+      error: '错误',
     },
     // Footer
     footer: {
@@ -237,4 +357,10 @@ export function getCurrentLocale(pathname: string): Locale {
   if (pathname.startsWith('/es')) return 'es'
   if (pathname.startsWith('/zh')) return 'zh'
   return 'zh' // default
+}
+
+export function getHtmlLang(locale: Locale): string {
+  if (locale === 'zh') return 'zh-CN'
+  if (locale === 'es') return 'es'
+  return 'en'
 }

@@ -7,9 +7,11 @@ import { t, getCurrentLocale } from "../i18n"
 
 interface Props {
   post: CollectionEntry<'posts'>
+  headingLevel?: 2 | 3
 }
 
-const { post } = Astro.props
+const { post, headingLevel = 2 } = Astro.props
+const HeadingTag = headingLevel === 3 ? 'h3' : 'h2'
 
 const { remarkPluginFrontmatter } = await render(post)
 const { minutesRead } = remarkPluginFrontmatter
@@ -26,9 +28,9 @@ const getLocalizedPath = (path: string) => {
 ---
 
 <article class="w-full py-5 my-4 border-accent/10">
-  <h1 class="mb-3 text-2xl text-[var(--theme-h1)] font-semibold">
+  <HeadingTag class="mb-3 text-2xl text-[var(--theme-h1)] font-semibold text-balance">
     <a href={getLocalizedPath(`/posts/${post.id}`)}># {post.data.title}</a>
-  </h1>
+  </HeadingTag>
   <div class="text-foreground/80 my-3">
     <time>{dateString(post.data.published)}</time>
     {
@@ -46,11 +48,11 @@ const getLocalizedPath = (path: string) => {
       )
     }
   </div>
-  {description && <p class="my-4 text-base/7 text-foreground">{description}</p>}
+  {description && <p class="my-4 text-base/7 text-foreground text-pretty">{description}</p>}
   {
     post.data.tags && (
       <div class="text-accent mb-6">
-        {post.data.tags.map((tag) => (
+        {post.data.tags.map((tag: string) => (
           <a
             class="underline mr-4 inline-block"
             href={getLocalizedPath(`/tags/${encodeURIComponent(tag)}`)}

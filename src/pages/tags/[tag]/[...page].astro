@@ -30,8 +30,6 @@ const { tag } = Astro.params
   <PostPreviewsWithYear posts={page.data} />
   <Pagination
     prevLink={page.url.prev ? encodeURI(page.url.prev) : undefined}
-    prevText="Newer Posts"
     nextLink={page.url.next ? encodeURI(page.url.next) : undefined}
-    nextText="Older Posts"
   />
 </Layout>

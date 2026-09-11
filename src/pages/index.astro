@@ -31,6 +31,9 @@ const currentLocale = "zh";
   title={t(currentLocale, 'home.welcome')}
   description={t(currentLocale, 'home.description')}
 >
+  <h1 class="text-2xl font-semibold text-[var(--theme-h1)] mt-6 mb-2 text-balance">
+    {t(currentLocale, 'home.welcome')}
+  </h1>
   {
     HomeContent && (
       <HomeBanner avatarImage={homeAvatarImage} githubCalendar={homeGithubCalendar}>
@@ -38,10 +41,12 @@ const currentLocale = "zh";
       </HomeBanner>
     )
   }
-  <BlockHeader>{t(currentLocale, 'nav.tags')}</BlockHeader>
+  <BlockHeader level={2}>{t(currentLocale, 'nav.tags')}</BlockHeader>
   <TagsSection posts={sortedPosts} />
-  <BlockHeader>{t(currentLocale, 'nav.latestPosts')}</BlockHeader>
-  {sortedPosts.slice(0, siteConfig.pageSize).map((post) => <PostPreview post={post} />)}
+  <BlockHeader level={2}>{t(currentLocale, 'nav.latestPosts')}</BlockHeader>
+  {sortedPosts.slice(0, siteConfig.pageSize).map((post) => (
+    <PostPreview post={post} headingLevel={3} />
+  ))}
   <Pagination nextLink="/posts" nextText={t(currentLocale, 'nav.archive')} />
 </Layout>
 

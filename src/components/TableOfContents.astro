@@ -2,6 +2,7 @@
 import type { MarkdownHeading } from 'astro'
 import TOCHeading from './TableOfContentsHeading.astro'
 import type { TocItem, TocOpts } from '@types'
+import { t, getCurrentLocale } from '../i18n'
 
 /** Inject a ToC entry as deep in the tree as its `depth` property requires. */
 function injectChild(items: TocItem[], item: TocItem): void {
@@ -34,8 +35,8 @@ interface Props {
 }
 
 const { headings } = Astro.props
-
 const toc = generateToc(headings)
+const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
 <details
@@ -44,7 +45,7 @@ const toc = generateToc(headings)
 >
   <summary
     class="list-none marker:hidden marker:content-[''] before:content-['>'] before:text-accent before:font-semibold before:absolute before:left-3 cursor-pointer"
-    >Table of Contents</summary
+    >{t(currentLocale, 'posts.tableOfContents')}</summary
   >
   <nav class="w-full text-sm">
     <ol class="mt-4 flex flex-col max-w-full">
@@ -59,8 +60,9 @@ const toc = generateToc(headings)
       e.preventDefault()
       const href = anchor.getAttribute('href')
       if (!href) return
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       document.querySelector(href)?.scrollIntoView({
-        behavior: 'smooth',
+        behavior: prefersReduced ? 'auto' : 'smooth',
       })
     })
   })

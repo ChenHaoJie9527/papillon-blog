@@ -1,46 +1,62 @@
 ---
-import '@pagefind/default-ui/css/ui.css'
 import { Icon } from 'astro-icon/components'
 import siteConfig from '../site.config'
+import { t, getCurrentLocale } from '../i18n'
 
 function kebabToTitleCase(str: string): string {
   return str
-    .split('-') // Split the string into words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-    .join(' ') // Join the words with a space
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
+
+const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
-<select-theme class="ms-auto" id="search">
+<select-theme class="ms-auto" id="theme-select">
   <button
-    class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md"
-    aria-keyshortcuts="Control+K Meta+K"
+    class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md min-h-10 min-w-10"
     data-open-modal
     disabled
+    type="button"
   >
     <Icon name="palette" class="size-6 text-accent" />
-    <span class="sr-only">Select Theme</span>
+    <span class="sr-only">{t(currentLocale, 'theme.select')}</span>
   </button>
   <dialog
-    aria-label="select-theme"
+    aria-label={t(currentLocale, 'theme.select')}
     class="text-foreground! bg-background max-h-5/6 max-w-5/6 border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-16 mb-auto rounded-xl"
   >
-    <div class="dialog-frame flex grow flex-col gap-4 px-10 py-1 max-w-full">
+    <div class="dialog-frame flex grow flex-col gap-3 px-6 py-4 max-w-full min-w-[18rem]">
       <button
-        aria-roledescription="close"
-        class="cursor-pointer fixed top-2 right-2 rounded-full"
+        aria-label={t(currentLocale, 'common.close')}
+        class="cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
+        type="button"
       >
         <Icon name="circle-x" class="size-6 text-accent/50" />
       </button>
+      <label class="block pt-4">
+        <span class="sr-only">{t(currentLocale, 'theme.searchPlaceholder')}</span>
+        <input
+          id="theme-filter"
+          type="search"
+          autocomplete="off"
+          placeholder={t(currentLocale, 'theme.searchPlaceholder')}
+          class="w-full text-base bg-transparent text-foreground border border-accent/40 p-2.5 rounded-xl"
+        />
+      </label>
+      <p id="theme-empty" class="hidden text-sm text-foreground/70 px-2 py-3">
+        {t(currentLocale, 'theme.noResults')}
+      </p>
       <ul
         id="theme-change-list"
-        class="flex flex-col bg-background text-accent m-0 p-2 rounded-xl"
+        class="flex flex-col bg-background text-accent m-0 p-2 rounded-xl overflow-y-auto max-h-[60vh]"
       >
         {
           siteConfig.themes.include.map((theme) => (
-            <li>
-              <button class="w-full rounded-lg py-1 px-2" data-theme={theme}>
+            <li data-theme-label={kebabToTitleCase(theme).toLowerCase()}>
+              <button class="w-full rounded-lg py-2 px-2 text-left" data-theme={theme} type="button">
                 {kebabToTitleCase(theme)}
               </button>
             </li>
@@ -53,7 +69,8 @@ function kebabToTitleCase(str: string): string {
 
 <style>
   button.current-theme {
-    background-color: color-mix(in srgb, var(--theme-accent) 8%, transparent 92%);
+    background-color: color-mix(in srgb, var(--theme-accent) 16%, transparent 84%);
+    font-weight: 600;
   }
 </style>
 
@@ -63,6 +80,8 @@ function kebabToTitleCase(str: string): string {
     #dialog: HTMLDialogElement | null
     #dialogFrame: HTMLDivElement | null
     #openBtn: HTMLButtonElement | null
+    #filterInput: HTMLInputElement | null
+    #emptyMessage: HTMLParagraphElement | null
     #controller: AbortController
 
     constructor() {
@@ -71,46 +90,40 @@ function kebabToTitleCase(str: string): string {
       this.#closeBtn = this.querySelector<HTMLButtonElement>('button[data-close-modal]')
       this.#dialog = this.querySelector<HTMLDialogElement>('dialog')
       this.#dialogFrame = this.querySelector('.dialog-frame')
+      this.#filterInput = this.querySelector<HTMLInputElement>('#theme-filter')
+      this.#emptyMessage = this.querySelector<HTMLParagraphElement>('#theme-empty')
       this.#controller = new AbortController()
 
-      // Set up events
       if (this.#openBtn) {
         this.#openBtn.addEventListener('click', this.openModal)
         this.#openBtn.disabled = false
-      } else {
-        console.warn('Select theme button not found')
       }
 
       if (this.#closeBtn) {
         this.#closeBtn.addEventListener('click', this.closeModal)
-      } else {
-        console.warn('Close button not found')
       }
 
       if (this.#dialog) {
         this.#dialog.addEventListener('close', () => {
           window.removeEventListener('click', this.onWindowClick)
         })
-      } else {
-        console.warn('Dialog not found')
       }
 
-      let themeChangeButtons = this.querySelectorAll('#theme-change-list button')
-      themeChangeButtons?.forEach((button) => {
+      this.querySelectorAll('#theme-change-list button').forEach((button) => {
         button.addEventListener('click', (ev) => {
           ev.preventDefault()
-          let themeId = button.getAttribute('data-theme')
+          const themeId = button.getAttribute('data-theme')
           if (themeId) {
-            document.documentElement.setAttribute('data-theme', themeId)
-            localStorage.setItem('data-theme', themeId)
+            this.applyTheme(themeId)
             this.closeModal()
           }
         })
       })
+
+      this.#filterInput?.addEventListener('input', () => this.filterThemes())
     }
 
     connectedCallback() {
-      // window events, requires cleanup
       window.addEventListener('keydown', this.onWindowKeydown, {
         signal: this.#controller.signal,
       })
@@ -120,15 +133,40 @@ function kebabToTitleCase(str: string): string {
       this.#controller.abort()
     }
 
+    applyTheme(themeId: string) {
+      const root = document.documentElement
+      root.classList.add('theme-switching')
+      root.setAttribute('data-theme', themeId)
+      localStorage.setItem('data-theme', themeId)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          root.classList.remove('theme-switching')
+        })
+      })
+    }
+
+    filterThemes() {
+      const query = (this.#filterInput?.value || '').trim().toLowerCase()
+      const items = this.querySelectorAll('#theme-change-list li')
+      let visibleCount = 0
+      items.forEach((item) => {
+        const label = item.getAttribute('data-theme-label') || ''
+        const themeId = item.querySelector('button')?.getAttribute('data-theme') || ''
+        const isMatch = !query || label.includes(query) || themeId.includes(query)
+        ;(item as HTMLElement).hidden = !isMatch
+        if (isMatch) visibleCount += 1
+      })
+      this.#emptyMessage?.classList.toggle('hidden', visibleCount > 0)
+    }
+
     openModal = (event?: MouseEvent) => {
-      if (!this.#dialog) {
-        console.warn('Dialog not found')
-        return
-      }
+      if (!this.#dialog) return
       this.highlightCurrentTheme()
-      const body = document.querySelector('body')
-      body?.classList.add('overflow-hidden')
+      if (this.#filterInput) this.#filterInput.value = ''
+      this.filterThemes()
+      document.body.classList.add('overflow-hidden')
       this.#dialog.showModal()
+      this.#filterInput?.focus()
       event?.stopPropagation()
       window.addEventListener('click', this.onWindowClick, {
         signal: this.#controller.signal,
@@ -136,15 +174,12 @@ function kebabToTitleCase(str: string): string {
     }
 
     closeModal = () => {
-      const body = document.querySelector('body')
-      body?.classList.remove('overflow-hidden')
+      document.body.classList.remove('overflow-hidden')
       this.#dialog?.close()
     }
 
     onWindowClick = (event: MouseEvent) => {
-      // check if it's a link
       const isLink = 'href' in (event.target || {})
-      // make sure the click is either a link or outside of the dialog
       if (
         isLink ||
         (document.body.contains(event.target as Node) &&
@@ -155,35 +190,20 @@ function kebabToTitleCase(str: string): string {
     }
 
     onWindowKeydown = (e: KeyboardEvent) => {
-      if (!this.#dialog) {
-        console.warn('Dialog not found')
-        return
-      }
-      // check if it's the Control+K or ⌘+K shortcut
-      if ((e.metaKey === true || e.ctrlKey === true) && e.key === 'k') {
-        this.#dialog.open ? this.closeModal() : this.openModal()
-        e.preventDefault()
+      if (e.key === 'Escape' && this.#dialog?.open) {
+        this.closeModal()
       }
     }
 
     highlightCurrentTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme')
-      if (!currentTheme) {
-        console.warn('No theme set in data-theme attribute.')
-        return
-      }
-      const themeChangeListItems = this.querySelectorAll('#theme-change-list li')
-      themeChangeListItems?.forEach((listItem) => {
-        let button = listItem.querySelector('button')
-        if (!button) {
-          console.warn('No button found in theme change list item.')
-          return
-        }
-        if (button.getAttribute('data-theme') === currentTheme) {
-          button.classList.add('current-theme')
-        } else {
-          button.classList.remove('current-theme')
-        }
+      this.querySelectorAll('#theme-change-list li').forEach((listItem) => {
+        const button = listItem.querySelector('button')
+        if (!button) return
+        button.classList.toggle(
+          'current-theme',
+          button.getAttribute('data-theme') === currentTheme,
+        )
       })
     }
   }

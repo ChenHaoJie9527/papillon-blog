@@ -1,5 +1,14 @@
-<h1
-  class="text-accent text-2xl pb-3 pl-1 mb-2 mt-7 font-semibold border-b-4 border-double border-accent/30"
+---
+interface Props {
+  level?: 1 | 2
+}
+
+const { level = 1 } = Astro.props
+const Tag = level === 2 ? 'h2' : 'h1'
+---
+
+<Tag
+  class="text-accent text-2xl pb-3 pl-1 mb-2 mt-7 font-semibold border-b-4 border-double border-accent/30 text-balance"
 >
   <slot />
-</h1>
+</Tag>

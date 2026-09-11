@@ -6,6 +6,7 @@ import PostPreviewsWithYear from '@components/PostPreviewsWithYear.astro'
 import Pagination from '@components/Pagination.astro'
 import BlockHeader from '@components/BlockHeader.astro'
 import siteConfig from '../../site.config'
+import { t, getCurrentLocale } from '../../i18n'
 
 // Note: Pagination like '/', '/2', '/3' only works with spread param like [...page]
 export const getStaticPaths = (async ({ paginate }) => {
@@ -14,15 +15,14 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths
 
 const { page } = Astro.props
+const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
-<Layout>
-  <BlockHeader>Archive</BlockHeader>
+<Layout title={t(currentLocale, 'nav.archive')}>
+  <BlockHeader>{t(currentLocale, 'nav.archive')}</BlockHeader>
   <PostPreviewsWithYear posts={page.data} />
   <Pagination
     prevLink={page.url.prev ? page.url.prev : undefined}
-    prevText="Newer Posts"
     nextLink={page.url.next ? page.url.next : undefined}
-    nextText="Older Posts"
   />
 </Layout>

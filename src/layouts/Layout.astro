@@ -7,6 +7,7 @@ import SelectThemeLoader from '@components/SelectThemeLoader.astro'
 import siteConfig from '../site.config'
 import { pick, resolveThemeColorStyles } from '@utils'
 import crypto from 'crypto'
+import { t, getCurrentLocale, getHtmlLang } from '../i18n'
 
 interface Props {
   title?: string
@@ -16,6 +17,8 @@ interface Props {
 }
 
 const { title, description, tags, author } = Astro.props
+const currentLocale = getCurrentLocale(Astro.url.pathname)
+const htmlLang = getHtmlLang(currentLocale)
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '') // Remove trailing slash for consistency
 const pageType = Astro.url.pathname.startsWith('/posts') ? 'article' : 'website'
 const pageTitle = title ? `${title} - ${siteConfig.title}` : siteConfig.title
@@ -103,7 +106,7 @@ let generatedCss: string = cssLines.join('\n')
 
 <!doctype html>
 <html
-  lang="en"
+  lang={htmlLang}
   data-theme={defaultTheme}
   data-dark-theme={darkTheme}
   data-light-theme={lightTheme}
@@ -143,11 +146,12 @@ let generatedCss: string = cssLines.join('\n')
     {themeMode === 'select' && <SelectThemeLoader />}
   </head>
   <body class="w-full h-full m-0 bg-background text-foreground">
+    <a class="skip-link" href="#main-content">{t(currentLocale, 'common.skipToContent')}</a>
     <div
       class="flex flex-col max-w-3xl min-h-screen border-accent/10 m-auto py-5 px-4 sm:px-6 md:p-10"
     >
       <Header />
-      <main class="flex flex-col">
+      <main id="main-content" tabindex="-1" class="flex flex-col outline-none">
         <slot />
       </main>
       <Footer />

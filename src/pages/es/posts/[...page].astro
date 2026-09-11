@@ -5,6 +5,7 @@ import PostPreviewsWithYear from '@components/PostPreviewsWithYear.astro'
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 import Pagination from '@components/Pagination.astro'
+import BlockHeader from '@components/BlockHeader.astro'
 import siteConfig from '../../../site.config'
 import { t } from '../../../i18n'
 
@@ -28,11 +29,10 @@ const nextUrl = page.url.next ? `/es${page.url.next}` : undefined
   title={t(currentLocale, 'nav.archive')}
   description={t(currentLocale, 'home.viewAllPosts')}
 >
+  <BlockHeader>{t(currentLocale, 'nav.archive')}</BlockHeader>
   <PostPreviewsWithYear posts={page.data} />
   <Pagination 
     prevLink={prevUrl} 
     nextLink={nextUrl}
-    prevText={t(currentLocale, 'nav.previous')}
-    nextText={t(currentLocale, 'nav.next')}
   />
 </Layout>

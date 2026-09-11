@@ -1,11 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { t, getCurrentLocale } from '../i18n'
 
 interface Props {
   posts: CollectionEntry<'posts'>[]
+  limit?: number
 }
 
-const { posts } = Astro.props
+const { posts, limit = 10 } = Astro.props
+const currentLocale = getCurrentLocale(Astro.url.pathname)
 const tags = new Set<string>([...posts.flatMap((post) => post.data.tags || [])])
 
 const tagsWithCount = Array.from(tags)
@@ -14,22 +17,55 @@ const tagsWithCount = Array.from(tags)
     return { tag, count }
   })
   .sort((a, b) => b.count - a.count)
+
+const hasExtraTags = tagsWithCount.length > limit
 ---
 
-<ul class="flex flex-wrap gap-x-3 gap-y-4 my-5">
+<div data-tags-section>
+  <ul class="flex flex-wrap gap-x-3 gap-y-4 my-5">
+    {
+      tagsWithCount.map(({ tag, count }, index) => (
+        <li class:list={[index >= limit && 'extra-tag hidden']}>
+          <a
+            href={`/tags/${encodeURIComponent(tag)}`}
+            class="flex gap-2.5 py-2 pl-4 pr-3 bg-accent/7 rounded-3xl"
+          >
+            {tag}
+            <span class="rounded-full bg-foreground/7 text-primary px-2 py-1 text-xs font-semibold">
+              {count}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
   {
-    tagsWithCount.map(({ tag, count }) => (
-      <li>
-        <a
-          href={`/tags/${encodeURIComponent(tag)}`}
-          class="flex gap-2.5 py-2 pl-4 pr-3 bg-accent/7 rounded-3xl"
-        >
-          {tag}
-          <span class="rounded-full bg-foreground/7 text-primary px-2 py-1 text-xs font-semibold">
-            {count}
-          </span>
-        </a>
-      </li>
-    ))
+    hasExtraTags && (
+      <button
+        type="button"
+        class="tags-toggle text-sm text-accent underline underline-offset-4"
+        data-expanded="false"
+        data-more={t(currentLocale, 'tags.showMore')}
+        data-less={t(currentLocale, 'tags.showLess')}
+      >
+        {t(currentLocale, 'tags.showMore')}
+      </button>
+    )
   }
-</ul>
+</div>
+
+<script>
+  document.querySelectorAll('[data-tags-section]').forEach((section) => {
+    const toggle = section.querySelector<HTMLButtonElement>('.tags-toggle')
+    if (!toggle) return
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.dataset.expanded === 'true'
+      const next = !expanded
+      toggle.dataset.expanded = String(next)
+      toggle.textContent = next ? toggle.dataset.less || '' : toggle.dataset.more || ''
+      section.querySelectorAll('.extra-tag').forEach((item) => {
+        item.classList.toggle('hidden', !next)
+      })
+    })
+  })
+</script>

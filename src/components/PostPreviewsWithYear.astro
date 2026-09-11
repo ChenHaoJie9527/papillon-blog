@@ -6,9 +6,10 @@ interface Props {
   posts: CollectionEntry<'posts'>[]
   yearMarkers?: boolean
   class?: string
+  headingLevel?: 2 | 3
 }
 
-const { posts, yearMarkers, class: className } = Astro.props
+const { posts, yearMarkers, class: className, headingLevel = 2 } = Astro.props
 let currentYear = 0
 ---
 
@@ -23,11 +24,11 @@ let currentYear = 0
             <div class="text-2xl pb-3 my-7 text-foreground/50 border-b-4 border-dotted border-foreground/20">
               {yearPublished}
             </div>
-            <PostPreview post={post} />
+            <PostPreview post={post} headingLevel={headingLevel} />
           </>
         )
       }
-      return <PostPreview post={post} />
+      return <PostPreview post={post} headingLevel={headingLevel} />
     })
   }
 </div>
