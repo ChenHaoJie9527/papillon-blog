@@ -128,8 +128,23 @@ a.button {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  a.button,
+  .press-scale {
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
   a.button {
-    @apply transition-colors;
+    transition-property: color, background-color, border-color, scale;
+  }
+
+  .press-scale {
+    transition-property: scale, color, background-color;
+  }
+
+  a.button:active,
+  .press-scale:active {
+    scale: 0.96;
   }
 }
 
@@ -142,6 +157,19 @@ article img {
 
   &[pixelated='true'] {
     image-rendering: pixelated;
+  }
+}
+
+article img,
+.img-outline {
+  outline: 1px solid oklch(0 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+@supports (color: oklch(from red l c h)) {
+  article img,
+  .img-outline {
+    outline-color: oklch(from var(--theme-background) clamp(0, round(1 - l), 1) 0 0 / 0.1);
   }
 }
 

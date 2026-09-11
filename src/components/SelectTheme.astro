@@ -14,7 +14,7 @@ function kebabToTitleCase(str: string): string {
 
 <select-theme class="ms-auto" id="theme-select">
   <button
-    class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md min-h-10 min-w-10"
+    class="press-scale hover:text-accent flex cursor-pointer items-center justify-center rounded-md min-h-10 min-w-10"
     data-open-modal
     disabled
     type="button"
@@ -55,7 +55,7 @@ function kebabToTitleCase(str: string): string {
         {
           siteConfig.themes.include.map((theme) => (
             <li data-theme-label={kebabToTitleCase(theme).toLowerCase()}>
-              <button class="w-full rounded-lg py-2 px-2 text-left" data-theme={theme} type="button">
+              <button class="w-full rounded-sm py-2 px-2 text-left" data-theme={theme} type="button">
                 {kebabToTitleCase(theme)}
               </button>
             </li>
@@ -137,6 +137,7 @@ function kebabToTitleCase(str: string): string {
       root.classList.add('theme-switching')
       root.setAttribute('data-theme', themeId)
       localStorage.setItem('data-theme', themeId)
+      void document.body.offsetHeight
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           root.classList.remove('theme-switching')
