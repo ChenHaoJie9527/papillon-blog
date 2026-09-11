@@ -2,7 +2,7 @@
 import type { MarkdownHeading } from 'astro'
 import TOCHeading from './TableOfContentsHeading.astro'
 import type { TocItem, TocOpts } from '@types'
-import { t, getCurrentLocale } from '../i18n'
+import { t } from '../i18n'
 
 /** Inject a ToC entry as deep in the tree as its `depth` property requires. */
 function injectChild(items: TocItem[], item: TocItem): void {
@@ -36,7 +36,6 @@ interface Props {
 
 const { headings } = Astro.props
 const toc = generateToc(headings)
-const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
 <details
@@ -45,7 +44,7 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
 >
   <summary
     class="list-none marker:hidden marker:content-[''] before:content-['>'] before:text-accent before:font-semibold before:absolute before:left-3 cursor-pointer"
-    >{t(currentLocale, 'posts.tableOfContents')}</summary
+    >{t('posts.tableOfContents')}</summary
   >
   <nav class="w-full text-sm">
     <ol class="mt-4 flex flex-col max-w-full">

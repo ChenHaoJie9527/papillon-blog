@@ -1,19 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { getCurrentLocale, t, type Locale } from "../i18n";
+import { useState } from "react";
+import { t } from "../i18n";
 
 interface CodeRunnerProps {
 	code: string;
 }
 
-function getLocale(): Locale {
-	if (typeof window === "undefined") return "zh";
-	return getCurrentLocale(window.location.pathname);
-}
-
 export default function CodeRunner({ code }: CodeRunnerProps) {
-	const locale = useMemo(() => getLocale(), []);
 	const [output, setOutput] = useState<string>("");
 	const [error, setError] = useState<string>("");
 	const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
@@ -47,7 +41,7 @@ export default function CodeRunner({ code }: CodeRunnerProps) {
 			if (result !== undefined) {
 				setOutput(JSON.stringify(result, null, 2));
 			} else {
-				setOutput(t(locale, "codeRunner.noReturn"));
+				setOutput(t("codeRunner.noReturn"));
 			}
 		} catch (err) {
 			setError(err instanceof Error ? err.message : String(err));
@@ -74,14 +68,14 @@ export default function CodeRunner({ code }: CodeRunnerProps) {
 					disabled={running}
 					className="px-3 py-2 text-sm bg-accent text-background rounded-xl hover:bg-accent/90 disabled:opacity-60"
 				>
-					{running ? t(locale, "codeRunner.running") : t(locale, "codeRunner.run")}
+					{running ? t("codeRunner.running") : t("codeRunner.run")}
 				</button>
 				<button
 					type="button"
 					onClick={clearOutput}
 					className="px-3 py-2 text-sm border-2 border-accent/40 text-accent rounded-xl hover:bg-accent/10"
 				>
-					{t(locale, "codeRunner.clear")}
+					{t("codeRunner.clear")}
 				</button>
 			</div>
 
@@ -94,11 +88,11 @@ export default function CodeRunner({ code }: CodeRunnerProps) {
 			<div className="mt-3" aria-live="polite">
 				{hasOutput && (
 					<div className="space-y-2">
-						<h5 className="font-semibold">{t(locale, "codeRunner.output")}</h5>
+						<h5 className="font-semibold">{t("codeRunner.output")}</h5>
 
 						{consoleOutput.length > 0 && (
 							<div className="bg-blue/10 border border-blue/40 p-3 rounded-xl text-foreground mb-3">
-								<div className="font-semibold mb-2">{t(locale, "codeRunner.console")}</div>
+								<div className="font-semibold mb-2">{t("codeRunner.console")}</div>
 								{consoleOutput.map((log, index) => (
 									<div
 										key={`console-${index}-${log}`}
@@ -112,11 +106,11 @@ export default function CodeRunner({ code }: CodeRunnerProps) {
 
 						{error ? (
 							<div className="bg-red/10 border border-red/40 p-3 rounded-xl text-red">
-								<strong>{t(locale, "codeRunner.error")}：</strong> {error}
+								<strong>{t("codeRunner.error")}：</strong> {error}
 							</div>
-						) : output && output !== t(locale, "codeRunner.noReturn") ? (
+						) : output && output !== t("codeRunner.noReturn") ? (
 							<div className="bg-green/10 border border-green/40 p-3 rounded-xl text-foreground">
-								<div className="font-semibold mb-2">{t(locale, "codeRunner.returnValue")}</div>
+								<div className="font-semibold mb-2">{t("codeRunner.returnValue")}</div>
 								<pre className="whitespace-pre-wrap font-mono text-sm">{output}</pre>
 							</div>
 						) : output ? (

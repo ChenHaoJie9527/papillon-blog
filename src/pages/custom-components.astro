@@ -34,45 +34,44 @@ const componentsData: ComponentsData = await import(
 
 const { components } = componentsData;
 const categories = [...new Set(components.map((component) => component.category))];
-const currentLocale = "zh";
 
 const categoryLabel = (category: string) => {
   const key = `components.category${category}`;
-  const translated = t(currentLocale, key);
+  const translated = t(key);
   return translated === key ? category : translated;
 };
 ---
 
 <Layout 
-title={t(currentLocale, 'nav.components')}
-description={t(currentLocale, 'nav.components')}
+title={t('nav.components')}
+description={t('nav.components')}
 >
-    <BlockHeader>{t(currentLocale, 'components.showcase')}</BlockHeader>
+    <BlockHeader>{t('components.showcase')}</BlockHeader>
     <div class="mb-8 p-4 bg-accent/5 rounded-xl border border-accent/10">
         <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end justify-between">
         <div class="flex-1 max-w-md">
             <label for="search-input" class="block text-sm font-medium text-accent mb-2">
-              {t(currentLocale, 'components.searchLabel')}
+              {t('components.searchLabel')}
             </label>
             <input 
             type="search"
             id="search-input"
             name="component-search"
             autocomplete="off"
-            placeholder={t(currentLocale, 'components.searchPlaceholder')}
+            placeholder={t('components.searchPlaceholder')}
             class="w-full text-base px-4 py-2 bg-background border border-accent rounded-lg"
             />
         </div>
         <div class="flex gap-2 items-end">
             <div>
               <label for="category-filter" class="block text-sm font-medium text-accent mb-2">
-                {t(currentLocale, 'components.category')}
+                {t('components.category')}
               </label>
               <select
                 id="category-filter"
                 class="px-3 py-2 text-base text-accent bg-background border border-accent rounded-lg"
               >
-                <option value="">{t(currentLocale, 'components.allCategories')}</option>
+                <option value="">{t('components.allCategories')}</option>
                 {categories.map((category) => (
                   <option value={category}>{categoryLabel(category)}</option>
                 ))}
@@ -83,13 +82,13 @@ description={t(currentLocale, 'nav.components')}
               type="button"
               class="px-4 py-2 border-2 border-accent/40 text-accent rounded-lg hover:bg-accent/10"
             >
-                {t(currentLocale, 'components.clearFilters')}
+                {t('components.clearFilters')}
             </button>
         </div>
         </div>
     </div>
     <p id="components-empty" class="hidden text-foreground/80 mb-6" role="status">
-      {t(currentLocale, 'components.noMatches')}
+      {t('components.noMatches')}
     </p>
   <div class="grid grid-cols-1 gap-6" id="components-grid">
     {components.map((component) => (
@@ -141,15 +140,15 @@ description={t(currentLocale, 'nav.components')}
         <div class="p-4">
           <div class="mb-4">
             <div class="flex items-center justify-between mb-3">
-              <span class="text-sm font-medium text-accent">{t(currentLocale, 'components.usage')}</span>
+              <span class="text-sm font-medium text-accent">{t('components.usage')}</span>
               <button 
                 class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
                 data-code={component.usageCode}
-                data-copy={t(currentLocale, 'components.copy')}
-                data-copied={t(currentLocale, 'components.copied')}
+                data-copy={t('components.copy')}
+                data-copied={t('components.copied')}
                 type="button"
               >
-                {t(currentLocale, 'components.copy')}
+                {t('components.copy')}
               </button>
             </div>
             <div class="code-block text-xs bg-accent/5 border border-accent rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
@@ -161,11 +160,11 @@ description={t(currentLocale, 'nav.components')}
             <button 
               class="source-toggle-btn w-full flex items-center justify-between p-3 bg-accent/5 border border-accent/10 rounded-lg hover:bg-accent/10"
               data-component-id={component.id}
-              data-show={t(currentLocale, 'components.viewSource')}
-              data-hide={t(currentLocale, 'components.hideSource')}
+              data-show={t('components.viewSource')}
+              data-hide={t('components.hideSource')}
               type="button"
             >
-              <span class="text-sm font-medium text-accent">{t(currentLocale, 'components.viewSource')}</span>
+              <span class="text-sm font-medium text-accent">{t('components.viewSource')}</span>
               <svg class="toggle-icon w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -173,15 +172,15 @@ description={t(currentLocale, 'nav.components')}
             
             <div class="source-code-content hidden mt-3">
               <div class="flex items-center justify-between mb-3">
-                <span class="text-sm font-medium text-accent">{t(currentLocale, 'components.sourceCode')}</span>
+                <span class="text-sm font-medium text-accent">{t('components.sourceCode')}</span>
                 <button 
                   class="copy-btn text-xs px-2 py-1 bg-accent/10 text-accent rounded hover:bg-accent/20"
                   data-code={component.sourceCode}
-                  data-copy={t(currentLocale, 'components.copy')}
-                  data-copied={t(currentLocale, 'components.copied')}
+                  data-copy={t('components.copy')}
+                  data-copied={t('components.copied')}
                   type="button"
                 >
-                  {t(currentLocale, 'components.copy')}
+                  {t('components.copy')}
                 </button>
               </div>
                 <div class="code-block text-xs bg-accent/5 border border-accent rounded-lg overflow-x-auto max-h-96 overflow-y-auto">

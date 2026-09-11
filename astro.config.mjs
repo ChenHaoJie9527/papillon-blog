@@ -30,6 +30,10 @@ export default defineConfig({
   site: siteConfig.site,
   trailingSlash: 'ignore',
   prefetch: true,
+  redirects: {
+    '/en': '/',
+    '/es': '/',
+  },
   markdown: {
     remarkPlugins: [
       [remarkDescription, { maxChars: 200 }],
@@ -71,16 +75,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
-    sitemap({
-      i18n: {
-        defaultLocale: "zh",
-        locales: {
-          zh: "zh-CN",
-          es: "es-ES",
-          en: "en-US"
-        }
-      }
-    }),
+    sitemap(),
     expressiveCode({
       themes: siteConfig.themes.include,
       useDarkModeMediaQuery: false,
@@ -96,12 +91,5 @@ export default defineConfig({
   ],
   experimental: {
     contentIntellisense: true,
-  },
-  i18n: {
-    locales: ["zh", "en", "es"],
-    defaultLocale: "zh",
-    routing: {
-      prefixDefaultLocale: false,
-    }
   },
 })

@@ -1,14 +1,6 @@
 ---
 import siteConfig from '../site.config'
 
-// 添加语言支持
-interface Props {
-  locale?: string
-}
-
-const { locale = 'zh' } = Astro.props
-
-// This will be localhost during development, site URL in prod
 const origin = Astro.url.origin
 const giscusConfig = siteConfig.giscus
 if (!giscusConfig) {
@@ -19,15 +11,6 @@ const repoId = giscusConfig.repoId
 const category = giscusConfig.category
 const categoryId = giscusConfig.categoryId
 const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
-
-// Giscus语言映射
-const giscusLangMap: { [key: string]: string } = {
-  'en': 'en',
-  'es': 'es', 
-  'zh': 'zh-CN'
-}
-
-const giscusLang = giscusLangMap[locale] || 'zh-CN'
 ---
 
 <div
@@ -38,7 +21,7 @@ const giscusLang = giscusLangMap[locale] || 'zh-CN'
   data-category={category}
   data-category-id={categoryId}
   data-reactions-enabled={reactionsEnabled}
-  data-giscus-lang={giscusLang}
+  data-giscus-lang="zh-CN"
 >
 </div>
 <script>

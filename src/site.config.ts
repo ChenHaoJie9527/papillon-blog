@@ -23,11 +23,11 @@ const config: SiteConfig = {
   // 导航链接，显示在页眉中。
   navLinks: [
     {
-      name: 'Home',
+      name: '首页',
       url: '/',
     },
     {
-      name: 'Archive',
+      name: '归档',
       url: '/posts',
     },
     {
@@ -36,7 +36,7 @@ const config: SiteConfig = {
       external: true,
     },
     {
-      name: 'Components',
+      name: '组件',
       url: '/custom-components',
     },
   ],

@@ -3,7 +3,7 @@ import { dateString } from '@utils'
 import { Icon } from 'astro-icon/components'
 import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
-import { t, getCurrentLocale } from "../i18n"
+import { t } from "../i18n"
 
 interface Props {
   post: CollectionEntry<'posts'>
@@ -16,20 +16,11 @@ const HeadingTag = headingLevel === 3 ? 'h3' : 'h2'
 const { remarkPluginFrontmatter } = await render(post)
 const { minutesRead } = remarkPluginFrontmatter
 const description = remarkPluginFrontmatter.description || post.data.description
-
-const currentLocale = getCurrentLocale(Astro.url.pathname);
-
-// 根据当前语言生成正确的链接前缀
-const getLocalizedPath = (path: string) => {
-  if (currentLocale === 'en') return `/en${path}`
-  if (currentLocale === 'es') return `/es${path}`
-  return path // 默认中文不加前缀
-}
 ---
 
 <article class="w-full py-5 my-4 border-accent/10">
   <HeadingTag class="mb-3 text-2xl text-[var(--theme-h1)] font-semibold text-balance">
-    <a href={getLocalizedPath(`/posts/${post.id}`)}># {post.data.title}</a>
+    <a href={`/posts/${post.id}`}># {post.data.title}</a>
   </HeadingTag>
   <div class="text-foreground/80 my-3">
     <time>{dateString(post.data.published)}</time>
@@ -55,7 +46,7 @@ const getLocalizedPath = (path: string) => {
         {post.data.tags.map((tag: string) => (
           <a
             class="underline mr-4 inline-block"
-            href={getLocalizedPath(`/tags/${encodeURIComponent(tag)}`)}
+            href={`/tags/${encodeURIComponent(tag)}`}
           >
             #{tag}
           </a>
@@ -64,8 +55,8 @@ const getLocalizedPath = (path: string) => {
     )
   }
   <div>
-    <a class="button flex items-center" href={getLocalizedPath(`/posts/${post.id}`)}>
-      {t(currentLocale, "common.readMore")}
+    <a class="button flex items-center" href={`/posts/${post.id}`}>
+      {t("common.readMore")}
       <Icon name="chevrons-right" class="size-5 ml-2" />
     </a>
   </div>

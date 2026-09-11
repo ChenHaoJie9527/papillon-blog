@@ -1,9 +1,7 @@
 ---
 import '@pagefind/default-ui/css/ui.css'
 import { Icon } from 'astro-icon/components'
-import { t, getCurrentLocale } from '../i18n'
-
-const currentLocale = getCurrentLocale(Astro.url.pathname)
+import { t } from '../i18n'
 ---
 
 <site-search class="ms-auto" id="search">
@@ -14,17 +12,17 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
     disabled
   >
     <Icon name="search" class="size-6 text-accent" />
-    <span class="sr-only">{t(currentLocale, 'common.search')}</span>
+    <span class="sr-only">{t('common.search')}</span>
   </button>
   <dialog
-    aria-label={t(currentLocale, 'common.search')}
+    aria-label={t('common.search')}
     class="text-foreground! bg-background max-h-5/6 min-h-48 w-7/8 sm:w-5/6 max-w-xl border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-10 sm:mt-16 mb-auto rounded-xl"
   >
     <div class="dialog-frame flex grow flex-col gap-4 p-6 pt-6 max-w-full">
       <button
         class="cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
-        aria-label={t(currentLocale, 'common.close')}
+        aria-label={t('common.close')}
         type="button"
       >
         <Icon name="circle-x" class="size-6 text-accent/50" />
@@ -33,8 +31,8 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
         import.meta.env.DEV ? (
           <div class="mx-auto text-center">
             <p>
-              Search is only available in production builds. <br />
-              Try building and previewing the site to test it out locally.
+              Search 仅在生产构建中可用。<br />
+              请先构建并预览站点后再测试搜索。
             </p>
           </div>
         ) : (

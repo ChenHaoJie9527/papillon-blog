@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import { t, getCurrentLocale } from '../i18n'
+import { t } from '../i18n'
 
 interface Props {
   posts: CollectionEntry<'posts'>[]
@@ -8,7 +8,6 @@ interface Props {
 }
 
 const { posts, limit = 10 } = Astro.props
-const currentLocale = getCurrentLocale(Astro.url.pathname)
 const tags = new Set<string>([...posts.flatMap((post) => post.data.tags || [])])
 
 const tagsWithCount = Array.from(tags)
@@ -45,10 +44,10 @@ const hasExtraTags = tagsWithCount.length > limit
         type="button"
         class="tags-toggle text-sm text-accent underline underline-offset-4"
         data-expanded="false"
-        data-more={t(currentLocale, 'tags.showMore')}
-        data-less={t(currentLocale, 'tags.showLess')}
+        data-more={t('tags.showMore')}
+        data-less={t('tags.showLess')}
       >
-        {t(currentLocale, 'tags.showMore')}
+        {t('tags.showMore')}
       </button>
     )
   }

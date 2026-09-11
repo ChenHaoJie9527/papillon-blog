@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from 'astro'
 import Layout from '@layouts/Layout.astro'
 import { dateString, getSortedPosts } from '@utils'
-import { t, getCurrentLocale } from '../../i18n'
+import { t } from '../../i18n'
 import PostPreview from '@components/PostPreview.astro'
 import DividerText from '@components/DividerText.astro'
 import { getCollection, render } from 'astro:content'
@@ -39,7 +39,6 @@ if (addendum.length > 0) {
   addendumAvatarImage = addendumEntry.data.avatarImage
 }
 
-const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
 <Layout
@@ -100,14 +99,14 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
       </PostAddendum>
     )
   }
-  {(prev || next) && <DividerText text={t(currentLocale, 'posts.relatedPosts')} />}
+  {(prev || next) && <DividerText text={t('posts.relatedPosts')} />}
   {prev && <PostPreview post={prev} />}
   {next && <PostPreview post={next} />}
   {
     siteConfig.giscus && (
       <>
-        <DividerText text={t(currentLocale, 'posts.comments')} />
-        <GiscusLoader locale={currentLocale} />
+        <DividerText text={t('posts.comments')} />
+        <GiscusLoader />
       </>
     )
   }

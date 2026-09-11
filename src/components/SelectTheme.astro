@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
 import siteConfig from '../site.config'
-import { t, getCurrentLocale } from '../i18n'
+import { t } from '../i18n'
 
 function kebabToTitleCase(str: string): string {
   return str
@@ -10,7 +10,6 @@ function kebabToTitleCase(str: string): string {
     .join(' ')
 }
 
-const currentLocale = getCurrentLocale(Astro.url.pathname)
 ---
 
 <select-theme class="ms-auto" id="theme-select">
@@ -21,15 +20,15 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
     type="button"
   >
     <Icon name="palette" class="size-6 text-accent" />
-    <span class="sr-only">{t(currentLocale, 'theme.select')}</span>
+    <span class="sr-only">{t('theme.select')}</span>
   </button>
   <dialog
-    aria-label={t(currentLocale, 'theme.select')}
+    aria-label={t('theme.select')}
     class="text-foreground! bg-background max-h-5/6 max-w-5/6 border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-16 mb-auto rounded-xl"
   >
     <div class="dialog-frame flex grow flex-col gap-3 px-6 py-4 max-w-full min-w-[18rem]">
       <button
-        aria-label={t(currentLocale, 'common.close')}
+        aria-label={t('common.close')}
         class="cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
         type="button"
@@ -37,17 +36,17 @@ const currentLocale = getCurrentLocale(Astro.url.pathname)
         <Icon name="circle-x" class="size-6 text-accent/50" />
       </button>
       <label class="block pt-4">
-        <span class="sr-only">{t(currentLocale, 'theme.searchPlaceholder')}</span>
+        <span class="sr-only">{t('theme.searchPlaceholder')}</span>
         <input
           id="theme-filter"
           type="search"
           autocomplete="off"
-          placeholder={t(currentLocale, 'theme.searchPlaceholder')}
+          placeholder={t('theme.searchPlaceholder')}
           class="w-full text-base bg-transparent text-foreground border border-accent/40 p-2.5 rounded-xl"
         />
       </label>
       <p id="theme-empty" class="hidden text-sm text-foreground/70 px-2 py-3">
-        {t(currentLocale, 'theme.noResults')}
+        {t('theme.noResults')}
       </p>
       <ul
         id="theme-change-list"
