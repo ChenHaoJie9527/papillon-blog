@@ -2,12 +2,11 @@
 import Layout from "@layouts/Layout.astro";
 import { getSortedPosts } from "@utils";
 import { getCollection, render } from "astro:content";
-import PostPreview from "@components/PostPreview.astro";
-import Pagination from "@components/Pagination.astro";
-import BlockHeader from "@components/BlockHeader.astro";
 import HomeBanner from "@components/HomeBanner.astro";
-import siteConfig from "../site.config";
 import TagsSection from "@components/TagsSection.astro";
+import PostLogItem from "@components/PostLogItem.astro";
+import Pagination from "@components/Pagination.astro";
+import siteConfig from "../site.config";
 import { t } from "../i18n";
 
 const home = await getCollection("home");
@@ -22,15 +21,13 @@ if (home.length > 0) {
 	homeGithubCalendar = homeEntry.data.githubCalendar;
 }
 const sortedPosts = await getSortedPosts();
+const dashboardPosts = sortedPosts.slice(0, siteConfig.pageSize);
 ---
 
 <Layout 
-  title={t('home.welcome')}
+  title={t('nav.dashboard')}
   description={t('home.description')}
 >
-  <h1 class="text-2xl font-semibold text-[var(--theme-h1)] mt-6 mb-2 text-balance">
-    {t('home.welcome')}
-  </h1>
   {
     HomeContent && (
       <HomeBanner avatarImage={homeAvatarImage} githubCalendar={homeGithubCalendar}>
@@ -38,12 +35,14 @@ const sortedPosts = await getSortedPosts();
       </HomeBanner>
     )
   }
-  <BlockHeader level={2}>{t('nav.tags')}</BlockHeader>
+  <h2 class="text-xs tracking-wide text-foreground/50 font-medium mb-2">{t('nav.tags')}</h2>
   <TagsSection posts={sortedPosts} />
-  <BlockHeader level={2}>{t('nav.latestPosts')}</BlockHeader>
-  {sortedPosts.slice(0, siteConfig.pageSize).map((post) => (
-    <PostPreview post={post} headingLevel={3} />
-  ))}
+  <h2 class="text-xs tracking-wide text-foreground/50 font-medium mt-6 mb-1">{t('nav.latestPosts')}</h2>
+  <div>
+    {dashboardPosts.map((post) => (
+      <PostLogItem post={post} />
+    ))}
+  </div>
   <Pagination nextLink="/posts" nextText={t('nav.archive')} />
 </Layout>
 

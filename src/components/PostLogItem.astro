@@ -1,0 +1,26 @@
+---
+import { dateString } from '@utils'
+import { render } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+}
+
+const { post } = Astro.props
+const { remarkPluginFrontmatter } = await render(post)
+const { minutesRead } = remarkPluginFrontmatter
+---
+
+<a
+  href={`/posts/${post.id}`}
+  class="grid grid-cols-1 gap-1 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:gap-3 sm:items-baseline py-2.5 border-b border-accent/15 no-underline hover:bg-accent/8"
+>
+  <time class="font-mono text-sm text-foreground/55">{dateString(post.data.published)}</time>
+  <span class="text-foreground truncate">{post.data.title}</span>
+  {
+    minutesRead && (
+      <span class="font-mono text-sm text-foreground/45 whitespace-nowrap">{minutesRead}</span>
+    )
+  }
+</a>

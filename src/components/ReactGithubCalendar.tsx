@@ -10,7 +10,7 @@ export default function ReactGithubCalendar({
 }) {
 	console.log("username==", username);
 	return (
-		<div className="github-calendar my-6">
+		<div className="github-calendar">
 			<GitHubCalendar
 				username={username}
 				theme={theme}
