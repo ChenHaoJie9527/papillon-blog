@@ -4,113 +4,73 @@ import LightDarkAutoButton from "./LightDarkAutoButton.astro";
 import Search from "./Search.astro";
 import SelectTheme from "./SelectTheme.astro";
 import NavLink from "./NavLink.astro";
+import { t } from "../i18n";
 
 const lightDarkAutoTheme = siteConfig.themes.mode === "light-dark-auto";
 const selectTheme =
 	siteConfig.themes.mode === "select" && siteConfig.themes.include.length > 1;
+const currentPath = Astro.url.pathname;
 ---
 
-<header>
-  <div class="relative flex items-center justify-between bg-accent/10 rounded-xl">
+<header class="site-header">
+  <div class="site-header-left">
+    <button
+      id="sidebar-toggle"
+      class="press-scale lg:hidden px-3 min-h-10 min-w-10 cursor-pointer border-2 rounded-xl bg-background text-accent"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-sidebar"
+      aria-label={t('sidebar.open')}
+    >
+      ☰
+    </button>
     <a
       id="logo"
       href="/"
-      class="block px-4 py-1.5 max-w-full no-underline items-center bg-accent text-background font-bold rounded-xl"
+      class="block px-4 py-1.5 max-w-full no-underline bg-accent text-background font-bold rounded-xl"
     >
       {siteConfig.title}
     </a>
-    <div class="flex items-center gap-3 sm:mr-3">
-      <Search />
-      {lightDarkAutoTheme && <LightDarkAutoButton />}
-      {selectTheme && <SelectTheme />}
-      <nav id="nav-mobile" aria-label="菜单" class="p-0 text-accent sm:hidden">
-        <button
-          id="nav-mobile-button"
-          class="press-scale px-3 min-h-10 min-w-10 cursor-pointer border-2 rounded-xl bg-background"
-          type="button"
-          aria-expanded="false"
-          aria-controls="nav-mobile-list"
-        >
-          ▾
-        </button>
-        <ul
-          id="nav-mobile-list"
-          class="absolute flex flex-col bg-background shadow text-accent border-2 m-0 p-2.5 top-11.5 left-auto right-0 z-50 rounded-xl"
-        >
-          {
-            siteConfig.navLinks.map((link) => (
-              <li class="p-1" aria-expanded="false">
-                <NavLink link={link} />
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </div>
   </div>
-  <nav aria-label="菜单" class="p-0 mt-4 ml-0.5 text-accent hidden sm:block">
-    <ul class="flex flex-row text-accent mb-2.5">
+
+  <nav aria-label="菜单" class="site-header-nav hidden md:block">
+    <ul class="flex flex-row items-center gap-0 text-accent m-0 p-0">
       {
-        siteConfig.navLinks.map((link) => (
-          <li class="mr-5" aria-expanded="true">
-            <NavLink link={link} />
+        siteConfig.navLinks.map((link, index) => (
+          <li class="flex items-center">
+            {index > 0 && <span class="mx-3 text-foreground/30" aria-hidden="true">|</span>}
+            <NavLink link={link} plain currentPath={currentPath} />
           </li>
         ))
       }
     </ul>
   </nav>
+
+  <div class="site-header-right">
+    <Search />
+    {lightDarkAutoTheme && <LightDarkAutoButton />}
+    {selectTheme && <SelectTheme />}
+  </div>
 </header>
 
-<style>
-  #nav-mobile-list {
-    opacity: 0;
-    transform: translateY(-12px);
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  #nav-mobile-list.is-open {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    #nav-mobile-list {
-      transition-property: opacity, transform, visibility;
-      transition-duration: 150ms;
-      transition-timing-function: ease-out;
-      transition-delay: 0ms, 0ms, 150ms;
-    }
-
-    #nav-mobile-list.is-open {
-      transition-delay: 0ms;
-    }
-  }
-</style>
-
 <script>
-  const navMobileButton = document.getElementById('nav-mobile-button')
-  const navMobileList = document.getElementById('nav-mobile-list')
-  const navMobileListItems = navMobileList?.querySelectorAll('li')
-  const toggleNavMobileMenu = (action: 'on' | 'off' | 'toggle') => {
-    const isOpen = navMobileList?.classList.contains('is-open') ?? false
-    let isNowOpen = false
-    if (action === 'on') {
-      isNowOpen = true
-    } else if (action === 'off') {
-      isNowOpen = false
-    } else {
-      isNowOpen = !isOpen
-    }
-    navMobileList?.classList.toggle('is-open', isNowOpen)
-    navMobileButton?.setAttribute('aria-expanded', isNowOpen ? 'true' : 'false')
-    navMobileListItems?.forEach((listItem) => {
-      listItem.setAttribute('aria-expanded', isNowOpen ? 'true' : 'false')
-    })
+  const toggle = document.getElementById('sidebar-toggle')
+  const sidebar = document.getElementById('site-sidebar')
+  const backdrop = document.getElementById('sidebar-backdrop')
+
+  const setOpen = (open: boolean) => {
+    sidebar?.classList.toggle('is-open', open)
+    if (backdrop) backdrop.hidden = !open
+    toggle?.setAttribute('aria-expanded', open ? 'true' : 'false')
+    document.body.classList.toggle('sidebar-open', open)
   }
-  navMobileButton?.addEventListener('click', (_ev) => {
-    toggleNavMobileMenu('toggle')
+
+  toggle?.addEventListener('click', () => {
+    const open = !sidebar?.classList.contains('is-open')
+    setOpen(open)
+  })
+  backdrop?.addEventListener('click', () => setOpen(false))
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false)
   })
 </script>

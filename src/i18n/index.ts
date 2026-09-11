@@ -1,12 +1,18 @@
 export const copy = {
   nav: {
     home: '首页',
+    dashboard: '仪表盘',
     archive: '归档',
     tags: '标签',
     latestPosts: '最新文章',
     next: '下一页',
     previous: '上一页',
     components: '组件',
+  },
+  sidebar: {
+    reserved: '其他内容',
+    open: '打开侧栏',
+    close: '关闭侧栏',
   },
   common: {
     readMore: '阅读更多',
@@ -51,6 +57,7 @@ export const copy = {
     sourceCode: '组件源码',
     copy: '复制',
     copied: '已复制',
+    backToList: '组件列表',
   },
   codeRunner: {
     run: '运行代码',

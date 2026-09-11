@@ -23,21 +23,17 @@ const config: SiteConfig = {
   // 导航链接，显示在页眉中。
   navLinks: [
     {
-      name: '首页',
-      url: '/',
-    },
-    {
       name: '归档',
       url: '/posts',
+    },
+    {
+      name: '组件',
+      url: '/custom-components',
     },
     {
       name: 'GitHub',
       url: 'https://github.com/ChenHaoJie9527/papillon-blog',
       external: true,
-    },
-    {
-      name: '组件',
-      url: '/custom-components',
     },
   ],
   // 网站的主题配置。

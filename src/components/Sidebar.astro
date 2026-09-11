@@ -1,0 +1,77 @@
+---
+import siteConfig from '../site.config'
+import { getSortedPosts } from '@utils'
+import { t } from '../i18n'
+
+const posts = (await getSortedPosts()).slice(0, 5)
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/'
+const onDashboard = pathname === '/'
+---
+
+<aside id="site-sidebar" class="site-sidebar">
+  <a
+    href="/"
+    class:list={[
+      'block px-3 py-2 rounded-lg no-underline text-sm font-semibold border',
+      onDashboard
+        ? 'bg-accent/15 border-accent text-accent'
+        : 'border-accent/20 text-foreground hover:bg-accent/10',
+    ]}
+    aria-current={onDashboard ? 'page' : undefined}
+  >
+    {t('nav.dashboard')}
+  </a>
+
+  <nav class="header-nav-mobile mt-4 md:hidden" aria-label="菜单">
+    <ul class="flex flex-col gap-2 m-0 p-0 text-sm text-accent">
+      {
+        siteConfig.navLinks.map((link) => (
+          <li>
+            <a
+              class="no-underline hover:underline"
+              href={link.url}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              target={link.external ? '_blank' : undefined}
+            >
+              {link.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <p class="mt-6 mb-2 text-xs tracking-wide text-foreground/50">
+    {t('nav.latestPosts')}
+  </p>
+  <ul class="m-0 p-0 flex flex-col gap-1">
+    {
+      posts.map((post) => (
+        <li>
+          <a
+            class:list={[
+              'block text-sm no-underline hover:underline truncate py-1',
+              pathname === `/posts/${post.id}` && 'text-accent',
+            ]}
+            href={`/posts/${post.id}`}
+          >
+            {post.data.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <hr class="my-5 border-accent/30" />
+
+  <p class="mb-2 text-xs tracking-wide text-foreground/50">
+    {t('sidebar.reserved')}
+  </p>
+  <div
+    class="flex-1 min-h-20 border border-dashed border-accent/20 rounded-lg"
+    aria-hidden="true"
+  >
+  </div>
+</aside>
+
+<div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>

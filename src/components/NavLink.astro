@@ -3,16 +3,28 @@ import type { NavLink } from '@types'
 
 interface Props {
   link: NavLink
+  plain?: boolean
+  currentPath?: string
 }
 
-const { link } = Astro.props
+const { link, plain = false, currentPath } = Astro.props
+const normalizedCurrent = (currentPath || '').replace(/\/$/, '') || '/'
+const normalizedHref = link.url.replace(/\/$/, '') || '/'
+const isActive =
+  !link.external &&
+  (normalizedCurrent === normalizedHref ||
+    (normalizedHref !== '/' && normalizedCurrent.startsWith(normalizedHref)))
 ---
 
 <a
-  class="underline"
+  class:list={[
+    plain ? 'no-underline hover:underline' : 'underline',
+    isActive && 'text-accent font-semibold',
+  ]}
   rel={link.external ? 'noopener noreferrer' : undefined}
   target={link.external ? '_blank' : undefined}
   href={link.url}
+  aria-current={isActive ? 'page' : undefined}
 >
   {link.name}
 </a>

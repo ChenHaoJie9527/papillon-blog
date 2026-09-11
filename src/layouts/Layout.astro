@@ -1,6 +1,7 @@
 ---
 import '/src/styles/global.css'
 import Header from '@components/Header.astro'
+import Sidebar from '@components/Sidebar.astro'
 import Footer from '@components/Footer.astro'
 import LightDarkAutoThemeLoader from '@components/LightDarkAutoThemeLoader.astro'
 import SelectThemeLoader from '@components/SelectThemeLoader.astro'
@@ -143,16 +144,19 @@ let generatedCss: string = cssLines.join('\n')
     {themeMode === 'light-dark-auto' && <LightDarkAutoThemeLoader />}
     {themeMode === 'select' && <SelectThemeLoader />}
   </head>
-  <body class="w-full h-full m-0 bg-background text-foreground">
+  <body class="w-full h-full m-0 bg-background text-foreground overflow-hidden">
     <a class="skip-link" href="#main-content">{t('common.skipToContent')}</a>
-    <div
-      class="flex flex-col max-w-3xl min-h-screen border-accent/10 m-auto py-5 px-4 sm:px-6 md:p-10"
-    >
+    <div class="site-shell">
       <Header />
-      <main id="main-content" tabindex="-1" class="flex flex-col outline-none">
-        <slot />
-      </main>
-      <Footer />
+      <div class="site-body">
+        <Sidebar />
+        <div class="site-main-column">
+          <main id="main-content" tabindex="-1" class="site-main outline-none">
+            <slot />
+          </main>
+          <Footer />
+        </div>
+      </div>
     </div>
   </body>
 </html>

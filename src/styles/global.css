@@ -99,6 +99,12 @@ html.theme-switching *::after {
   transform: translateY(0);
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   font-display: block;
@@ -593,6 +599,93 @@ article img,
 
   input[type='submit'] {
     @apply border-accent cursor-pointer;
+  }
+}
+
+.site-shell {
+  @apply flex flex-col h-dvh overflow-hidden bg-background;
+}
+
+.site-header {
+  @apply flex items-center justify-between px-3 py-2.5 sm:px-4 border-b border-accent/20 bg-accent/8;
+}
+
+.site-header-left,
+.site-header-right {
+  @apply flex items-center gap-2 min-w-0;
+}
+
+.site-header-right {
+  @apply justify-end gap-1;
+}
+
+.site-header-nav {
+  @apply justify-self-center;
+}
+
+.site-body {
+  @apply flex flex-1 min-h-0 overflow-hidden;
+}
+
+.site-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  width: 16.5rem;
+  flex-shrink: 0;
+  height: 100dvh;
+  flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  background: var(--theme-background);
+  padding: 1rem;
+  transform: translateX(-100%);
+}
+
+.site-sidebar.is-open {
+  transform: translateX(0);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--theme-background) 55%, transparent);
+}
+
+.site-main-column {
+  @apply flex flex-col flex-1 min-w-0 min-h-0 overflow-y-auto;
+}
+
+.site-main {
+  @apply flex flex-col flex-1 px-4 py-5 sm:px-6 md:px-8;
+}
+
+body.sidebar-open {
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .site-sidebar {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 1;
+    height: 100%;
+    min-height: 0;
+    transform: none;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar {
+    transition: transform 180ms ease-out;
   }
 }
 
