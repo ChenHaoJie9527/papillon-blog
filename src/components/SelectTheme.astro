@@ -2,17 +2,10 @@
 import { Icon } from 'astro-icon/components'
 import siteConfig from '../site.config'
 import { t } from '../i18n'
-
-function kebabToTitleCase(str: string): string {
-  return str
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-}
-
+import { getThemeLabel } from '../theme-labels'
 ---
 
-<select-theme class="ms-auto" id="theme-select">
+<select-theme class="inline-flex" id="theme-select">
   <button
     class="press-scale hover:text-accent flex cursor-pointer items-center justify-center rounded-md min-h-10 min-w-10"
     data-open-modal
@@ -24,18 +17,19 @@ function kebabToTitleCase(str: string): string {
   </button>
   <dialog
     aria-label={t('theme.select')}
-    class="site-dialog text-foreground! bg-background max-h-5/6 max-w-5/6 border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-16 mb-auto rounded-xl"
+    class="site-dialog text-foreground! bg-background w-[min(42rem,calc(100vw-2rem))] max-h-[min(40rem,85vh)] border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-10 sm:mt-16 mb-auto rounded-xl"
   >
-    <div class="dialog-frame flex grow flex-col gap-3 px-6 py-4 max-w-full min-w-[18rem]">
+    <div class="dialog-frame relative flex grow flex-col gap-3 px-6 py-4 w-full min-h-0">
       <button
         aria-label={t('common.close')}
-        class="press-scale cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
+        class="press-scale cursor-pointer absolute top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
         type="button"
       >
         <Icon name="circle-x" class="size-6 text-accent/50" />
       </button>
-      <label class="block pt-4">
+      <h2 class="text-lg font-semibold pt-2 pr-10">{t('theme.select')}</h2>
+      <label class="block">
         <span class="sr-only">{t('theme.searchPlaceholder')}</span>
         <input
           id="theme-filter"
@@ -50,16 +44,23 @@ function kebabToTitleCase(str: string): string {
       </p>
       <ul
         id="theme-change-list"
-        class="flex flex-col bg-background text-accent m-0 p-2 rounded-xl overflow-y-auto max-h-[60vh]"
+        class="grid grid-cols-1 sm:grid-cols-2 gap-1 bg-background text-accent m-0 p-1 rounded-xl overflow-y-auto min-h-0 max-h-[min(28rem,60vh)]"
       >
         {
-          siteConfig.themes.include.map((theme) => (
-            <li data-theme-label={kebabToTitleCase(theme).toLowerCase()}>
-              <button class="press-scale w-full rounded-sm py-2 px-2 text-left" data-theme={theme} type="button">
-                {kebabToTitleCase(theme)}
-              </button>
-            </li>
-          ))
+          siteConfig.themes.include.map((theme) => {
+            const label = getThemeLabel(theme)
+            return (
+              <li data-theme-label={`${label} ${theme}`.toLowerCase()}>
+                <button
+                  class="press-scale w-full rounded-sm py-2.5 px-3 text-left"
+                  data-theme={theme}
+                  type="button"
+                >
+                  {label}
+                </button>
+              </li>
+            )
+          })
         }
       </ul>
     </div>
