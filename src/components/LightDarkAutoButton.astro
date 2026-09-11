@@ -1,20 +1,56 @@
 ---
 import { Icon } from 'astro-icon/components'
 import siteConfig from '../site.config'
+import { t } from '../i18n'
 let lightTheme = siteConfig.themes.include[0]
 let darkTheme = siteConfig.themes.include[1]
 ---
 
 <button
   id="theme-change-button"
-  class="block ml-auto"
+  class="press-scale relative ml-auto flex min-h-10 min-w-10 items-center justify-center"
+  type="button"
   data-light={lightTheme}
   data-dark={darkTheme}
 >
-  <Icon name="sun" id="icon-light" class="hidden size-6 text-[var(--theme-accent)]" />
-  <Icon name="moon" id="icon-dark" class="hidden size-6 text-[var(--theme-accent)]" />
-  <Icon name="sun-moon" id="icon-auto" class="hidden size-6 text-[var(--theme-accent)]" />
+  <span class="sr-only">{t('theme.select')}</span>
+  <span class="theme-icon-wrap relative grid size-6 place-items-center">
+    <Icon name="sun" id="icon-light" class="theme-icon size-6 text-accent" />
+    <Icon name="moon" id="icon-dark" class="theme-icon size-6 text-accent" />
+    <Icon name="sun-moon" id="icon-auto" class="theme-icon size-6 text-accent" />
+  </span>
 </button>
+
+<style>
+  #theme-change-button :global(.theme-icon) {
+    grid-area: 1 / 1;
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+    pointer-events: none;
+  }
+
+  #theme-change-button :global(.theme-icon.is-active) {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #theme-change-button.icons-ready :global(.theme-icon) {
+      transition-property: opacity, filter, scale;
+      transition-duration: 300ms;
+      transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #theme-change-button :global(.theme-icon) {
+      scale: 1;
+      filter: blur(0);
+    }
+  }
+</style>
 
 <script>
   const themeButton = document.getElementById('theme-change-button')
@@ -24,25 +60,30 @@ let darkTheme = siteConfig.themes.include[1]
   const moonIcon = themeButton?.querySelector('#icon-dark')
   const sunMoonIcon = themeButton?.querySelector('#icon-auto')
   const updateIcons = (theme: string) => {
-    if (theme === lightThemeId) {
-      sunIcon?.classList.remove('hidden')
-      moonIcon?.classList.add('hidden')
-      sunMoonIcon?.classList.add('hidden')
-    } else if (theme === darkThemeId) {
-      sunIcon?.classList.add('hidden')
-      moonIcon?.classList.remove('hidden')
-      sunMoonIcon?.classList.add('hidden')
-    } else {
-      sunIcon?.classList.add('hidden')
-      moonIcon?.classList.add('hidden')
-      sunMoonIcon?.classList.remove('hidden')
-    }
+    sunIcon?.classList.toggle('is-active', theme === lightThemeId)
+    moonIcon?.classList.toggle('is-active', theme === darkThemeId)
+    sunMoonIcon?.classList.toggle(
+      'is-active',
+      theme !== lightThemeId && theme !== darkThemeId,
+    )
+  }
+  const applyTheme = (themeId: string) => {
+    const root = document.documentElement
+    root.classList.add('theme-switching')
+    root.setAttribute('data-theme', themeId)
+    void document.body.offsetHeight
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.remove('theme-switching')
+      })
+    })
   }
   let currentTheme = localStorage.getItem('data-theme') || 'auto'
   updateIcons(currentTheme)
+  requestAnimationFrame(() => {
+    themeButton?.classList.add('icons-ready')
+  })
   themeButton?.addEventListener('click', () => {
-    // Toggle between light, dark, and auto themes
-    // Only need to update localStorage because there should be a listener in Layout.astro
     const currentTheme = localStorage.getItem('data-theme') || darkThemeId
     let newTheme
     if (currentTheme === lightThemeId) {
@@ -57,12 +98,9 @@ let darkTheme = siteConfig.themes.include[1]
       localStorage.setItem('data-theme', newTheme)
       if (newTheme === 'auto') {
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)')
-        document.documentElement.setAttribute(
-          'data-theme',
-          prefersDarkScheme.matches ? darkThemeId || 'auto' : lightThemeId || 'auto',
-        )
+        applyTheme(prefersDarkScheme.matches ? darkThemeId || 'auto' : lightThemeId || 'auto')
       } else {
-        document.documentElement.setAttribute('data-theme', newTheme)
+        applyTheme(newTheme)
       }
     }
   })

@@ -90,12 +90,13 @@ html.theme-switching *::after {
   @apply bg-accent text-background rounded-xl font-semibold px-4 py-2;
   position: absolute;
   left: 1rem;
-  top: -100px;
+  top: 1rem;
   z-index: 100;
+  transform: translateY(-200%);
 }
 
 .skip-link:focus {
-  top: 1rem;
+  transform: translateY(0);
 }
 
 body {
@@ -145,6 +146,56 @@ a.button {
   a.button:active,
   .press-scale:active {
     scale: 0.96;
+  }
+
+  .skip-link {
+    transition-property: transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  .site-dialog {
+    opacity: 0;
+    transform: translateY(-12px);
+    filter: blur(4px);
+    transition-property: opacity, transform, filter, overlay, display;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+    transition-behavior: allow-discrete;
+  }
+
+  .site-dialog[open] {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition-duration: 300ms;
+  }
+
+  @starting-style {
+    .site-dialog[open] {
+      opacity: 0;
+      transform: translateY(12px);
+      filter: blur(4px);
+    }
+  }
+
+  .site-dialog::backdrop {
+    opacity: 0;
+    transition-property: opacity, overlay, display;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+    transition-behavior: allow-discrete;
+  }
+
+  .site-dialog[open]::backdrop {
+    opacity: 1;
+    transition-duration: 300ms;
+  }
+
+  @starting-style {
+    .site-dialog[open]::backdrop {
+      opacity: 0;
+    }
   }
 }
 
@@ -235,6 +286,30 @@ article img,
     }
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      .heading-anchor {
+        scale: 0.25;
+        filter: blur(4px);
+        transition-property: opacity, filter, scale;
+        transition-duration: 300ms;
+        transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+      }
+
+      &:hover .heading-anchor,
+      &:focus-within .heading-anchor,
+      .heading-anchor:focus-visible {
+        scale: 1;
+        filter: blur(0);
+      }
+    }
+  }
+
   h1,
   h2,
   h3,
@@ -248,7 +323,8 @@ article img,
     }
 
     .heading-anchor {
-      @apply opacity-0 inline-block text-accent/10 ml-3;
+      @apply inline-block text-accent ml-3;
+      opacity: 0;
     }
 
     &::before {
@@ -256,12 +332,9 @@ article img,
     }
 
     &:hover .heading-anchor,
-    &:focus-within .heading-anchor {
-      @apply !opacity-80;
-    }
-
+    &:focus-within .heading-anchor,
     .heading-anchor:focus-visible {
-      @apply !opacity-80;
+      opacity: 0.8;
     }
   }
 

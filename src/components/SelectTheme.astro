@@ -24,12 +24,12 @@ function kebabToTitleCase(str: string): string {
   </button>
   <dialog
     aria-label={t('theme.select')}
-    class="text-foreground! bg-background max-h-5/6 max-w-5/6 border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-16 mb-auto rounded-xl"
+    class="site-dialog text-foreground! bg-background max-h-5/6 max-w-5/6 border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-16 mb-auto rounded-xl"
   >
     <div class="dialog-frame flex grow flex-col gap-3 px-6 py-4 max-w-full min-w-[18rem]">
       <button
         aria-label={t('common.close')}
-        class="cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
+        class="press-scale cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
         type="button"
       >
@@ -55,7 +55,7 @@ function kebabToTitleCase(str: string): string {
         {
           siteConfig.themes.include.map((theme) => (
             <li data-theme-label={kebabToTitleCase(theme).toLowerCase()}>
-              <button class="w-full rounded-sm py-2 px-2 text-left" data-theme={theme} type="button">
+              <button class="press-scale w-full rounded-sm py-2 px-2 text-left" data-theme={theme} type="button">
                 {kebabToTitleCase(theme)}
               </button>
             </li>
@@ -70,6 +70,10 @@ function kebabToTitleCase(str: string): string {
   button.current-theme {
     background-color: color-mix(in srgb, var(--theme-accent) 16%, transparent 84%);
     font-weight: 600;
+  }
+
+  #theme-change-list button:hover:not(.current-theme) {
+    background-color: color-mix(in srgb, var(--theme-accent) 8%, transparent 92%);
   }
 </style>
 

@@ -24,7 +24,7 @@ const hasExtraTags = tagsWithCount.length > limit
   <ul class="flex flex-wrap gap-x-3 gap-y-4 my-5">
     {
       tagsWithCount.map(({ tag, count }, index) => (
-        <li class:list={[index >= limit && 'extra-tag hidden']}>
+        <li class:list={[index >= limit && 'extra-tag']}>
           <a
             href={`/tags/${encodeURIComponent(tag)}`}
             class="flex gap-2.5 py-2 pl-4 pr-3 bg-accent/7 rounded-3xl"
@@ -46,12 +46,47 @@ const hasExtraTags = tagsWithCount.length > limit
         data-expanded="false"
         data-more={t('tags.showMore')}
         data-less={t('tags.showLess')}
+        aria-expanded="false"
       >
         {t('tags.showMore')}
       </button>
     )
   }
 </div>
+
+<style>
+  .extra-tag {
+    display: none;
+  }
+
+  [data-tags-section].is-expanded .extra-tag {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .extra-tag {
+      opacity: 0;
+      transform: translateY(-12px);
+      transition-property: opacity, transform, display;
+      transition-duration: 150ms;
+      transition-timing-function: ease-out;
+      transition-behavior: allow-discrete;
+    }
+
+    [data-tags-section].is-expanded .extra-tag {
+      opacity: 1;
+      transform: translateY(0);
+      transition-duration: 300ms;
+    }
+
+    @starting-style {
+      [data-tags-section].is-expanded .extra-tag {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+    }
+  }
+</style>
 
 <script>
   document.querySelectorAll('[data-tags-section]').forEach((section) => {
@@ -61,10 +96,9 @@ const hasExtraTags = tagsWithCount.length > limit
       const expanded = toggle.dataset.expanded === 'true'
       const next = !expanded
       toggle.dataset.expanded = String(next)
+      toggle.setAttribute('aria-expanded', String(next))
       toggle.textContent = next ? toggle.dataset.less || '' : toggle.dataset.more || ''
-      section.querySelectorAll('.extra-tag').forEach((item) => {
-        item.classList.toggle('hidden', !next)
-      })
+      section.classList.toggle('is-expanded', next)
     })
   })
 </script>
