@@ -85,12 +85,15 @@ export type ColorStyles = {
 //     background: '#ffffff',
 //   },
 // }
-export type ThemesWithColorStyles = Partial<Record<BundledShikiTheme, ColorStyles>>
+export type CustomThemeId = 'cyberpunk-gold'
+export type ThemeId = BundledShikiTheme | CustomThemeId
+
+export type ThemesWithColorStyles = Partial<Record<ThemeId, ColorStyles>>
 
 export interface ThemesConfig {
-  default: BundledShikiTheme | 'auto'
+  default: ThemeId | 'auto'
   mode: 'single' | 'light-dark-auto' | 'select'
-  include: BundledShikiTheme[]
+  include: ThemeId[]
 }
 
 export type SocialLinks = {

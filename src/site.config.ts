@@ -59,6 +59,7 @@ const config: SiteConfig = {
       'catppuccin-latte',
       'catppuccin-macchiato',
       'catppuccin-mocha',
+      'cyberpunk-gold',
       'dark-plus',
       'dracula',
       'dracula-soft',

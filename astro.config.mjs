@@ -7,6 +7,7 @@ import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import expressiveCode from 'astro-expressive-code'
 import siteConfig from './src/site.config'
+import { resolveExpressiveCodeThemes } from './src/themes'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import icon from 'astro-icon'
 import {
@@ -77,7 +78,7 @@ export default defineConfig({
   integrations: [
     sitemap(),
     expressiveCode({
-      themes: siteConfig.themes.include,
+      themes: await resolveExpressiveCodeThemes(siteConfig.themes.include),
       useDarkModeMediaQuery: false,
       defaultProps: {
         showLineNumbers: false,

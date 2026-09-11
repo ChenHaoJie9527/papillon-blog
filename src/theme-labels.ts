@@ -6,6 +6,7 @@ const themeLabels: Record<string, string> = {
   'catppuccin-latte': '卡布奇诺·拿铁',
   'catppuccin-macchiato': '卡布奇诺·玛奇朵',
   'catppuccin-mocha': '卡布奇诺·摩卡',
+  'cyberpunk-gold': '赛博朋克金',
   'dark-plus': '暗色加强',
   dracula: '德古拉',
   'dracula-soft': '德古拉柔和',

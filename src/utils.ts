@@ -1,9 +1,7 @@
-import type { TextmateStyles, ThemesWithColorStyles, ThemeKey } from '@types'
-import {
-  loadShikiTheme,
-  type BundledShikiTheme,
-  type ExpressiveCodeTheme,
-} from 'astro-expressive-code'
+import type { TextmateStyles, ThemesWithColorStyles, ThemeKey, ThemeId } from '@types'
+import { type ExpressiveCodeTheme } from 'astro-expressive-code'
+import { loadAnyTheme } from './themes'
+import { cyberpunkGoldColors, CYBERPUNK_GOLD_ID } from './themes/cyberpunk-gold'
 import { getCollection } from 'astro:content'
 
 export function dateString(date: Date) {
@@ -142,16 +140,20 @@ const unresolvedStyles: TextmateStyles = {
 }
 
 export async function resolveThemeColorStyles(
-  themes: BundledShikiTheme[],
+  themes: ThemeId[],
   overrides?: ThemesWithColorStyles,
 ): Promise<ThemesWithColorStyles> {
   const resolvedThemes = themes.map(async (theme) => {
-    const loadedTheme = await loadShikiTheme(theme)
+    const loadedTheme = await loadAnyTheme(theme)
     const flattenedTheme = flattenThemeColors(loadedTheme)
     const result = {} as { [key in ThemeKey]: string }
+    const customOverrides =
+      theme === CYBERPUNK_GOLD_ID ? cyberpunkGoldColors : undefined
     for (const el of Object.keys(unresolvedStyles) as ThemeKey[]) {
       if (overrides?.[theme]?.[el]) {
         result[el] = overrides[theme][el]
+      } else if (customOverrides?.[el as keyof typeof customOverrides]) {
+        result[el] = customOverrides[el as keyof typeof customOverrides]
       } else {
         for (const group of unresolvedStyles[el]) {
           if (flattenedTheme[group]) {
