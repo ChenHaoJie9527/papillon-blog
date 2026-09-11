@@ -1,0 +1,24 @@
+---
+import { dateString } from '@utils'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+}
+
+const { post } = Astro.props
+---
+
+<article class="break-inside-avoid mb-4 border border-accent/15 rounded-xl p-4 bg-accent/5">
+  <h2 class="text-lg font-semibold text-[var(--theme-h2)] text-balance mb-2">
+    <a class="no-underline hover:underline" href={`/posts/${post.id}`}>
+      {post.data.title}
+    </a>
+  </h2>
+  {
+    post.data.description && (
+      <p class="text-sm text-foreground/80 text-pretty mb-3">{post.data.description}</p>
+    )
+  }
+  <time class="font-mono text-xs text-foreground/50">{dateString(post.data.published)}</time>
+</article>
