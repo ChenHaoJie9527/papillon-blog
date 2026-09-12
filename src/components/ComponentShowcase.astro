@@ -20,6 +20,8 @@ import {
   RightLoadingButton,
   BaseCopyButton,
 } from '@components/previews/Expansion'
+import { SelectApiPreview } from '@components/previews/Select'
+import { selectApi } from '@components/previews/Select/api'
 import type { ComponentConfig } from '../custom-components'
 import { t } from '../i18n'
 
@@ -39,7 +41,12 @@ const { component } = Astro.props
   </div>
   <p class="text-sm text-foreground/80 mb-5 text-pretty">{component.description}</p>
 
-  <div class="preview-area bg-accent/5 border border-accent/20 rounded-xl p-4 min-h-[120px] flex items-center justify-center mb-6">
+  <div
+    class:list={[
+      'preview-area bg-accent/5 border border-accent/20 rounded-xl p-4 flex justify-center mb-6',
+      component.previewType === 'select' ? 'min-h-0 items-start' : 'min-h-[120px] items-center',
+    ]}
+  >
     <ComponentPreview client:idle>
       <div class="flex gap-2 w-full flex-wrap justify-center">
         {
@@ -68,6 +75,9 @@ const { component } = Astro.props
               <BaseCopyButton client:idle />
             </>
           )
+        }
+        {
+          component.previewType === 'select' && <SelectApiPreview client:idle />
         }
       </div>
     </ComponentPreview>
@@ -138,6 +148,54 @@ const { component } = Astro.props
       ))
     }
   </div>
+
+  {
+    component.previewType === 'select' && (
+      <section class="mt-8" aria-labelledby="component-api">
+        <h2 id="component-api" class="text-lg font-semibold text-accent mb-4">
+          {t('components.api')}
+        </h2>
+        <div class="flex flex-col gap-6">
+          {selectApi.map((section) => (
+            <div>
+              <h3 class="text-sm font-medium text-accent mb-1">
+                <code>{section.component}</code>
+              </h3>
+              <p class="text-xs text-foreground/70 mb-3 text-pretty">{section.description}</p>
+              <div class="overflow-x-auto border border-accent/20 rounded-lg">
+                <table class="w-full text-left text-sm border-collapse">
+                  <thead>
+                    <tr class="bg-accent/10 text-accent">
+                      <th class="px-3 py-2 font-medium whitespace-nowrap">{t('components.apiProp')}</th>
+                      <th class="px-3 py-2 font-medium whitespace-nowrap">{t('components.apiType')}</th>
+                      <th class="px-3 py-2 font-medium whitespace-nowrap">{t('components.apiDefault')}</th>
+                      <th class="px-3 py-2 font-medium">{t('components.apiDescription')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {section.props.map((prop) => (
+                      <tr class="border-t border-accent/15">
+                        <td class="px-3 py-2 align-top whitespace-nowrap">
+                          <code class="text-accent">{prop.name}</code>
+                        </td>
+                        <td class="px-3 py-2 align-top">
+                          <code class="text-xs text-foreground/80 break-all">{prop.type}</code>
+                        </td>
+                        <td class="px-3 py-2 align-top whitespace-nowrap text-foreground/70">
+                          <code class="text-xs">{prop.defaultValue}</code>
+                        </td>
+                        <td class="px-3 py-2 align-top text-foreground/80 text-pretty">{prop.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 </article>
 
 <style>

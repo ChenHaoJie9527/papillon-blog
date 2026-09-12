@@ -55,6 +55,11 @@ export const copy = {
     viewSource: '查看源码',
     hideSource: '收起源码',
     sourceCode: '组件源码',
+    api: 'API',
+    apiProp: '属性',
+    apiType: '类型',
+    apiDefault: '默认值',
+    apiDescription: '说明',
     copy: '复制',
     copied: '已复制',
     backToList: '组件列表',
@@ -71,8 +76,7 @@ export const copy = {
   },
   home: {
     welcome: '欢迎',
-    description:
-      '专注于React、Vue、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
+    description: '专注于React、Vue、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
     viewAllPosts: '查看所有文章',
   },
   posts: {
