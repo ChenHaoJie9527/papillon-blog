@@ -1,5 +1,6 @@
 ---
 import type { NavLink } from '@types'
+import { withBase } from '@utils'
 
 interface Props {
   link: NavLink
@@ -23,7 +24,7 @@ const isActive =
   ]}
   rel={link.external ? 'noopener noreferrer' : undefined}
   target={link.external ? '_blank' : undefined}
-  href={link.url}
+  href={withBase(link.url)}
   aria-current={isActive ? 'page' : undefined}
 >
   {link.name}

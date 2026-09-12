@@ -4,6 +4,7 @@ import Layout from '@layouts/Layout.astro'
 import ComponentShowcase from '@components/ComponentShowcase.astro'
 import type { ComponentsData } from '../../custom-components'
 import { t } from '../../i18n'
+import { withBase } from '@utils'
 
 export const getStaticPaths = (async () => {
   const componentsData: ComponentsData = await import('../../custom-components.json')
@@ -18,7 +19,9 @@ const { component } = Astro.props
 
 <Layout title={component.title} description={component.description}>
   <p class="mb-4">
-    <a href="/custom-components" class="text-sm text-accent">{t('components.backToList')}</a>
+    <a href={withBase('/custom-components')} class="text-sm text-accent">
+      {t('components.backToList')}
+    </a>
   </p>
   <ComponentShowcase component={component} />
 </Layout>

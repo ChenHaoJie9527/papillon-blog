@@ -1,14 +1,21 @@
 ---
 import Layout from '@layouts/Layout.astro'
 import { t } from '../i18n'
+import { withBase } from '@utils'
 ---
 
-<script is:inline>
+<script is:inline define:vars={{ basePath: import.meta.env.BASE_URL }}>
   ;(() => {
-    const nextPath = location.pathname.replace(/^\/(en|es)(?=\/|$)/, '') || '/'
-    if (nextPath !== location.pathname) {
-      location.replace(nextPath + location.search + location.hash)
-    }
+    // Runs on 404s so that legacy `/en/...` and `/es/...` URLs still resolve when
+    // they land here instead of on a served redirect page. `basePath` is empty
+    // when the site is deployed at the domain root.
+    const prefix = String(basePath || '').replace(/\/$/, '')
+    const pathname = location.pathname
+    if (pathname !== prefix && !pathname.startsWith(`${prefix}/`)) return
+    const rest = pathname.slice(prefix.length)
+    const nextPath = rest.replace(/^\/(en|es)(?=\/|$)/, '') || '/'
+    if (nextPath === rest) return
+    location.replace(prefix + nextPath + location.search + location.hash)
   })()
 </script>
 
@@ -20,7 +27,7 @@ import { t } from '../i18n'
       {t('notFound.message')}
     </p>
     <a
-      href="/"
+      href={withBase('/')}
       class="press-scale px-6 py-3 bg-accent text-background font-semibold rounded-lg hover:bg-accent/90"
     >
       {t('notFound.backHome')}

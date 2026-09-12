@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import { t } from '../i18n'
+import { withBase } from '@utils'
 
 interface Props {
   posts: CollectionEntry<'posts'>[]
@@ -26,7 +27,7 @@ const hasExtraTags = tagsWithCount.length > limit
       tagsWithCount.map(({ tag, count }, index) => (
         <li class:list={[index >= limit && 'extra-tag']}>
           <a
-            href={`/tags/${encodeURIComponent(tag)}`}
+            href={withBase(`/tags/${encodeURIComponent(tag)}`)}
             class="flex gap-2.5 py-2 pl-4 pr-3 bg-accent/7 rounded-3xl"
           >
             {tag}

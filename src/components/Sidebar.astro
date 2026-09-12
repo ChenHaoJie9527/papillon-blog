@@ -1,16 +1,16 @@
 ---
 import siteConfig from '../site.config'
-import { getSortedPosts } from '@utils'
+import { getSortedPosts, withBase, withoutBase } from '@utils'
 import { t } from '../i18n'
 
 const posts = (await getSortedPosts()).slice(0, 5)
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/'
+const pathname = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/'
 const onDashboard = pathname === '/'
 ---
 
 <aside id="site-sidebar" class="site-sidebar">
   <a
-    href="/"
+    href={withBase('/')}
     class:list={[
       'block px-3 py-2 rounded-lg no-underline text-sm font-semibold border',
       onDashboard
@@ -29,7 +29,7 @@ const onDashboard = pathname === '/'
           <li>
             <a
               class="no-underline hover:underline"
-              href={link.url}
+              href={withBase(link.url)}
               rel={link.external ? 'noopener noreferrer' : undefined}
               target={link.external ? '_blank' : undefined}
             >
@@ -53,7 +53,7 @@ const onDashboard = pathname === '/'
               'block text-sm no-underline hover:underline truncate py-1',
               pathname === `/posts/${post.id}` && 'text-accent',
             ]}
-            href={`/posts/${post.id}`}
+            href={withBase(`/posts/${post.id}`)}
           >
             {post.data.title}
           </a>

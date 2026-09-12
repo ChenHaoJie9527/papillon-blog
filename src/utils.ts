@@ -4,6 +4,32 @@ import { loadAnyTheme } from './themes'
 import { cyberpunkGoldColors, CYBERPUNK_GOLD_ID } from './themes/cyberpunk-gold'
 import { getCollection } from 'astro:content'
 
+// Astro always exposes `base` with a trailing slash: '/' or '/papillon-blog/'.
+const BASE = import.meta.env.BASE_URL
+const BASE_NO_TRAILING_SLASH = BASE.replace(/\/$/, '')
+
+/**
+ * Prefix a site-root-relative path with Astro's configured `base`, so links keep
+ * working when the site is served from a subdirectory (e.g. a GitHub Pages
+ * project page). Returns the input unchanged for external URLs, anchors and
+ * protocol-relative or relative paths.
+ */
+export function withBase(path: string) {
+  if (!path.startsWith('/') || path.startsWith('//')) return path
+  return `${BASE_NO_TRAILING_SLASH}${path}`
+}
+
+/**
+ * Strip Astro's configured `base` from a pathname, so `Astro.url.pathname` can be
+ * compared against site-relative paths declared in config.
+ */
+export function withoutBase(pathname: string) {
+  if (BASE_NO_TRAILING_SLASH && pathname.startsWith(BASE_NO_TRAILING_SLASH)) {
+    return pathname.slice(BASE_NO_TRAILING_SLASH.length) || '/'
+  }
+  return pathname
+}
+
 export function dateString(date: Date) {
   return date.toISOString().split('T')[0]
 }

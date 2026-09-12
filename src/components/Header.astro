@@ -5,11 +5,12 @@ import Search from "./Search.astro";
 import SelectTheme from "./SelectTheme.astro";
 import NavLink from "./NavLink.astro";
 import { t } from "../i18n";
+import { withBase, withoutBase } from "@utils";
 
 const lightDarkAutoTheme = siteConfig.themes.mode === "light-dark-auto";
 const selectTheme =
 	siteConfig.themes.mode === "select" && siteConfig.themes.include.length > 1;
-const currentPath = Astro.url.pathname;
+const currentPath = withoutBase(Astro.url.pathname);
 ---
 
 <header class="site-header">
@@ -26,7 +27,7 @@ const currentPath = Astro.url.pathname;
     </button>
     <a
       id="logo"
-      href="/"
+      href={withBase("/")}
       class="block px-4 py-1.5 max-w-full no-underline bg-accent text-background font-bold rounded-xl"
     >
       {siteConfig.title}

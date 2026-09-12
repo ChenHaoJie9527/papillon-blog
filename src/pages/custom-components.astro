@@ -3,6 +3,7 @@ import Layout from '@layouts/Layout.astro'
 import { t } from '../i18n'
 import BlockHeader from '@components/BlockHeader.astro'
 import type { ComponentsData } from '../custom-components'
+import { withBase } from '@utils'
 
 const componentsData: ComponentsData = await import('../custom-components.json')
 const { components } = componentsData
@@ -64,7 +65,7 @@ const categoryLabel = (category: string) => {
     {
       components.map((component) => (
         <a
-          href={`/custom-components/${component.id}`}
+          href={withBase(`/custom-components/${component.id}`)}
           class="component-card flex flex-col border border-accent/15 rounded-xl p-4 bg-accent/5 no-underline hover:border-accent/40 hover:bg-accent/10"
           data-category={component.category}
           data-title={component.title}

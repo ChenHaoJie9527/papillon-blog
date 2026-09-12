@@ -26,14 +26,23 @@ import remarkGemoji from './src/plugins/remark-gemoji' /* for shortcode emoji su
 import rehypePixelated from './src/plugins/rehype-pixelated' /* Custom plugin to handle pixelated images */
 import react from '@astrojs/react'
 
+// GitHub Pages project pages are served from a subdirectory, so built sites prefix
+// every root-relative URL with this path. Keep it in sync with the repository name;
+// use '/' for a user/organisation page (e.g. `<user>.github.io`) or a custom domain.
+// `astro dev` keeps serving from the domain root (http://localhost:4321/) so local
+// development URLs stay short. Astro sets NODE_ENV before loading this config.
+const base = process.env.NODE_ENV === 'development' ? '/' : '/papillon-blog'
+const withBase = (path) => `${base.replace(/\/$/, '')}${path}`
+
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.site,
+  base,
   trailingSlash: 'ignore',
   prefetch: true,
   redirects: {
-    '/en': '/',
-    '/es': '/',
+    '/en': withBase('/'),
+    '/es': withBase('/'),
   },
   markdown: {
     remarkPlugins: [

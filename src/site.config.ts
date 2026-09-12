@@ -2,7 +2,8 @@ import type { SiteConfig } from '@types'
 
 const config: SiteConfig = {
   // 您已发布网站的根目录的绝对网址，用于生成链接和网站地图。
-  site: 'https://papillon-x.netlify.app',
+  // 部署到 GitHub Pages 项目页时只写域名，子路径由 astro.config.mjs 的 base 负责。
+  site: 'https://chenhaojie9527.github.io',
   // 网站的名称，用于标题和SEO。
   title: 'Papillon',
   // 网站的描述，用于SEO和RSS订阅。

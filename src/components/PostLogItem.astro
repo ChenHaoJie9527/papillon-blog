@@ -1,5 +1,5 @@
 ---
-import { dateString } from '@utils'
+import { dateString, withBase } from '@utils'
 import { render } from 'astro:content'
 import type { CollectionEntry } from 'astro:content'
 
@@ -13,7 +13,7 @@ const { minutesRead } = remarkPluginFrontmatter
 ---
 
 <a
-  href={`/posts/${post.id}`}
+  href={withBase(`/posts/${post.id}`)}
   class="grid grid-cols-1 gap-1 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:gap-3 sm:items-baseline py-2.5 border-b border-accent/15 no-underline hover:bg-accent/8"
 >
   <time class="font-mono text-sm text-foreground/55">{dateString(post.data.published)}</time>

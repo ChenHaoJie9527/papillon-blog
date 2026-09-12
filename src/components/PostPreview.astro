@@ -1,5 +1,5 @@
 ---
-import { dateString } from '@utils'
+import { dateString, withBase } from '@utils'
 import { Icon } from 'astro-icon/components'
 import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
@@ -20,7 +20,7 @@ const description = remarkPluginFrontmatter.description || post.data.description
 
 <article class="w-full py-5 my-4 border-accent/10">
   <HeadingTag class="mb-3 text-2xl text-[var(--theme-h1)] font-semibold text-balance">
-    <a href={`/posts/${post.id}`}># {post.data.title}</a>
+    <a href={withBase(`/posts/${post.id}`)}># {post.data.title}</a>
   </HeadingTag>
   <div class="text-foreground/80 my-3">
     <time>{dateString(post.data.published)}</time>
@@ -46,7 +46,7 @@ const description = remarkPluginFrontmatter.description || post.data.description
         {post.data.tags.map((tag: string) => (
           <a
             class="underline mr-4 inline-block"
-            href={`/tags/${encodeURIComponent(tag)}`}
+            href={withBase(`/tags/${encodeURIComponent(tag)}`)}
           >
             #{tag}
           </a>
@@ -55,7 +55,7 @@ const description = remarkPluginFrontmatter.description || post.data.description
     )
   }
   <div>
-    <a class="button flex items-center" href={`/posts/${post.id}`}>
+    <a class="button flex items-center" href={withBase(`/posts/${post.id}`)}>
       {t("common.readMore")}
       <Icon name="chevrons-right" class="size-5 ml-2" />
     </a>

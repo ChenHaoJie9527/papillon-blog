@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro'
 import Layout from '@layouts/Layout.astro'
-import { dateString, getSortedPosts } from '@utils'
+import { dateString, getSortedPosts, withBase } from '@utils'
 import { t } from '../../i18n'
 import DividerText from '@components/DividerText.astro'
 import { render } from 'astro:content'
@@ -58,7 +58,7 @@ const { headings, Content: PostContent } = await render(post)
           {postData.tags.map((tag) => (
             <a
               class="underline mr-4 inline-block"
-              href={`/tags/${encodeURIComponent(tag)}`}
+              href={withBase(`/tags/${encodeURIComponent(tag)}`)}
             >
               #{tag}
             </a>

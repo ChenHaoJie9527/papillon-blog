@@ -24,6 +24,7 @@ import { SelectApiPreview } from '@components/previews/Select'
 import { selectApi } from '@components/previews/Select/api'
 import type { ComponentConfig } from '../custom-components'
 import { t } from '../i18n'
+import { withBase } from '@utils'
 
 interface Props {
   component: ComponentConfig
@@ -140,7 +141,7 @@ const { component } = Astro.props
       component.tags.map((tag) => (
         <a
           title={tag}
-          href={`/tags/${encodeURIComponent(tag)}`}
+          href={withBase(`/tags/${encodeURIComponent(tag)}`)}
           class="text-xs px-2 py-1 bg-accent/10 text-accent rounded-full no-underline hover:bg-accent/20"
         >
           #{tag}

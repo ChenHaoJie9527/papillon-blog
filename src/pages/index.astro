@@ -1,6 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import { getSortedPosts } from "@utils";
+import { getSortedPosts, withBase } from "@utils";
 import { getCollection, render } from "astro:content";
 import HomeBanner from "@components/HomeBanner.astro";
 import TagsSection from "@components/TagsSection.astro";
@@ -43,7 +43,7 @@ const dashboardPosts = sortedPosts.slice(0, siteConfig.pageSize);
       <PostLogItem post={post} />
     ))}
   </div>
-  <Pagination nextLink="/posts" nextText={t('nav.archive')} />
+  <Pagination nextLink={withBase('/posts')} nextText={t('nav.archive')} />
 </Layout>
 
 <style is:global>
