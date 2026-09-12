@@ -18,9 +18,9 @@ import { t } from '../i18n'
     aria-label={t('common.search')}
     class="site-dialog text-foreground! bg-background max-h-5/6 min-h-48 w-7/8 sm:w-5/6 max-w-xl border-double! border-4 border-accent/30 shadow-sm backdrop:backdrop-blur-sm open:flex mx-auto mt-10 sm:mt-16 mb-auto rounded-xl"
   >
-    <div class="dialog-frame flex grow flex-col gap-4 p-6 pt-6 max-w-full">
+    <div class="dialog-frame relative flex grow flex-col gap-4 p-6 pt-12 max-w-full">
       <button
-        class="press-scale cursor-pointer fixed top-2 right-2 rounded-full min-h-10 min-w-10 flex items-center justify-center"
+        class="press-scale cursor-pointer absolute top-2 right-2 z-10 rounded-full min-h-10 min-w-10 flex items-center justify-center"
         data-close-modal
         aria-label={t('common.close')}
         type="button"
