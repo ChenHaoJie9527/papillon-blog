@@ -16,6 +16,7 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
 <div
   class="giscus"
   data-origin={origin}
+  data-base={import.meta.env.BASE_URL}
   data-repo={repo}
   data-repo-id={repoId}
   data-category={category}
@@ -25,22 +26,36 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
 >
 </div>
 <script>
+  const giscusDiv = document.querySelector('.giscus')
+  if (!giscusDiv) {
+    throw new Error('Giscus div not found in the document.')
+  }
+  const origin = giscusDiv.getAttribute('data-origin')
+  // Astro's base path, so the theme stylesheet resolves on project pages too.
+  const basePath = (giscusDiv.getAttribute('data-base') || '/').replace(/\/$/, '')
+  const themeUrl = (theme: string) => `${origin}${basePath}/giscus/${theme}.css`
+  const repo = giscusDiv.getAttribute('data-repo')
+  const repoId = giscusDiv.getAttribute('data-repo-id')
+  const category = giscusDiv.getAttribute('data-category')
+  const categoryId = giscusDiv.getAttribute('data-category-id')
+  const reactionsEnabled = giscusDiv.getAttribute('data-reactions-enabled')
+  const giscusLang = giscusDiv.getAttribute('data-giscus-lang')
+  const theme = document.documentElement.getAttribute('data-theme')
+
+  if (
+    !origin ||
+    !repo ||
+    !repoId ||
+    !category ||
+    !categoryId ||
+    !reactionsEnabled ||
+    !theme ||
+    !giscusLang
+  ) {
+    throw new Error('Giscus configuration missing in the Giscus div.')
+  }
+
   function loadGiscus() {
-    const giscusDiv = document.querySelector('.giscus')
-    if (!giscusDiv) {
-      throw new Error('Giscus div not found in the document.')
-    }
-    const origin = giscusDiv.getAttribute('data-origin')
-    const repo = giscusDiv.getAttribute('data-repo')
-    const repoId = giscusDiv.getAttribute('data-repo-id')
-    const category = giscusDiv.getAttribute('data-category')
-    const categoryId = giscusDiv.getAttribute('data-category-id')
-    const reactionsEnabled = giscusDiv.getAttribute('data-reactions-enabled')
-    const giscusLang = giscusDiv.getAttribute('data-giscus-lang')
-    const theme = document.documentElement.getAttribute('data-theme')
-    if (!origin || !repo || !repoId || !category || !categoryId || !reactionsEnabled || !theme || !giscusLang) {
-      throw new Error('Giscus configuration missing in the Giscus div.')
-    }
     const script = document.createElement('script')
     script.src = 'https://giscus.app/client.js'
     script.setAttribute('data-repo', repo)
@@ -53,7 +68,7 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
     script.setAttribute('data-emit-metadata', '0')
 
     script.setAttribute('data-input-position', 'top')
-    script.setAttribute('data-theme', `${origin}/giscus/${theme}.css`)
+    script.setAttribute('data-theme', themeUrl(theme))
     script.setAttribute('data-lang', giscusLang)
     script.setAttribute('loading', 'lazy')
     script.crossOrigin = 'anonymous'
@@ -74,7 +89,7 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
       return
     }
     giscusFrame.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: `${origin}/giscus/${theme}.css` } } },
+      { giscus: { setConfig: { theme: themeUrl(theme) } } },
       'https://giscus.app',
     )
   }
