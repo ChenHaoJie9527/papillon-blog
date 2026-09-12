@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,14 +42,24 @@
 
 /* 在 @theme 外部定义关键帧和动画 */
 @keyframes shine {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -226,7 +236,9 @@ article img,
 @supports (color: oklch(from red l c h)) {
   article img,
   .img-outline {
-    outline-color: oklch(from var(--theme-background) clamp(0, round(1 - l), 1) 0 0 / 0.1);
+    outline-color: oklch(
+      from var(--theme-background) clamp(0, round(1 - l), 1) 0 0 / 0.1
+    );
   }
 }
 

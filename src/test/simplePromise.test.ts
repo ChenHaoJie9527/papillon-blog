@@ -116,7 +116,7 @@ describe('SimplePromise', () => {
     })
   })
 
-  it('异步 resolve', (done) => {
+  it('异步 resolve', (_done) => {
     const promise = new SimplePromise((resolve: any) => {
       setTimeout(() => {
         resolve('async success')
@@ -128,8 +128,8 @@ describe('SimplePromise', () => {
     })
   })
 
-  it('异步 reject', (done) => {
-    const promise = new SimplePromise((resolve: any, reject: any) => {
+  it('异步 reject', (_done) => {
+    const promise = new SimplePromise((_resolve: any, reject: any) => {
       setTimeout(() => {
         reject('async error')
       }, 100)
@@ -140,13 +140,13 @@ describe('SimplePromise', () => {
     })
   })
 
-  it('then 回调抛出错误应该被捕获', (done) => {
+  it('then 回调抛出错误应该被捕获', (_done) => {
     const promise = new SimplePromise((resolve: any) => {
       resolve('success')
     })
 
     promise
-      .then((value: any) => {
+      .then((_value: any) => {
         throw new Error('then error')
       })
       .catch((error: any) => {

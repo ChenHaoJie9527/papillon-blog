@@ -2,7 +2,7 @@ import siteConfig from '../../site.config'
 import type { APIContext } from 'astro'
 import { resolveThemeColorStyles } from '@utils'
 import Color from 'color'
-import type { ColorStyles, ThemeId, ThemeKey } from '@types'
+import type { ColorStyles, ThemeId } from '@types'
 
 interface Props {
   theme: ThemeId

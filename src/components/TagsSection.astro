@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { posts, limit = 10 } = Astro.props
-const tags = new Set<string>([...posts.flatMap((post) => post.data.tags || [])])
+const tags = new Set<string>(posts.flatMap((post) => post.data.tags || []))
 
 const tagsWithCount = Array.from(tags)
   .map((tag) => {

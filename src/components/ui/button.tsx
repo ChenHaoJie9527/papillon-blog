@@ -1,99 +1,97 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import { Slot, Slottable } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-import { Spinner } from "@components/ui/Spinner";
-import { cn } from "@components/lib/utils";
-import useCopy from "@hooks/useCopy";
+import * as React from 'react'
+import { Slot, Slottable } from '@radix-ui/react-slot'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Spinner } from '@components/ui/Spinner'
+import { cn } from '@components/lib/utils'
+import useCopy from '@hooks/useCopy'
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 box-border",
-	{
-		variants: {
-			variant: {
-				default:
-					"bg-primary text-primary-foreground hover:bg-primary/90 border border-accent rounded-md",
-				destructive:
-					"bg-destructive text-destructive-foreground hover:bg-destructive/90",
-				outline:
-					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-				secondary:
-					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
-				ghost: "hover:bg-accent hover:text-accent-foreground",
-				link: "text-primary underline-offset-4",
-			},
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 box-border',
+  {
+    variants: {
+      variant: {
+        default:
+          'bg-primary text-primary-foreground hover:bg-primary/90 border border-accent rounded-md',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4',
+      },
 
-			effect: {
-				expandIcon: "group gap-0 relative",
-				ringHover:
-					"transition-all duration-300 hover:ring-2 hover:ring-primary/90 hover:ring-offset-2",
-				shine:
-					"relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:[animation:shine_3s_ease-out_infinite]",
-				shineHover:
-					"relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:transition-[background-position] before:duration-[1200ms] hover:before:bg-[position:-200%_0]",
-				gooeyRight:
-					"relative z-0 overflow-hidden transition-all duration-500 before:absolute before:inset-0 before:z-[-1] before:translate-x-[150%] before:translate-y-[150%] before:scale-[2.5] before:rounded-[100%] before:bg-white/10 before:transition-transform before:duration-1000 hover:before:translate-x-[0%] hover:before:translate-y-[0%]",
-				gooeyLeft:
-					"relative z-0 overflow-hidden transition-all duration-500 after:absolute after:inset-0 after:z-[-1] after:translate-x-[-150%] after:translate-y-[150%] after:scale-[2.5] after:rounded-[100%] after:bg-white/10 after:transition-transform after:duration-1000  hover:after:translate-x-[0%] hover:after:translate-y-[0%]",
-				underline:
-					"relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-left after:scale-x-100 hover:after:origin-bottom-right hover:after:scale-x-0 after:transition-transform after:ease-in-out after:duration-300",
-				hoverUnderline:
-					"relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300",
-				gradientSlideShow:
-					"bg-[size:400%] bg-[linear-gradient(-45deg,var(--gradient-lime),var(--gradient-ocean),var(--gradient-wine),var(--gradient-rust))] animate-gradient-flow",
-			},
+      effect: {
+        expandIcon: 'group gap-0 relative',
+        ringHover:
+          'transition-all duration-300 hover:ring-2 hover:ring-primary/90 hover:ring-offset-2',
+        shine:
+          'relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:[animation:shine_3s_ease-out_infinite]',
+        shineHover:
+          'relative overflow-hidden before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.3)_50%,transparent_60%)] before:bg-[length:250%_250%] before:bg-no-repeat before:bg-[position:200%_0] before:transition-[background-position] before:duration-[1200ms] hover:before:bg-[position:-200%_0]',
+        gooeyRight:
+          'relative z-0 overflow-hidden transition-all duration-500 before:absolute before:inset-0 before:z-[-1] before:translate-x-[150%] before:translate-y-[150%] before:scale-[2.5] before:rounded-[100%] before:bg-white/10 before:transition-transform before:duration-1000 hover:before:translate-x-[0%] hover:before:translate-y-[0%]',
+        gooeyLeft:
+          'relative z-0 overflow-hidden transition-all duration-500 after:absolute after:inset-0 after:z-[-1] after:translate-x-[-150%] after:translate-y-[150%] after:scale-[2.5] after:rounded-[100%] after:bg-white/10 after:transition-transform after:duration-1000  hover:after:translate-x-[0%] hover:after:translate-y-[0%]',
+        underline:
+          "relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-left after:scale-x-100 hover:after:origin-bottom-right hover:after:scale-x-0 after:transition-transform after:ease-in-out after:duration-300",
+        hoverUnderline:
+          "relative !no-underline after:absolute after:left-0 after:right-0 after:content-[''] after:bg-accent after:bottom-1 after:h-[1px] after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300",
+        gradientSlideShow:
+          'bg-[size:400%] bg-[linear-gradient(-45deg,var(--gradient-lime),var(--gradient-ocean),var(--gradient-wine),var(--gradient-rust))] animate-gradient-flow',
+      },
 
-			size: {
-				default: "h-10 px-4 py-2",
-				sm: "h-9 rounded-md px-3",
-				lg: "h-11 rounded-md px-8",
-				icon: "h-10 w-10",
-			},
-		},
-		defaultVariants: {
-			size: "default",
-			variant: "default",
-		},
-	},
-);
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      size: 'default',
+      variant: 'default',
+    },
+  },
+)
 
 type CopyProps = {
-	copyText?: string;
-	onCopy?: (text: string) => void;
-	successText?: React.ReactNode;
-	timeout?: number;
-};
+  copyText?: string
+  onCopy?: (text: string) => void
+  successText?: React.ReactNode
+  timeout?: number
+}
 
 type CopyRefProps = {
-	copyText?: never;
-	onCopy?: never;
-	successText?: React.ReactNode;
-	timeout?: never;
-};
+  copyText?: never
+  onCopy?: never
+  successText?: React.ReactNode
+  timeout?: never
+}
 
-export type CopyButtonProps = CopyProps | CopyRefProps;
+export type CopyButtonProps = CopyProps | CopyRefProps
 
 type IconProps = {
-	// 检索React组件T的类型
-	icon?: React.ElementType;
-	// 图标位置
-	iconPlacement: "left" | "right";
-};
+  // 检索React组件T的类型
+  icon?: React.ElementType
+  // 图标位置
+  iconPlacement: 'left' | 'right'
+}
 
 type IconRefProps = {
-	icon?: never;
-	iconPlacement?: undefined;
-};
+  icon?: never
+  iconPlacement?: undefined
+}
 
 type LoadingProps = {
-	loading?: boolean;
-	loadingText?: string;
-	hideIconOnLoading?: boolean;
-	loadingIconPlacement?: "left" | "right";
-};
+  loading?: boolean
+  loadingText?: string
+  hideIconOnLoading?: boolean
+  loadingIconPlacement?: 'left' | 'right'
+}
 
-export type ButtonIconProps = IconProps | IconRefProps;
+export type ButtonIconProps = IconProps | IconRefProps
 
 /**
  * ButtonProps 类型定义
@@ -142,117 +140,115 @@ export type ButtonIconProps = IconProps | IconRefProps;
  * @property {boolean} [asChild] - 是否作为子组件渲染（使用 Radix UI Slot）
  *
  */
-export type ButtonProps = React.ComponentProps<"button"> &
-	VariantProps<typeof buttonVariants> &
-	ButtonIconProps &
-	CopyButtonProps &
-	LoadingProps & {
-		asChild?: boolean;
-	};
+export type ButtonProps = React.ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants> &
+  ButtonIconProps &
+  CopyButtonProps &
+  LoadingProps & {
+    asChild?: boolean
+  }
 
 function Button({
-	className,
-	variant,
-	effect,
-	size,
-	icon: Icon,
-	iconPlacement,
-	loading,
-	loadingText = "Loading",
-	children,
-	hideIconOnLoading = false,
-	loadingIconPlacement = "right",
-	asChild = false,
-	copyText,
-	onCopy,
-	successText = "Copied!",
-	timeout = 3000,
-	...props
+  className,
+  variant,
+  effect,
+  size,
+  icon: Icon,
+  iconPlacement,
+  loading,
+  loadingText = 'Loading',
+  children,
+  hideIconOnLoading = false,
+  loadingIconPlacement = 'right',
+  asChild = false,
+  copyText,
+  onCopy,
+  successText = 'Copied!',
+  timeout = 3000,
+  ...props
 }: ButtonProps) {
-	const Comp = asChild ? Slot : "button";
+  const Comp = asChild ? Slot : 'button'
 
-	const timerRef = React.useRef<NodeJS.Timeout | null>(null);
-	const { copied, copyHandle, resetHandle } = useCopy();
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null)
+  const { copied, copyHandle, resetHandle } = useCopy()
 
-	React.useEffect(() => {
-		return () => {
-			if (timerRef.current) {
-				clearTimeout(timerRef.current);
-			}
-		};
-	}, []);
+  React.useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    }
+  }, [])
 
-	const handleCopy = async () => {
-		if (!copyText) {
-			return;
-		}
+  const handleCopy = async () => {
+    if (!copyText) {
+      return
+    }
 
-		try {
-			await copyHandle(copyText);
-			onCopy?.(copyText);
+    try {
+      await copyHandle(copyText)
+      onCopy?.(copyText)
 
-			// 设置定时器自动重置状态
-			if (timerRef.current) {
-				clearTimeout(timerRef.current);
-			}
+      // 设置定时器自动重置状态
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
 
-			timerRef.current = setTimeout(() => {
-				resetHandle();
-			}, timeout);
-		} catch (err) {
-			console.error("Failed to copy text: ", err);
-		}
-	};
+      timerRef.current = setTimeout(() => {
+        resetHandle()
+      }, timeout)
+    } catch (err) {
+      console.error('Failed to copy text: ', err)
+    }
+  }
 
-	const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		if (copyText) {
-			handleCopy();
-		}
-		props.onClick?.(e);
-	};
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (copyText) {
+      handleCopy()
+    }
+    props.onClick?.(e)
+  }
 
-	return (
-		<Comp
-			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className, effect }))}
-			disabled={loading}
-			onClick={handleClick}
-			{...props}
-		>
-			{/* loading 左侧图标 */}
-			{loading && loadingIconPlacement === "left" && <Spinner size="sm" />}
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className, effect }))}
+      disabled={loading}
+      onClick={handleClick}
+      {...props}
+    >
+      {/* loading 左侧图标 */}
+      {loading && loadingIconPlacement === 'left' && <Spinner size="sm" />}
 
-			{/* icon */}
-			{Icon &&
-				iconPlacement === "left" &&
-				!(hideIconOnLoading && loading) &&
-				(effect === "expandIcon" ? (
-					<div className="w-0 translate-x-[-100%] pr-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pr-2 group-hover:opacity-100 overflow-hidden">
-						<Icon />
-					</div>
-				) : (
-					<Icon />
-				))}
+      {/* icon */}
+      {Icon &&
+        iconPlacement === 'left' &&
+        !(hideIconOnLoading && loading) &&
+        (effect === 'expandIcon' ? (
+          <div className="w-0 translate-x-[-100%] pr-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pr-2 group-hover:opacity-100 overflow-hidden">
+            <Icon />
+          </div>
+        ) : (
+          <Icon />
+        ))}
 
-			<Slottable>
-				{loading ? loadingText : copied ? successText : children}
-			</Slottable>
+      <Slottable>{loading ? loadingText : copied ? successText : children}</Slottable>
 
-			{/* loading 右侧图标 */}
-			{loading && loadingIconPlacement === "right" && <Spinner size="sm" />}
+      {/* loading 右侧图标 */}
+      {loading && loadingIconPlacement === 'right' && <Spinner size="sm" />}
 
-			{Icon &&
-				iconPlacement === "right" &&
-				!(hideIconOnLoading && loading) &&
-				(effect === "expandIcon" ? (
-					<div className="w-0 translate-x-[100%] pl-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
-						<Icon />
-					</div>
-				) : (
-					<Icon />
-				))}
-		</Comp>
-	);
+      {Icon &&
+        iconPlacement === 'right' &&
+        !(hideIconOnLoading && loading) &&
+        (effect === 'expandIcon' ? (
+          <div className="w-0 translate-x-[100%] pl-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-0 group-hover:pl-2 group-hover:opacity-100">
+            <Icon />
+          </div>
+        ) : (
+          <Icon />
+        ))}
+    </Comp>
+  )
 }
 
-export { Button, buttonVariants };
+export { Button, buttonVariants }

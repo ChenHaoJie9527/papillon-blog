@@ -147,8 +147,7 @@ export async function resolveThemeColorStyles(
     const loadedTheme = await loadAnyTheme(theme)
     const flattenedTheme = flattenThemeColors(loadedTheme)
     const result = {} as { [key in ThemeKey]: string }
-    const customOverrides =
-      theme === CYBERPUNK_GOLD_ID ? cyberpunkGoldColors : undefined
+    const customOverrides = theme === CYBERPUNK_GOLD_ID ? cyberpunkGoldColors : undefined
     for (const el of Object.keys(unresolvedStyles) as ThemeKey[]) {
       if (overrides?.[theme]?.[el]) {
         result[el] = overrides[theme][el]

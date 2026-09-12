@@ -74,7 +74,8 @@ export const to = <T, U = Error & BaseError>(
 ) => {
   return promise
     .then<[null, T]>((data: T) => [null, data])
-    .catch<
-      [U, undefined]
-    >((err: U) => [extendError(standardizeError(err), errorExt), undefined])
+    .catch<[U, undefined]>((err: U) => [
+      extendError(standardizeError(err), errorExt),
+      undefined,
+    ])
 }

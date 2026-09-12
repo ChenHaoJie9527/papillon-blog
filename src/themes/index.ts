@@ -24,7 +24,9 @@ export async function resolveExpressiveCodeThemes(
 ): Promise<(BundledShikiTheme | ExpressiveCodeTheme)[]> {
   return Promise.all(
     themeIds.map((themeId) =>
-      isCustomThemeId(themeId) ? loadCyberpunkGoldTheme() : (themeId as BundledShikiTheme),
+      isCustomThemeId(themeId)
+        ? loadCyberpunkGoldTheme()
+        : (themeId as BundledShikiTheme),
     ),
   )
 }

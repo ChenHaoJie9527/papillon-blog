@@ -70,10 +70,9 @@ describe('useInterval', () => {
     const callback2 = vi.fn()
     const ms = 1000
 
-    const { rerender } = renderHook(
-      ({ callback }) => useInterval(callback, ms),
-      { initialProps: { callback: callback1 } }
-    )
+    const { rerender } = renderHook(({ callback }) => useInterval(callback, ms), {
+      initialProps: { callback: callback1 },
+    })
 
     // 1秒后调用第一个回调
     act(() => {

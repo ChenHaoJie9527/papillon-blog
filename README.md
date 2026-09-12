@@ -25,6 +25,11 @@ pnpm build
 pnpm preview
 ```
 
+```bash
+pnpm lint
+pnpm format
+```
+
 站点配置在 `src/site.config.ts`。
 
 ## 技术栈

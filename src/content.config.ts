@@ -42,10 +42,10 @@ const schemas = {
 function createCollection(config: {
   pattern: string | string[]
   base: string
-  schema: (params: {image: any}) => z.ZodObject<any>
+  schema: (params: { image: any }) => z.ZodObject<any>
 }) {
   return defineCollection({
-    loader: glob({pattern: config.pattern, base: config.base}),
+    loader: glob({ pattern: config.pattern, base: config.base }),
     schema: config.schema,
   })
 }

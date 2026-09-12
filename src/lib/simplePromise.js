@@ -51,9 +51,9 @@ class SimplePromise {
    * @param {*} onRejected 失败回调
    * @returns
    */
-  
-// biome-ignore lint/suspicious/noThenProperty: <explanation>
-then(onFulfilled = (value) => value, onRejected = (reason) => reason) {
+
+  // biome-ignore lint/suspicious/noThenProperty: <explanation>
+  then(onFulfilled = (value) => value, onRejected = (reason) => reason) {
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : (value) => value
     onRejected = typeof onRejected === 'function' ? onRejected : (reason) => reason
 

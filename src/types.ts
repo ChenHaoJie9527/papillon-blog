@@ -59,8 +59,6 @@ const themeKeys = [
   'regexp',
 ] as const
 
-console.log
-
 export type ThemeKey = (typeof themeKeys)[number]
 
 // const example: TextmateStyles = {

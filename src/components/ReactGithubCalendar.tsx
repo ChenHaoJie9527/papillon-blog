@@ -1,23 +1,19 @@
-import GitHubCalendar from "react-github-calendar";
+import GitHubCalendar from 'react-github-calendar'
 
-const themeFromColorscheme = ["var(--theme-background)", "var(--theme-accent)"];
-const theme = { light: themeFromColorscheme, dark: themeFromColorscheme };
+const themeFromColorscheme = ['var(--theme-background)', 'var(--theme-accent)']
+const theme = { light: themeFromColorscheme, dark: themeFromColorscheme }
 
-export default function ReactGithubCalendar({
-	username,
-}: {
-	username: string;
-}) {
-	console.log("username==", username);
-	return (
-		<div className="github-calendar">
-			<GitHubCalendar
-				username={username}
-				theme={theme}
-				showWeekdayLabels={true}
-				colorScheme="light"
-				year={new Date().getFullYear()}
-			/>
-		</div>
-	);
+export default function ReactGithubCalendar({ username }: { username: string }) {
+  console.log('username==', username)
+  return (
+    <div className="github-calendar">
+      <GitHubCalendar
+        username={username}
+        theme={theme}
+        showWeekdayLabels={true}
+        colorScheme="light"
+        year={new Date().getFullYear()}
+      />
+    </div>
+  )
 }

@@ -6,7 +6,8 @@ const config: SiteConfig = {
   // 网站的名称，用于标题和SEO。
   title: 'Papillon',
   // 网站的描述，用于SEO和RSS订阅。
-  description: '专注于React、Next.js、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
+  description:
+    '专注于React、Next.js、Astro、JavaScript、TypeScript等技术栈的个人开发博客',
   // 网站的作者，用于页脚、SEO和RSS订阅。
   author: 'momotom(ChenHaoJie9527)',
   // SEO的关键词，用于元标签。

@@ -23,7 +23,7 @@ const exportThemeData = async () => {
   // Filter keys that appear in less than 10% of themes
   // and sort them alphabetically
   const sortedEntries = Object.entries(keyCount)
-    .filter(([_, count]) => count > Math.ceil(Object.keys(bundledThemes).length / 10))
+    .filter(([, count]) => count > Math.ceil(Object.keys(bundledThemes).length / 10))
     .sort((a, b) => a[0].localeCompare(b[0]))
   const jsonData = JSON.stringify(
     {

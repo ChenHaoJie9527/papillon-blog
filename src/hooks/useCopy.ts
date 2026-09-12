@@ -11,7 +11,7 @@ function useCopy() {
       } else {
         throw new Error('writeText not supported')
       }
-    } catch (error) {
+    } catch {
       oldSchoolCopy(value)
       setCopied(value)
     }
