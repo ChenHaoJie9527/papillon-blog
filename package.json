@@ -3,6 +3,7 @@
   "description": "A terminal-inspired coding blog built with Astro.",
   "type": "module",
   "version": "1.0.0",
+  "packageManager": "pnpm@11.22.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

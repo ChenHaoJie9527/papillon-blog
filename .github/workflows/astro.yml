@@ -1,4 +1,4 @@
-# Sample workflow for building and deploying an Astro site to GitHub Pages
+# Builds the Astro site with pnpm and deploys it to GitHub Pages
 #
 # To get started with Astro see: https://docs.astro.build/en/getting-started/
 #
@@ -24,10 +24,6 @@ concurrency:
   group: 'pages'
   cancel-in-progress: false
 
-env:
-  BUILD_PATH: '.' # default value when not using subfolders
-  # BUILD_PATH: subfolder
-
 jobs:
   build:
     name: Build
@@ -35,50 +31,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            echo "lockfile=yarn.lock" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
+      # Must come before setup-node, otherwise `cache: pnpm` cannot resolve the
+      # store path. The pnpm version is read from `packageManager` in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ env.BUILD_PATH }}/${{ steps.detect-package-manager.outputs.lockfile }}
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-        working-directory: ${{ env.BUILD_PATH }}
       - name: Build with Astro
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
-      - name: Build Pagefind Index
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} pagefind --site dist
-        working-directory: ${{ env.BUILD_PATH }}
+        # Deploy URL and base path live in src/site.config.ts and
+        # astro.config.mjs, so the build is identical to a local one.
+        # Called directly instead of via `pnpm run build --`: pnpm forwards a
+        # literal `--` to the script, which would swallow extra flags.
+        run: pnpm astro build
+      - name: Build Pagefind search index
+        run: pnpm pagefind --site dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/dist
+          path: dist
 
   deploy:
     environment:
