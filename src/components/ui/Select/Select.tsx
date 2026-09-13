@@ -3,6 +3,7 @@ import { useReducedMotion } from 'motion/react'
 import { cn } from '@components/lib/utils'
 import { SelectContext } from './context'
 import type { Placement, SelectProps } from './types'
+import { useMap } from '@hooks/useMap'
 
 /**
  * Select 根组件：持有选中值、开关、选项标签表与放置方向。
@@ -52,7 +53,8 @@ export function Select({
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
   const [internal, setInternal] = useState(defaultValue)
   // TODO: 后续实现 useMap hook 来管理标签
-  const [labels, setLabels] = useState<Map<string, string>>(new Map())
+  // const [labels, setLabels] = useState<Map<string, string>>(new Map())
+  const [labels, labelsActions] = useMap<string, string>()
   const [placement, setPlacement] = useState<Placement>('bottom')
 
   const controlled = value !== undefined
@@ -79,18 +81,26 @@ export function Select({
   )
 
   /** 同 value 的 label 未变则复用旧 Map，避免无意义的 context 刷新。 */
-  const register = useCallback((v: string, label: string) => {
-    setLabels((m) => (m.get(v) === label ? m : new Map(m).set(v, label)))
-  }, [])
+  const register = useCallback(
+    (v: string, label: string) => {
+      // setLabels((m) => (m.get(v) === label ? m : new Map(m).set(v, label)))
+      labelsActions.set(v, label)
+    },
+    [labelsActions],
+  )
 
-  const unregister = useCallback((v: string) => {
-    setLabels((m) => {
-      if (!m.has(v)) return m
-      const next = new Map(m)
-      next.delete(v)
-      return next
-    })
-  }, [])
+  const unregister = useCallback(
+    (v: string) => {
+      // setLabels((m) => {
+      //   if (!m.has(v)) return m
+      //   const next = new Map(m)
+      //   next.delete(v)
+      //   return next
+      // })
+      labelsActions.remove(v)
+    },
+    [labelsActions],
+  )
 
   useEffect(() => {
     if (!open) return
@@ -130,7 +140,19 @@ export function Select({
       placement,
       setPlacement,
     }),
-    [current, open, setOpen, select, register, unregister, labels, reduce, baseId, disabled, placement],
+    [
+      current,
+      open,
+      setOpen,
+      select,
+      register,
+      unregister,
+      labels,
+      reduce,
+      baseId,
+      disabled,
+      placement,
+    ],
   )
 
   return (

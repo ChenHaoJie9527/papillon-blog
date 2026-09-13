@@ -1,0 +1,238 @@
+---
+title: 'useMap: 一个可以管理 Map 状态的 Hook'
+published: 2026-09-13
+draft: false
+description: '把 Map 的增删改做成不可变更新，用来在 React 里管理键值对状态。'
+author: 'ChenHaoJie9527'
+tags: ['react', 'hooks', 'typescript']
+---
+
+import { BasicMapDemo, SetAllMapDemo, LookupMapDemo } from '../../components/MapDemo'
+
+在 React 组件里，键值对很常见：用户 id 对应资料、选项 value 对应展示文案、请求 key 对应缓存结果。`Map` 能用任意类型做键，还保留插入顺序。但它是可变的——直接调用 `map.set()` 不会换引用，组件也就不会更新。
+
+`useMap` 把每次写入都做成一份新的 `Map`，并给出 `set`、`setAll`、`remove`、`reset`，避免在渲染路径里反复手写拷贝逻辑。
+
+## 为什么不能直接改 Map
+
+```tsx
+const [map, setMap] = useState(new Map<string, string>())
+
+map.set('user-1', 'Bob')
+setMap(map)
+```
+
+这两步都不会触发重渲染：`Map.prototype.set` 改的是同一个对象，`setMap(map)` 拿到的也是同一引用。React 用 `Object.is` 比较 state，引用没变就跳过更新。
+
+正确写法是每次操作都返回新的 `Map`：
+
+```tsx
+setMap((prev) => {
+  const next = new Map(prev)
+  next.set('user-1', 'Bob')
+  return next
+})
+```
+
+`useMap` 做的就是把这段样板收进稳定的 action。
+
+## 功能特性
+
+- ✅ 用 `Map` 管理键值对，键不必是字符串
+- ✅ `set` / `remove` / `reset` / `setAll` 都走不可变更新
+- ✅ 初始值可以是 `Map`，也可以是 `[key, value][]`
+- ✅ TypeScript 泛型推断键和值的类型
+- ✅ 返回的 `Map` 在类型上隐藏了 `set` / `delete` / `clear`，避免误用原地修改
+
+## 使用方法
+
+### 基本用法
+
+`set` 按 key 写入（已存在则覆盖），`remove` 删除一项，`reset` 清空。返回的 `map` 仍可使用 `get`、`has`、`size`、`entries()` 等只读方法。
+
+<BasicMapDemo client:only />
+
+```tsx
+import { useMap } from './hooks/useMap'
+
+function UserTable() {
+  const [map, { set, remove, reset }] = useMap<string, string>()
+
+  return (
+    <div>
+      <button onClick={() => set('user-1', '陈浩杰')}>添加</button>
+      <button onClick={() => remove('user-1')}>删除</button>
+      <button onClick={reset}>重置</button>
+      <p>size: {map.size}</p>
+      <ul>
+        {[...map.entries()].map(([key, value]) => (
+          <li key={key}>
+            {key}: {value}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+### 初始化与批量替换
+
+构造时传入条目数组（或另一个 `Map`）即可设置初始状态。`setAll` 会用新数据**整体替换**当前 Map，而不是逐项合并。
+
+<SetAllMapDemo client:only />
+
+```tsx
+const fruits: [string, string][] = [
+  ['apple', '苹果'],
+  ['pear', '梨'],
+]
+
+function FruitMap() {
+  const [map, { setAll, reset }] = useMap(fruits)
+
+  return (
+    <div>
+      <button onClick={() => setAll([['cat', '猫'], ['dog', '狗']])}>
+        换成动物
+      </button>
+      <button onClick={() => setAll(fruits)}>换回水果</button>
+      <button onClick={reset}>清空</button>
+      <p>{map.get('apple')}</p>
+    </div>
+  )
+}
+```
+
+### 作为查找表
+
+`map.get(key)` 适合做 value → label 这类登记表。站点里的 `Select` 就是用 `useMap` 在选项挂载时登记文案，关闭面板后触发器仍能显示当前标签。
+
+<LookupMapDemo client:only />
+
+```tsx
+function SelectLabels() {
+  const [labels, { set, remove }] = useMap<string, string>()
+
+  const register = (value: string, label: string) => set(value, label)
+  const unregister = (value: string) => remove(value)
+  const labelFor = (value?: string) =>
+    value === undefined ? undefined : labels.get(value)
+
+  return { register, unregister, labelFor }
+}
+```
+
+## API
+
+### 参数
+
+- `initialState?: Map<K, V> | [K, V][]` — 初始数据，默认空 `Map`。只在首次渲染生效。
+
+### 返回值
+
+元组 `[map, actions]`：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `map` | `Omit<Map<K, V>, 'set' \| 'clear' \| 'delete'>` | 当前 Map，只强调读取 |
+| `actions.set` | `(key: K, value: V) => void` | 添加或覆盖一项 |
+| `actions.setAll` | `(entries: Map<K, V> \| [K, V][]) => void` | 用新条目整体替换 |
+| `actions.remove` | `(key: K) => void` | 删除一项 |
+| `actions.reset` | `() => void` | 清空为新的空 Map |
+
+### 类型定义
+
+```typescript
+type MapOrEntries<K, V> = Map<K, V> | [K, V][]
+
+type UseMapActions<K, V> = {
+  set: (key: K, value: V) => void
+  setAll: (entries: MapOrEntries<K, V>) => void
+  remove: (key: K) => void
+  reset: () => void
+}
+
+function useMap<K, V>(
+  initialState?: MapOrEntries<K, V>,
+): [Omit<Map<K, V>, 'set' | 'clear' | 'delete'>, UseMapActions<K, V>]
+```
+
+## 函数实现
+
+```typescript
+import { useCallback, useState } from 'react'
+
+type MapOrEntries<K, V> = Map<K, V> | [K, V][]
+
+type UseMapActions<K, V> = {
+  set: (key: K, value: V) => void
+  setAll: (entries: MapOrEntries<K, V>) => void
+  remove: (key: K) => void
+  reset: () => void
+}
+
+export function useMap<K, V>(
+  initialState: MapOrEntries<K, V> = new Map(),
+): [Omit<Map<K, V>, 'set' | 'clear' | 'delete'>, UseMapActions<K, V>] {
+  const [map, setMap] = useState(new Map(initialState))
+
+  const set = useCallback((key: K, value: V) => {
+    setMap((prev) => {
+      const next = new Map(prev)
+      next.set(key, value)
+      return next
+    })
+  }, [])
+
+  const setAll = useCallback((entries: MapOrEntries<K, V>) => {
+    setMap(() => new Map(entries))
+  }, [])
+
+  const remove = useCallback((key: K) => {
+    setMap((prev) => {
+      const next = new Map(prev)
+      next.delete(key)
+      return next
+    })
+  }, [])
+
+  const reset = useCallback(() => {
+    setMap(() => new Map())
+  }, [])
+
+  return [map, { set, setAll, remove, reset }]
+}
+```
+
+### 关键点解析
+
+1. **先拷贝再修改**：`new Map(prev)` 得到新引用，React 才会提交这次更新。
+2. **函数式 `setMap`**：按 `prev` 计算下一份数据，避免闭包里读到过期的 `map`。
+3. **`setAll` 是替换不是合并**：`new Map(entries)` 丢弃旧条目。要合并就对需要留下的 key 再 `set`。
+4. **`useCallback` 空依赖**：`set` / `setAll` / `remove` / `reset` 的函数引用稳定，可以放进其他 Hook 的依赖数组。
+5. **类型上拿掉可变方法**：运行时的 `Map` 仍有 `set` / `delete` / `clear`，TypeScript 不提示它们，是为了减少「改了但页面不动」的误用。
+
+## 和普通对象 state 怎么选
+
+| | `useState<Record<string, V>>` | `useMap<K, V>` |
+| --- | --- | --- |
+| 键类型 | 字符串 / symbol | 任意类型（对象、数字都可以） |
+| 插入顺序 | 整数键会按索引排序 | 按写入顺序 |
+| 大小 | 自己数 `Object.keys` | `map.size` |
+| 更新方式 | 展开对象 `{ ...prev, [k]: v }` | Hook 内部拷贝 Map |
+| 更合适的场景 | 表单字段、固定形状的字典 | 查找表、缓存、动态登记 |
+
+键只是字符串、结构也稳定时，对象 state 往往更直观。需要任意键、频繁增删、或要保留插入顺序时，再用 `useMap`。
+
+## 注意事项
+
+1. **不要原地修改返回的 `map`**。类型隐藏了 `set` / `delete` / `clear`，运行时它们还在。一旦直接调用，引用不变，界面不会更新。
+2. **解构 action，不要依赖整个 `actions` 对象**。每次渲染都会返回新的 `{ set, setAll, remove, reset }`，对象引用会变；四个方法本身是稳定的。写成 `const { set, remove } = actions` 再放进 `useCallback` / `useEffect` 依赖。
+3. **`initialState` 只用于首次渲染**。之后就算传入新的数组或 `Map`，也不会同步进来。运行时要换全部数据，用 `setAll`。
+4. **相同 key 和 value 仍会拷贝一份新 Map**。如果登记表会在 layout effect 里反复写入同一对值，调用前先 `map.get(key) === value` 判断，避免无意义的重渲染。
+5. **渲染列表时把 `Map` 转成数组**：`[...map.entries()]` 或 `Array.from(map)`。不要在 JSX 里直接遍历 `Map`。
+
+## 总结
+
+`useMap` 解决的不是「怎么用 Map」，而是「怎么让 Map 的改动被 React 看见」。读写仍用熟悉的 `get` / `has` / `size`，写入走 `set`、`setAll`、`remove`、`reset`。适合选项标签、请求缓存、动态登记这类以 key 为主的状态；键只是字符串且形状固定时，继续用对象 state 即可。
