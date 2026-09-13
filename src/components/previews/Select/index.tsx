@@ -7,6 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@components/ui/Select'
+import { Apple, Wheat } from 'lucide-react'
 
 const fruits = [
   { value: 'apple', label: '苹果' },
@@ -193,13 +194,13 @@ export function CustomItemDemo() {
         <SelectContent>
           <SelectItem value="apple">
             <span className="flex items-center gap-2">
-              <span>🍎</span>
+              <Apple className="size-4" />
               <span>苹果</span>
             </span>
           </SelectItem>
           <SelectItem value="pear">
             <span className="flex items-center gap-2">
-              <span>🍐</span>
+              <Wheat className="size-4" />
               <span>梨</span>
             </span>
           </SelectItem>
