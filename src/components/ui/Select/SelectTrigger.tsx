@@ -38,7 +38,8 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
         className,
       )}
     >
-      {children}
+      <span className="flex min-w-0 flex-1 items-center">{children}</span>
+
       <motion.span
         aria-hidden={true}
         animate={{ rotate: ctx.open ? 180 : 0 }}

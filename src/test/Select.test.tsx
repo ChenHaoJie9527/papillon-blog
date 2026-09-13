@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { render, screen, fireEvent, within } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import {
   Select,
   SelectContent,
@@ -49,5 +49,53 @@ describe('Select', () => {
     expect(list.className).toContain('rounded-none')
     expect(list.style.borderTopLeftRadius).toBe('')
     expect(list.style.borderBottomRightRadius).toBe('')
+  })
+
+  it('multiple 时点选切换且不关面板', () => {
+    const onValueChange = vi.fn()
+    render(
+      <Select multiple defaultValue={['apple']} onValueChange={onValueChange}>
+        <SelectTrigger>
+          <SelectValue placeholder="选择水果" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">苹果</SelectItem>
+          <SelectItem value="pear">梨</SelectItem>
+        </SelectContent>
+      </Select>,
+    )
+    fireEvent.click(screen.getByRole('button', { expanded: false }))
+    fireEvent.click(screen.getByRole('option', { name: '梨' }))
+    expect(onValueChange).toHaveBeenCalledWith(['apple', 'pear'])
+    const trigger = screen.getByRole('button', { expanded: true })
+    expect(trigger).toBeTruthy()
+    expect(within(trigger).getByText('苹果')).toBeTruthy()
+    expect(within(trigger).getByText('梨')).toBeTruthy()
+    expect(trigger.querySelectorAll('[data-slot="select-tag"]')).toHaveLength(2)
+    expect(within(trigger).queryByText('苹果、梨')).toBeNull()
+    fireEvent.click(screen.getByRole('option', { name: '苹果' }))
+    expect(onValueChange).toHaveBeenLastCalledWith(['pear'])
+  })
+
+  it('单选时点选仍关闭且回调是 string', () => {
+    const onValueChange = vi.fn()
+    render(
+      <Select defaultValue="apple" onValueChange={onValueChange}>
+        <SelectTrigger>
+          <SelectValue placeholder="选择水果" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">苹果</SelectItem>
+          <SelectItem value="pear">梨</SelectItem>
+        </SelectContent>
+      </Select>,
+    )
+    fireEvent.click(screen.getByRole('button', { expanded: false }))
+    fireEvent.click(screen.getByRole('option', { name: '梨' }))
+    expect(onValueChange).toHaveBeenCalledWith('pear')
+    const trigger = screen.getByRole('button', { expanded: false })
+    expect(trigger).toBeTruthy()
+    expect(within(trigger).getByText('梨')).toBeTruthy()
+    expect(trigger.querySelector('[data-slot="select-tag"]')).toBeNull()
   })
 })

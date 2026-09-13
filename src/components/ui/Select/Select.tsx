@@ -4,6 +4,7 @@ import { cn } from '@components/lib/utils'
 import { SelectContext } from './context'
 import type { Placement, SelectProps } from './types'
 import { useMap } from '@hooks/useMap'
+import { toggleValue, toValues } from './utils'
 
 /**
  * Select 根组件：持有选中值、开关、选项标签表与放置方向。
@@ -43,6 +44,7 @@ export function Select({
   disabled = false,
   className,
   children,
+  multiple = false,
 }: SelectProps) {
   /** 系统开启「减少动态效果」时为 true，子组件据此跳过弹簧。 */
   const reduce = useReducedMotion() ?? false
@@ -51,12 +53,13 @@ export function Select({
   const rootRef = useRef<HTMLDivElement>(null)
 
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
-  const [internal, setInternal] = useState(defaultValue)
+  const [internal, setInternal] = useState<string[]>(() => toValues(defaultValue))
   const [labels, { set: setLabel, remove: removeLabel }] = useMap<string, string>()
   const [placement, setPlacement] = useState<Placement>('bottom')
 
+  const isMultiple = multiple === true
   const controlled = value !== undefined
-  const current = controlled ? value : internal
+  const values = controlled ? toValues(value) : internal
 
   const openControlled = openProp !== undefined
   const open = openControlled ? openProp : internalOpen
@@ -71,11 +74,28 @@ export function Select({
 
   const select = useCallback(
     (next: string) => {
-      if (!controlled) setInternal(next)
-      onValueChange?.(next)
-      setOpen(false)
+      // 判断是否多选，如果是多选，则使用 toggleValue 函数切换选中值，否则直接设置为新值
+      const upcoming = isMultiple ? toggleValue(values, next) : [next]
+
+      // 如果受控，则不更新内部状态，否则更新内部状态
+      if (!controlled) setInternal(upcoming)
+
+      // TODO: 这里的 if else 可读性太差，可以考虑使用一个辅助函数来处理值
+      if (isMultiple) {
+        const emit = onValueChange as ((value: string[]) => void) | undefined
+        emit?.(upcoming)
+      } else {
+        const emit = onValueChange as ((value: string) => void) | undefined
+        emit?.(upcoming[0] ?? '')
+        setOpen(false)
+      }
+
+      // 单选选中后关闭面板
+      if (!isMultiple) {
+        setOpen(false)
+      }
     },
-    [controlled, onValueChange, setOpen],
+    [controlled, onValueChange, setOpen, isMultiple, setOpen, values],
   )
 
   /** 依赖具体方法而不是整个 actions 对象，避免对象换引用导致选项反复登记。 */
@@ -117,7 +137,8 @@ export function Select({
 
   const ctx = useMemo(
     () => ({
-      value: current,
+      multiple: isMultiple,
+      values,
       open,
       setOpen,
       select,
@@ -132,7 +153,8 @@ export function Select({
       setPlacement,
     }),
     [
-      current,
+      isMultiple,
+      values,
       open,
       setOpen,
       select,

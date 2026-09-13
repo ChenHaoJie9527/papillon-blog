@@ -92,6 +92,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
       role="listbox"
       aria-labelledby={ctx.triggerId}
       aria-hidden={!open}
+      aria-multiselectable={ctx.multiple || undefined}
       inert={!open}
       data-open={open}
       data-placement={ctx.placement}

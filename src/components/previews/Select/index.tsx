@@ -19,7 +19,11 @@ function FruitOptions({ disableValue }: { disableValue?: string }) {
   return (
     <>
       {fruits.map((fruit) => (
-        <SelectItem key={fruit.value} value={fruit.value} disabled={fruit.value === disableValue}>
+        <SelectItem
+          key={fruit.value}
+          value={fruit.value}
+          disabled={fruit.value === disableValue}
+        >
           {fruit.label}
         </SelectItem>
       ))}
@@ -27,10 +31,11 @@ function FruitOptions({ disableValue }: { disableValue?: string }) {
   )
 }
 
-function FruitSelect({
-  disableValue,
-  ...props
-}: Omit<SelectProps, 'children'> & { disableValue?: string }) {
+type FruitSelectProps = Omit<Extract<SelectProps, { multiple?: false }>, 'children'> & {
+  disableValue?: string
+}
+
+function FruitSelect({ disableValue, ...props }: FruitSelectProps) {
   return (
     <Select className="w-full" {...props}>
       <SelectTrigger>
@@ -83,7 +88,10 @@ export function DefaultValueDemo() {
 /** 占位符 */
 export function PlaceholderDemo() {
   return (
-    <ApiCard api="SelectValue placeholder" note="未选中时显示占位文案，选中后换成选项 label。">
+    <ApiCard
+      api="SelectValue placeholder"
+      note="未选中时显示占位文案，选中后换成选项 label。"
+    >
       <FruitSelect />
     </ApiCard>
   )
@@ -93,7 +101,10 @@ export function PlaceholderDemo() {
 export function ControlledValueDemo() {
   const [value, setValue] = useState('apple')
   return (
-    <ApiCard api="value / onValueChange" note="传入 value 即为受控。外部按钮也能改选中项。">
+    <ApiCard
+      api="value / onValueChange"
+      note="传入 value 即为受控。外部按钮也能改选中项。"
+    >
       <FruitSelect value={value} onValueChange={setValue} />
       <div className="mt-1 flex flex-wrap gap-1">
         <button
@@ -159,7 +170,10 @@ export function DisabledSelectDemo() {
 /** 单项禁用 */
 export function DisabledItemDemo() {
   return (
-    <ApiCard api="SelectItem disabled" note="芒果不可选，其它项正常。禁用项仍会登记 label。">
+    <ApiCard
+      api="SelectItem disabled"
+      note="芒果不可选，其它项正常。禁用项仍会登记 label。"
+    >
       <FruitSelect defaultValue="apple" disableValue="mango" />
     </ApiCard>
   )
@@ -240,6 +254,26 @@ export function ExclusiveOpenDemo() {
   )
 }
 
+export function MultipleDemo() {
+  const [values, setValues] = useState<string[]>(['apple'])
+  return (
+    <ApiCard
+      api="multiple"
+      note="点选项切换，面板保持打开。新选中的 Tag 会弹出，已有 Tag 让位。"
+    >
+      <Select className="w-full" multiple value={values} onValueChange={setValues}>
+        <SelectTrigger>
+          <SelectValue placeholder="选择水果" />
+        </SelectTrigger>
+        <SelectContent>
+          <FruitOptions />
+        </SelectContent>
+      </Select>
+      <Status>onValueChange → {values.join(', ') || '(空)'}</Status>
+    </ApiCard>
+  )
+}
+
 /** 展柜入口：把 API 示例铺开，而不只是几个裸控件 */
 export function SelectApiPreview() {
   return (
@@ -251,6 +285,8 @@ export function SelectApiPreview() {
       <DisabledSelectDemo />
       <DisabledItemDemo />
       <CustomItemDemo />
+      <MultipleDemo />
+
       <DefaultOpenDemo />
       <ExclusiveOpenDemo />
     </div>

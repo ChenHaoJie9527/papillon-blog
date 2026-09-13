@@ -22,7 +22,7 @@ import type { SelectItemProps } from './types'
  */
 export function SelectItem({ value, disabled, className, children }: SelectItemProps) {
   const ctx = useSelectContext('SelectItem')
-  const selected = ctx.value === value
+  const selected = ctx.values?.includes(value)
   const label = typeof children === 'string' ? children : value
 
   useLayoutEffect(() => {

@@ -23,13 +23,14 @@ export type Placement = 'bottom' | 'top'
  * - `SelectContent` 测量高度、决定翻转方向
  */
 export interface SelectContextValue {
-  /** 当前选中值；未选中时为 `undefined`。 */
-  value?: string
+  multiple: boolean
+  /** 当前选中值。内部一律是数组；单选为 0 或 1 项，空数组表示未选。 */
+  values?: string[]
   /** 面板是否展开。 */
   open: boolean
   /** 更新展开状态。受控模式下只通知外部，不写内部 state。 */
   setOpen: (open: boolean) => void
-  /** 选中一项：更新值并关闭面板。 */
+  /** 选中一项。单选：替换并关面板；多选：切换该项，不关面板。 */
   select: (value: string) => void
   /**
    * 选项挂载时把自己的 `value → label` 登记进 Map。
@@ -57,6 +58,25 @@ export interface SelectContextValue {
   setPlacement?: (placement: Placement) => void
 }
 
+type SelectSharedProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> & {
+  /**
+   * 受控的面板打开状态。
+   * 堆叠布局可由父级持有该状态，避免两个绝对定位面板互相覆盖。
+   */
+  open?: boolean
+  /** 非受控的初始打开状态。默认 `false`。 */
+  defaultOpen?: boolean
+  /** 禁用整个选择器。 */
+  disabled?: boolean
+  className?: string
+  children: ReactNode
+  /**
+   * 面板打开或关闭时触发。
+   * 堆叠选择器需要据此决定哪个邻居要画在上面。
+   */
+  onOpenChange?: (open: boolean) => void
+}
+
 /**
  * 根组件属性。
  *
@@ -67,30 +87,21 @@ export interface SelectContextValue {
  * 多个 Select 纵向堆叠时，面板是绝对定位的，同时打开会互相遮挡。
  * 这时应由父级持有 `open`，保证同一时刻只有一个面板展开。
  */
-export interface SelectProps extends HTMLAttributes<HTMLDivElement> {
-  /** 受控选中值。 */
-  value?: string
-  /** 非受控初始选中值。 */
-  defaultValue?: string
-  /** 选中值变化时回调。受控与非受控都会触发。 */
-  onValueChange?: (value: string) => void
-  /**
-   * 受控的面板打开状态。
-   * 堆叠布局可由父级持有该状态，避免两个绝对定位面板互相覆盖。
-   */
-  open?: boolean
-  /** 非受控的初始打开状态。默认 `false`。 */
-  defaultOpen?: boolean
-  /**
-   * 面板打开或关闭时触发。
-   * 堆叠选择器需要据此决定哪个邻居要画在上面。
-   */
-  onOpenChange?: (open: boolean) => void
-  /** 禁用整个选择器。 */
-  disabled?: boolean
-  className?: string
-  children: ReactNode
-}
+export type SelectProps = SelectSharedProps &
+  (
+    | {
+        multiple?: false
+        value?: string
+        defaultValue?: string
+        onValueChange?: (value: string) => void
+      }
+    | {
+        multiple: true
+        value?: string[]
+        defaultValue?: string[]
+        onValueChange?: (value: string[]) => void
+      }
+  )
 
 export interface SelectTriggerProps {
   className?: string

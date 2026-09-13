@@ -13,6 +13,7 @@ export { SelectTrigger } from './SelectTrigger'
 export { SelectValue } from './SelectValue'
 export { SelectContent } from './SelectContent'
 export { SelectItem } from './SelectItem'
+export { SelectTag } from './SelectTag'
 
 export type {
   SelectProps,

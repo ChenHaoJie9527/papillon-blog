@@ -18,22 +18,23 @@ export const selectApi: ApiSection[] = [
     props: [
       {
         name: 'value',
-        type: 'string',
+        type: 'string | string[]',
         defaultValue: '—',
-        description: '受控选中值。传入后由外部决定当前项，内部不再写入。',
+        description: '受控选中值。multiple 时为 string[]，传入 [] 表示受控且未选。',
       },
       {
         name: 'defaultValue',
-        type: 'string',
+        type: 'string | string[]',
         defaultValue: '—',
-        description: '非受控初始选中值。仅在未传 value 时生效。',
+        description: '非受控初始值。multiple 时为 string[]。',
       },
       {
         name: 'onValueChange',
-        type: '(value: string) => void',
+        type: '(value: string | string[]) => void',
         defaultValue: '—',
-        description: '选中项变化时回调。受控与非受控都会触发。',
+        description: '选中变化回调。单选为 string，multiple 时为 string[]。',
       },
+
       {
         name: 'open',
         type: 'boolean',
@@ -71,6 +72,13 @@ export const selectApi: ApiSection[] = [
         defaultValue: '必填',
         description: '通常为 SelectTrigger 与 SelectContent。',
       },
+      {
+        name: 'multiple',
+        type: 'boolean',
+        defaultValue: 'false',
+        description:
+          '为 true 时多选。value / defaultValue / onValueChange 变为 string[]；点选项切换且不关面板。',
+      },
     ],
   },
   {
@@ -93,7 +101,8 @@ export const selectApi: ApiSection[] = [
   },
   {
     component: 'SelectValue',
-    description: '触发器内的当前值。文案来自 SelectItem 登记的 label。',
+    description:
+      '触发器内的当前值。单选为纯文本；多选时每个 label 包一层 SelectTag，追加时播放入场。',
     props: [
       {
         name: 'placeholder',
@@ -105,7 +114,7 @@ export const selectApi: ApiSection[] = [
         name: 'className',
         type: 'string',
         defaultValue: '—',
-        description: '展示文案的 span class。有值用前景色，占位符用 muted。',
+        description: '容器 class。未选中时是占位文案；单选是纯文本，多选是 Tag 列表。',
       },
     ],
   },

@@ -33,6 +33,17 @@ export const itemVariants: Variants = {
   show: { opacity: 1, y: 0, filter: 'blur(0px)' },
 }
 
+/**
+ * 多选 Tag 入场 / 退场。
+ * scale 用短弹簧，opacity 用时长，避免透明度被弹簧顶过 1。
+ * layout 只负责已有 Tag 给新项让位时的位移。
+ */
+export const tagTransition: Transition = {
+  scale: { type: 'spring', duration: 0.32, bounce: 0.22 },
+  opacity: { duration: 0.16 },
+  layout: { type: 'spring', duration: 0.28, bounce: 0.12 },
+}
+
 /** 面板打开后，近侧（朝向触发器）拉开的缝隙（px）。 */
 export const NEAR_GAP = 8
 
