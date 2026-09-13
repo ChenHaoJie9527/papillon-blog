@@ -52,9 +52,7 @@ export function Select({
 
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
   const [internal, setInternal] = useState(defaultValue)
-  // TODO: 后续实现 useMap hook 来管理标签
-  // const [labels, setLabels] = useState<Map<string, string>>(new Map())
-  const [labels, labelsActions] = useMap<string, string>()
+  const [labels, { set: setLabel, remove: removeLabel }] = useMap<string, string>()
   const [placement, setPlacement] = useState<Placement>('bottom')
 
   const controlled = value !== undefined
@@ -80,26 +78,19 @@ export function Select({
     [controlled, onValueChange, setOpen],
   )
 
-  /** 同 value 的 label 未变则复用旧 Map，避免无意义的 context 刷新。 */
+  /** 依赖具体方法而不是整个 actions 对象，避免对象换引用导致选项反复登记。 */
   const register = useCallback(
     (v: string, label: string) => {
-      // setLabels((m) => (m.get(v) === label ? m : new Map(m).set(v, label)))
-      labelsActions.set(v, label)
+      setLabel(v, label)
     },
-    [labelsActions],
+    [setLabel],
   )
 
   const unregister = useCallback(
     (v: string) => {
-      // setLabels((m) => {
-      //   if (!m.has(v)) return m
-      //   const next = new Map(m)
-      //   next.delete(v)
-      //   return next
-      // })
-      labelsActions.remove(v)
+      removeLabel(v)
     },
-    [labelsActions],
+    [removeLabel],
   )
 
   useEffect(() => {

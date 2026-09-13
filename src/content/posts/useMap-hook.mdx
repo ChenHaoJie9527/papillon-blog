@@ -161,7 +161,7 @@ function useMap<K, V>(
 ## 函数实现
 
 ```typescript
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 type MapOrEntries<K, V> = Map<K, V> | [K, V][]
 
@@ -201,7 +201,12 @@ export function useMap<K, V>(
     setMap(() => new Map())
   }, [])
 
-  return [map, { set, setAll, remove, reset }]
+  const actions = useMemo(
+    () => ({ set, setAll, remove, reset }),
+    [set, setAll, remove, reset],
+  )
+
+  return [map, actions]
 }
 ```
 
@@ -210,7 +215,7 @@ export function useMap<K, V>(
 1. **先拷贝再修改**：`new Map(prev)` 得到新引用，React 才会提交这次更新。
 2. **函数式 `setMap`**：按 `prev` 计算下一份数据，避免闭包里读到过期的 `map`。
 3. **`setAll` 是替换不是合并**：`new Map(entries)` 丢弃旧条目。要合并就对需要留下的 key 再 `set`。
-4. **`useCallback` 空依赖**：`set` / `setAll` / `remove` / `reset` 的函数引用稳定，可以放进其他 Hook 的依赖数组。
+4. **`useMemo` 固定 `actions` 对象**：`set` / `setAll` / `remove` / `reset` 本身已经用空依赖的 `useCallback` 固定；如果不把它们收进同一个 memo 对象，每次渲染仍会得到新的 `actions`。把 `actions` 放进其他 Hook 的依赖（例如选项登记的 layout effect）就会反复 `set` / `remove`，触发无限更新。
 5. **类型上拿掉可变方法**：运行时的 `Map` 仍有 `set` / `delete` / `clear`，TypeScript 不提示它们，是为了减少「改了但页面不动」的误用。
 
 ## 和普通对象 state 怎么选
@@ -228,7 +233,7 @@ export function useMap<K, V>(
 ## 注意事项
 
 1. **不要原地修改返回的 `map`**。类型隐藏了 `set` / `delete` / `clear`，运行时它们还在。一旦直接调用，引用不变，界面不会更新。
-2. **解构 action，不要依赖整个 `actions` 对象**。每次渲染都会返回新的 `{ set, setAll, remove, reset }`，对象引用会变；四个方法本身是稳定的。写成 `const { set, remove } = actions` 再放进 `useCallback` / `useEffect` 依赖。
+2. **`actions` 对象和方法引用都是稳定的**，可以放进 `useCallback` / `useEffect` 依赖。仍建议解构出 `set` / `remove`，意图更清楚。如果依赖的是每次渲染新建的包装函数，仍可能让 layout effect 反复 `register` / `unregister`，触发无限更新。
 3. **`initialState` 只用于首次渲染**。之后就算传入新的数组或 `Map`，也不会同步进来。运行时要换全部数据，用 `setAll`。
 4. **相同 key 和 value 仍会拷贝一份新 Map**。如果登记表会在 layout effect 里反复写入同一对值，调用前先 `map.get(key) === value` 判断，避免无意义的重渲染。
 5. **渲染列表时把 `Map` 转成数组**：`[...map.entries()]` 或 `Array.from(map)`。不要在 JSX 里直接遍历 `Map`。

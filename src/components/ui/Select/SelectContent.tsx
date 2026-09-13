@@ -4,13 +4,11 @@ import { EASE_OUT } from '@components/lib/select-ease'
 import { cn } from '@components/lib/utils'
 import { useSelectContext } from './context'
 import {
-  CORNER_RADIUS,
   FLIP_SAFE_GAP,
   NEAR_GAP,
   gapTransition,
   initialTransition,
   listVariants,
-  radiusTransition,
 } from './motion'
 import type { SelectContentProps } from './types'
 
@@ -25,12 +23,12 @@ import type { SelectContentProps } from './types'
  * 打开时量一次视口：下方放不下（高度 + 16px 安全距）且上方更宽裕 → `placement: 'top'`。
  *
  * ## 近侧 / 远侧
- * 朝向触发器的一侧叫近侧：打开时缝隙从 0→8、圆角从 0→12；
- * 远侧始终圆角、margin 为 0。四个角和两侧 margin 每次都写全，
- * 避免 `placement` 翻转后留下单独一个方角。
+ * 朝向触发器的一侧叫近侧：打开时缝隙从 0→8。远侧 margin 为 0。
+ * 两侧 margin 每次都写全，避免 `placement` 翻转后留下旧边距。
+ * 圆角只走 className（默认 `rounded-xl`），不写 inline `border-radius`。
  *
  * ## 减少动态效果
- * 只做透明度和高度的短过渡，不做缝隙 / 圆角弹簧。
+ * 只做透明度和高度的短过渡，不做缝隙弹簧。
  */
 export function SelectContent({ className, children }: SelectContentProps) {
   const ctx = useSelectContext('SelectContent')
@@ -66,9 +64,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
 
   const isTop = ctx.placement === 'top'
   const nearGap = open ? NEAR_GAP : 0
-  const nearRadius = open ? CORNER_RADIUS : 0
   const gapT = gapTransition(open)
-  const radiusT = radiusTransition(open)
 
   const animate = ctx.reduce
     ? { opacity: open ? 1 : 0, height: open ? height : 0 }
@@ -77,10 +73,6 @@ export function SelectContent({ className, children }: SelectContentProps) {
         height: open ? height : 0,
         marginTop: isTop ? 0 : nearGap,
         marginBottom: isTop ? nearGap : 0,
-        borderTopLeftRadius: isTop ? CORNER_RADIUS : nearRadius,
-        borderTopRightRadius: isTop ? CORNER_RADIUS : nearRadius,
-        borderBottomLeftRadius: isTop ? nearRadius : CORNER_RADIUS,
-        borderBottomRightRadius: isTop ? nearRadius : CORNER_RADIUS,
       }
 
   const transition = ctx.reduce
@@ -92,10 +84,6 @@ export function SelectContent({ className, children }: SelectContentProps) {
           : { duration: 0.26, ease: EASE_OUT, delay: 0.14 },
         marginTop: isTop ? initialTransition : gapT,
         marginBottom: isTop ? gapT : initialTransition,
-        borderTopLeftRadius: isTop ? initialTransition : radiusT,
-        borderTopRightRadius: isTop ? initialTransition : radiusT,
-        borderBottomLeftRadius: isTop ? radiusT : initialTransition,
-        borderBottomRightRadius: isTop ? radiusT : initialTransition,
       }
 
   return (
@@ -105,6 +93,8 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-labelledby={ctx.triggerId}
       aria-hidden={!open}
       inert={!open}
+      data-open={open}
+      data-placement={ctx.placement}
       initial={false}
       animate={animate}
       transition={transition}
@@ -114,7 +104,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
         pointerEvents: open ? 'auto' : 'none',
       }}
       className={cn(
-        'absolute left-0 right-0 z-20 rounded-xl border border-border bg-background shadow-lg',
+        'absolute left-0 right-0 z-20 rounded-lg border border-border bg-background shadow-lg',
         isTop ? 'bottom-full' : 'top-full',
         className,
       )}

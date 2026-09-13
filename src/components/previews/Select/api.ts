@@ -38,7 +38,8 @@ export const selectApi: ApiSection[] = [
         name: 'open',
         type: 'boolean',
         defaultValue: '—',
-        description: '受控的面板打开状态。堆叠多个 Select 时由父级持有，避免面板互相遮挡。',
+        description:
+          '受控的面板打开状态。堆叠多个 Select 时由父级持有，避免面板互相遮挡。',
       },
       {
         name: 'defaultOpen',
@@ -74,13 +75,13 @@ export const selectApi: ApiSection[] = [
   },
   {
     component: 'SelectTrigger',
-    description: '打开 / 关闭面板的按钮。圆角动画跟随面板放置方向。',
+    description: '打开 / 关闭面板的按钮。圆角用 className 覆盖，例如 rounded-lg。',
     props: [
       {
         name: 'className',
         type: 'string',
         defaultValue: '—',
-        description: '触发器按钮 class。',
+        description: '触发器按钮 class。可覆盖默认 rounded-xl；开合不会写 inline 圆角。',
       },
       {
         name: 'children',
@@ -110,13 +111,15 @@ export const selectApi: ApiSection[] = [
   },
   {
     component: 'SelectContent',
-    description: '选项面板。关闭后仍挂载 children，避免触发器掉回占位符；视口不够时翻到上方。',
+    description:
+      '选项面板。关闭后仍挂载 children，避免触发器掉回占位符；视口不够时翻到上方。',
     props: [
       {
         name: 'className',
         type: 'string',
         defaultValue: '—',
-        description: '面板容器 class。',
+        description:
+          '面板容器 class。可覆盖默认 rounded-xl；高度与缝隙仍由 Motion 驱动。',
       },
       {
         name: 'children',
@@ -134,7 +137,8 @@ export const selectApi: ApiSection[] = [
         name: 'value',
         type: 'string',
         defaultValue: '必填',
-        description: '机器可读值。选中后写入上下文，并作为非字符串 children 时的回退文案。',
+        description:
+          '机器可读值。选中后写入上下文，并作为非字符串 children 时的回退文案。',
       },
       {
         name: 'disabled',
@@ -152,7 +156,8 @@ export const selectApi: ApiSection[] = [
         name: 'children',
         type: 'ReactNode',
         defaultValue: '必填',
-        description: '列表中的展示内容。纯字符串会同时作为触发器 label；否则触发器显示 value。',
+        description:
+          '列表中的展示内容。纯字符串会同时作为触发器 label；否则触发器显示 value。',
       },
     ],
   },

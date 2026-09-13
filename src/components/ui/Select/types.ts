@@ -8,8 +8,8 @@ import type { HTMLAttributes, ReactNode } from 'react'
  *
  * 放置方向会同时影响：
  * 1. 面板的绝对定位锚点（`top-full` / `bottom-full`）
- * 2. 触发器与面板「近侧」圆角的动画轴（朝向对方的那一侧会从直角过渡到圆角）
- * 3. 缝隙（margin）打开的一侧
+ * 2. 缝隙（margin）打开的一侧
+ * 3. `data-placement`，供 className 按方向覆盖圆角等样式
  */
 export type Placement = 'bottom' | 'top'
 
@@ -17,7 +17,7 @@ export type Placement = 'bottom' | 'top'
  * Select 内部共享状态。
  *
  * 子组件不直接持有选中值 / 开关，全部通过该上下文协作：
- * - `SelectTrigger` 负责开关与圆角变形
+ * - `SelectTrigger` 负责开关；圆角由 className 控制
  * - `SelectValue` 根据 `labelFor` 显示当前项文案
  * - `SelectItem` 注册文案、提交选中值
  * - `SelectContent` 测量高度、决定翻转方向

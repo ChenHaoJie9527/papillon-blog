@@ -1,4 +1,5 @@
-import { renderHook, act } from '@testing-library/react'
+import { render, renderHook, screen, act } from '@testing-library/react'
+import { useCallback, useLayoutEffect } from 'react'
 import { describe, it, expect } from 'vitest'
 import { useMap } from '@hooks/useMap'
 
@@ -91,5 +92,42 @@ describe('useMap', () => {
     expect(result.current[1].setAll).toBe(firstActions.setAll)
     expect(result.current[1].remove).toBe(firstActions.remove)
     expect(result.current[1].reset).toBe(firstActions.reset)
+  })
+
+  it('actions 对象引用应该保持稳定', () => {
+    const { result, rerender } = renderHook(() => useMap<string, number>())
+    const firstActions = result.current[1]
+
+    rerender()
+
+    expect(result.current[1]).toBe(firstActions)
+  })
+
+  it('把 actions 放进 layout effect 依赖时不应陷入无限更新', () => {
+    function LabelsRegistry() {
+      const [map, actions] = useMap<string, string>()
+      const register = useCallback(
+        (value: string, label: string) => {
+          actions.set(value, label)
+        },
+        [actions],
+      )
+      const unregister = useCallback(
+        (value: string) => {
+          actions.remove(value)
+        },
+        [actions],
+      )
+
+      useLayoutEffect(() => {
+        register('apple', '苹果')
+        return () => unregister('apple')
+      }, [register, unregister])
+
+      return <span>{map.get('apple')}</span>
+    }
+
+    expect(() => render(<LabelsRegistry />)).not.toThrow()
+    expect(screen.getByText('苹果')).toBeTruthy()
   })
 })
