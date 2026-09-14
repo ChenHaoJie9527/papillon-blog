@@ -8,6 +8,7 @@ import {
   SelectItem,
 } from '@components/ui/Select'
 import { Apple, Wheat } from 'lucide-react'
+import { SelectPlan } from './SelectPlan'
 
 const fruits = [
   { value: 'apple', label: '苹果' },
@@ -346,6 +347,7 @@ export function SearchableLabelDemo() {
 export function SelectApiPreview() {
   return (
     <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+      <SelectPlan />
       <DefaultValueDemo />
       <PlaceholderDemo />
       <ControlledValueDemo />
