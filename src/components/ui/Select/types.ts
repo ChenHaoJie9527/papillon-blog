@@ -1,4 +1,5 @@
-import type { HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode, RefObject } from 'react'
+import type { SelectFilterFn } from './utils'
 
 /**
  * 下拉面板相对触发器的摆放方向。
@@ -56,6 +57,17 @@ export interface SelectContextValue {
   placement: Placement
   /** 由 `SelectContent` 在打开时根据视口剩余空间写入。 */
   setPlacement?: (placement: Placement) => void
+  /** 为 true 时 Trigger 变成 combobox，输入发生在 SelectValue 里的 input。支持搜索。 */
+  searchable: boolean
+  /** 当前搜索词。关面板后根组件会清掉。 */
+  query: string
+  setQuery: (query: string) => void
+  /** false 时不做本地过滤（留给远程）。函数则替换默认 includes。 */
+  filter: boolean | SelectFilterFn
+  /** 选项是否应显示。filter === false 时恒为 true。 */
+  matchItem: (item: { value: string; label: string }) => boolean
+  /** 可搜索时由 SelectValue 把 input 节点挂上来，供 Trigger 点击时 focus。 */
+  searchInputRef: RefObject<HTMLInputElement | null>
 }
 
 type SelectSharedProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> & {
@@ -75,6 +87,18 @@ type SelectSharedProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> & 
    * 堆叠选择器需要据此决定哪个邻居要画在上面。
    */
   onOpenChange?: (open: boolean) => void
+
+  searchable?: boolean
+  /** 受控的搜索词。 */
+  searchValue?: string
+  /** 非受控的初始搜索词。 */
+  defaultSearchValue?: string
+  /** 搜索词变化时触发。 */
+  onSearch?: (query: string) => void
+  /** false 时不做本地过滤（留给远程）。函数则替换默认 includes。 */
+  filter?: boolean | SelectFilterFn
+  /** 选项是否应显示。filter === false 时恒为 true。 */
+  matchItem?: (item: { value: string; label: string }) => boolean
 }
 
 /**
@@ -130,4 +154,9 @@ export interface SelectItemProps {
    * 否则退回使用 `value` 作为 label。
    */
   children: ReactNode
+
+  /** 触发器文案；不传则用字符串 children，再否则 value。 */
+  label?: string
+  /** 仅用于搜索，不改触发器展示。 */
+  textValue?: string
 }
