@@ -5,6 +5,7 @@ import { cn } from '@components/lib/utils'
 import { useSelectContext } from './context'
 import { itemVariants } from './motion'
 import type { SelectItemProps } from './types'
+import { resolveItemLabel } from './utils'
 
 /**
  * 列表中的一项。
@@ -20,10 +21,19 @@ import type { SelectItemProps } from './types'
  * 外层是 `motion.li` 以配合 listbox；真正可聚焦的是内部 `role="option"` 按钮。
  * 选中项展示勾选图标，并用 `aria-selected` 同步给辅助技术。
  */
-export function SelectItem({ value, disabled, className, children }: SelectItemProps) {
+export function SelectItem({
+  value,
+  disabled,
+  className,
+  children,
+  label: labelProp,
+  textValue,
+}: SelectItemProps) {
   const ctx = useSelectContext('SelectItem')
   const selected = ctx.values?.includes(value)
-  const label = typeof children === 'string' ? children : value
+  const label = resolveItemLabel(value, children, labelProp)
+  const searchText = textValue || label
+  const matched = !ctx.searchable || ctx.matchItem({ value, label: searchText })
 
   useLayoutEffect(() => {
     ctx.register(value, label)
@@ -33,7 +43,7 @@ export function SelectItem({ value, disabled, className, children }: SelectItemP
   }, [ctx.register, ctx.unregister, value, label])
 
   return (
-    <motion.li variants={ctx.reduce ? undefined : itemVariants}>
+    <motion.li variants={ctx.reduce ? undefined : itemVariants} hidden={!matched}>
       <button
         type="button"
         role="option"

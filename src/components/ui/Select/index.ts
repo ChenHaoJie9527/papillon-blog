@@ -22,3 +22,4 @@ export type {
   SelectContentProps,
   SelectItemProps,
 } from './types'
+export type { SelectFilterFn } from './utils'

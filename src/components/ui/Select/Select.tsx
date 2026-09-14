@@ -4,7 +4,7 @@ import { cn } from '@components/lib/utils'
 import { SelectContext } from './context'
 import type { Placement, SelectProps } from './types'
 import { useMap } from '@hooks/useMap'
-import { toggleValue, toValues } from './utils'
+import { toggleValue, toValues, defaultMatch } from './utils'
 
 /**
  * Select 根组件：持有选中值、开关、选项标签表与放置方向。
@@ -45,12 +45,25 @@ export function Select({
   className,
   children,
   multiple = false,
+  searchable = false,
+  searchValue,
+  defaultSearchValue = '',
+  onSearch,
+  filter = true,
 }: SelectProps) {
   /** 系统开启「减少动态效果」时为 true，子组件据此跳过弹簧。 */
   const reduce = useReducedMotion() ?? false
   /** 同一页面多个 Select 并存时，用 React id 保证 trigger / list 的 aria 配对唯一。 */
   const baseId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
+  /** 可搜索时由 SelectValue 把 input 节点挂上来，供 Trigger 点击时 focus。 */
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  /** 非受控的初始搜索词。 */
+  const [internalQuery, setInternalQuery] = useState(defaultSearchValue)
+  /** 受控搜索词优先。 */
+  const searchControlled = searchValue !== undefined
+  /** 最终的搜索词。 */
+  const query = searchControlled ? searchValue : internalQuery
 
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
   const [internal, setInternal] = useState<string[]>(() => toValues(defaultValue))
@@ -64,14 +77,27 @@ export function Select({
   const openControlled = openProp !== undefined
   const open = openControlled ? openProp : internalOpen
 
+  /** 更新搜索词。 */
+  const setQuery = useCallback(
+    (next: string) => {
+      if (!searchControlled) setInternalQuery(next)
+      onSearch?.(next)
+    },
+    [onSearch, searchControlled],
+  )
+
+  /** 更新展开状态。 */
   const setOpen = useCallback(
     (next: boolean) => {
       if (!openControlled) setInternalOpen(next)
       onOpenChange?.(next)
+      // 如果关闭面板，并且可搜索，则清空搜索词
+      if (!next && searchable) setQuery('')
     },
-    [onOpenChange, openControlled],
+    [onOpenChange, openControlled, searchable, setQuery],
   )
 
+  /** 选中一项。单选：替换并关面板；多选：切换该项，不关面板。 */
   const select = useCallback(
     (next: string) => {
       // 判断是否多选，如果是多选，则使用 toggleValue 函数切换选中值，否则直接设置为新值
@@ -80,22 +106,19 @@ export function Select({
       // 如果受控，则不更新内部状态，否则更新内部状态
       if (!controlled) setInternal(upcoming)
 
-      // TODO: 这里的 if else 可读性太差，可以考虑使用一个辅助函数来处理值
       if (isMultiple) {
         const emit = onValueChange as ((value: string[]) => void) | undefined
         emit?.(upcoming)
+        if (searchable) setQuery('')
       } else {
         const emit = onValueChange as ((value: string) => void) | undefined
         emit?.(upcoming[0] ?? '')
         setOpen(false)
       }
 
-      // 单选选中后关闭面板
-      if (!isMultiple) {
-        setOpen(false)
-      }
+      if (searchable) searchInputRef.current?.focus()
     },
-    [controlled, onValueChange, setOpen, isMultiple, setOpen, values],
+    [controlled, onValueChange, setOpen, isMultiple, values, searchable, setQuery],
   )
 
   /** 依赖具体方法而不是整个 actions 对象，避免对象换引用导致选项反复登记。 */
@@ -106,11 +129,27 @@ export function Select({
     [setLabel],
   )
 
+  // 避免每次选中都换掉 unregister 引用
+  const valuesRef = useRef(values)
+  valuesRef.current = values
+
   const unregister = useCallback(
     (v: string) => {
+      // 如果值在选中值中，则不删除
+      if (valuesRef.current.includes(v)) return
       removeLabel(v)
     },
     [removeLabel],
+  )
+
+  /** 选项是否应显示。filter === false 时恒为 true。 */
+  const matchItem = useCallback(
+    (item: { value: string; label: string }) => {
+      if (filter === false) return true
+      const fn = typeof filter === 'function' ? filter : defaultMatch
+      return fn(query, item)
+    },
+    [filter, query],
   )
 
   useEffect(() => {
@@ -151,6 +190,12 @@ export function Select({
       disabled,
       placement,
       setPlacement,
+      searchable,
+      query,
+      setQuery,
+      filter,
+      matchItem,
+      searchInputRef,
     }),
     [
       isMultiple,
@@ -165,6 +210,12 @@ export function Select({
       baseId,
       disabled,
       placement,
+      searchable,
+      query,
+      setQuery,
+      filter,
+      matchItem,
+      searchInputRef,
     ],
   )
 

@@ -149,11 +149,7 @@ export function ControlledOpenDemo() {
 /** 初始展开 */
 export function DefaultOpenDemo() {
   return (
-    <ApiCard
-      api="defaultOpen"
-      note="非受控的初始打开状态。刷新后默认展开。"
-      className="min-h-[240px]"
-    >
+    <ApiCard api="defaultOpen" note="非受控的初始打开状态。刷新后默认展开。">
       <FruitSelect defaultValue="apple" defaultOpen />
     </ApiCard>
   )
@@ -275,6 +271,77 @@ export function MultipleDemo() {
   )
 }
 
+/** 单选 Combobox：点输入框打开，输入过滤 */
+export function SearchableDemo() {
+  const [last, setLast] = useState('')
+  return (
+    <ApiCard
+      api="searchable"
+      note="Trigger 变成输入框。点字段打开面板，输入过滤选项；选中后关闭并恢复 label。"
+    >
+      <FruitSelect searchable onValueChange={setLast} />
+      <Status>onValueChange → {last || '(未选)'}</Status>
+    </ApiCard>
+  )
+}
+
+/** 多选 Combobox：Tag + 输入框，选中不清面板 */
+export function SearchableMultipleDemo() {
+  const [values, setValues] = useState<string[]>(['apple'])
+  return (
+    <ApiCard
+      api="searchable + multiple"
+      note="Tag 和输入框在同一格。选中后清空搜索词、焦点留在输入框，可继续搜。"
+    >
+      <Select
+        className="w-full"
+        searchable
+        multiple
+        value={values}
+        onValueChange={setValues}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="选择水果" />
+        </SelectTrigger>
+        <SelectContent>
+          <FruitOptions />
+        </SelectContent>
+      </Select>
+      <Status>onValueChange → {values.join(', ') || '(空)'}</Status>
+    </ApiCard>
+  )
+}
+
+/** children 非字符串时用 label 搜索 */
+export function SearchableLabelDemo() {
+  return (
+    <ApiCard
+      api="SelectItem label"
+      note="自定义节点没有字符串 children，用 label 作为触发器文案和搜索文本。"
+    >
+      <Select className="w-full" searchable>
+        <SelectTrigger>
+          <SelectValue placeholder="选择水果" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple" label="苹果">
+            <span className="flex items-center gap-2">
+              <Apple className="size-4" />
+              <span>苹果</span>
+            </span>
+          </SelectItem>
+          <SelectItem value="pear" label="梨">
+            <span className="flex items-center gap-2">
+              <Wheat className="size-4" />
+              <span>梨</span>
+            </span>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </ApiCard>
+  )
+}
+
 /** 展柜入口：把 API 示例铺开，而不只是几个裸控件 */
 export function SelectApiPreview() {
   return (
@@ -287,6 +354,9 @@ export function SelectApiPreview() {
       <DisabledItemDemo />
       <CustomItemDemo />
       <MultipleDemo />
+      <SearchableDemo />
+      <SearchableMultipleDemo />
+      <SearchableLabelDemo />
 
       <DefaultOpenDemo />
       <ExclusiveOpenDemo />

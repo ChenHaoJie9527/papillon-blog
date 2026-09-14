@@ -97,8 +97,6 @@ type SelectSharedProps = Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> & 
   onSearch?: (query: string) => void
   /** false 时不做本地过滤（留给远程）。函数则替换默认 includes。 */
   filter?: boolean | SelectFilterFn
-  /** 选项是否应显示。filter === false 时恒为 true。 */
-  matchItem?: (item: { value: string; label: string }) => boolean
 }
 
 /**

@@ -79,11 +79,44 @@ export const selectApi: ApiSection[] = [
         description:
           '为 true 时多选。value / defaultValue / onValueChange 变为 string[]；点选项切换且不关面板。',
       },
+      {
+        name: 'searchable',
+        type: 'boolean',
+        defaultValue: 'false',
+        description:
+          '为 true 时 Trigger 变成 combobox：点输入框打开面板并过滤选项。关面板或（多选）选中后清空搜索词。',
+      },
+      {
+        name: 'searchValue',
+        type: 'string',
+        defaultValue: '—',
+        description: '受控搜索词。传入后内部不再自己更新 query。',
+      },
+      {
+        name: 'defaultSearchValue',
+        type: 'string',
+        defaultValue: '""',
+        description: '非受控的初始搜索词。仅在未传 searchValue 时生效。',
+      },
+      {
+        name: 'onSearch',
+        type: '(query: string) => void',
+        defaultValue: '—',
+        description: '搜索词变化时回调。远程搜索可在这里拉数，并设 filter={false}。',
+      },
+      {
+        name: 'filter',
+        type: 'boolean | ((query: string, item: { value: string; label: string }) => boolean)',
+        defaultValue: 'true',
+        description:
+          '本地过滤。false 时不隐藏选项（留给远程）；传入函数则替换默认的 label/value includes。',
+      },
     ],
   },
   {
     component: 'SelectTrigger',
-    description: '打开 / 关闭面板的按钮。圆角用 className 覆盖，例如 rounded-lg。',
+    description:
+      '打开 / 关闭面板。默认为 button；searchable 时改为容器，combobox 角色在输入框上。圆角用 className 覆盖。',
     props: [
       {
         name: 'className',
@@ -102,13 +135,14 @@ export const selectApi: ApiSection[] = [
   {
     component: 'SelectValue',
     description:
-      '触发器内的当前值。单选为纯文本；多选时每个 label 包一层 SelectTag，追加时播放入场。',
+      '触发器内的当前值。单选为纯文本；多选时每个 label 包一层 SelectTag。searchable 时在同一处渲染输入框，placeholder 成为 input 的占位。',
     props: [
       {
         name: 'placeholder',
         type: 'string',
         defaultValue: '"Select"',
-        description: '尚未选中（或对应项尚未登记）时显示的占位文案。',
+        description:
+          '尚未选中（或对应项尚未登记）时显示的占位文案。searchable 时写在输入框上；已有选中值时不显示。',
       },
       {
         name: 'className',
@@ -121,7 +155,7 @@ export const selectApi: ApiSection[] = [
   {
     component: 'SelectContent',
     description:
-      '选项面板。关闭后仍挂载 children，避免触发器掉回占位符；视口不够时翻到上方。',
+      '选项面板。关闭后仍挂载 children，避免触发器掉回占位符；视口不够时翻到上方。可搜索时列表限高滚动，无匹配时显示空态。',
     props: [
       {
         name: 'className',
@@ -166,7 +200,19 @@ export const selectApi: ApiSection[] = [
         type: 'ReactNode',
         defaultValue: '必填',
         description:
-          '列表中的展示内容。纯字符串会同时作为触发器 label；否则触发器显示 value。',
+          '列表中的展示内容。纯字符串会同时作为触发器 label 与搜索文本；否则触发器显示 value，可用 label / textValue 覆盖。',
+      },
+      {
+        name: 'label',
+        type: 'string',
+        defaultValue: '—',
+        description: '触发器文案。不传则用字符串 children，再否则 value。',
+      },
+      {
+        name: 'textValue',
+        type: 'string',
+        defaultValue: '—',
+        description: '仅用于本地搜索，不改触发器展示。适合 children 是图标或自定义节点的项。',
       },
     ],
   },

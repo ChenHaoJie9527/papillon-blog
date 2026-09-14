@@ -34,6 +34,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const ctx = useSelectContext('SelectContent')
   const innerRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState(0)
+  const [visibleCount, setVisibleCount] = useState(0)
   const open = ctx.open
   const { setPlacement } = ctx
 
@@ -41,13 +42,16 @@ export function SelectContent({ className, children }: SelectContentProps) {
     const node = innerRef.current
     if (!node) return
 
-    const measure = () => setHeight(node.offsetHeight)
+    const measure = () => {
+      setHeight(node.offsetHeight)
+      setVisibleCount(node.querySelectorAll('li:not([hidden])').length)
+    }
     measure()
 
     const observer = new ResizeObserver(measure)
     observer.observe(node)
     return () => observer.disconnect()
-  }, [])
+  }, [ctx.query, children])
 
   useLayoutEffect(() => {
     if (!open) return
@@ -115,9 +119,17 @@ export function SelectContent({ className, children }: SelectContentProps) {
         variants={ctx.reduce ? undefined : listVariants}
         initial={false}
         animate={open ? 'show' : 'hidden'}
-        className="p-1"
+        className="max-h-60 overflow-y-auto p-1"
       >
         {children}
+        {ctx.searchable && ctx.query.trim() !== '' && visibleCount === 0 && (
+          <p
+            data-slot="select-empty"
+            className="px-2.5 py-2 text-center text-sm text-muted-foreground"
+          >
+            无匹配项
+          </p>
+        )}
       </motion.div>
     </motion.div>
   )
