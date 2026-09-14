@@ -19,7 +19,9 @@ export function SelectValue({ placeholder, className }: SelectValueProps) {
 
   if (values.length === 0) {
     return (
-      <span className={cn('min-w-0 truncate text-muted-foreground', className)}>
+      <span
+        className={cn('min-w-0 truncate text-muted-foreground opacity-45', className)}
+      >
         {placeholder || 'Select'}
       </span>
     )
